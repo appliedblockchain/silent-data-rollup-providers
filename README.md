@@ -1,4 +1,5 @@
-# SilentData Rollup Providers
+![Silent Data By Applied Blockchain Logo](https://cdn.prod.website-files.com/66e010db8f2318d36725b915/6703b717b513df4231a5ee72_sd-logo-landscape.svg)
+# Silent Data [Rollup] Providers
 
 ## Table of Contents
 
@@ -7,11 +8,10 @@
 - [Prerequisites](#prerequisites)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
-- [Additional Resources](#additional-resources)
 
 ## Introduction
 
-This monorepo contains multiple packages for custom providers for SilentData Rollup, compatible with ethers.js and Hardhat plugins.
+This monorepo contains multiple packages for custom providers for Silent Data [Rollup], compatible with ethers.js and Hardhat plugins.
 
 ## Features
 
@@ -27,11 +27,11 @@ These packages offer several key features:
 
 5. **Simplified Contract Interactions**: Provides a `SilentDataRollupContract` class that streamlines interactions with smart contracts, automatically handling method signing when necessary.
 
-6. **Network Abstraction**: Offers a `NetworkName` enum to easily switch between different SilentData Rollup networks (e.g., testnet, mainnet).
+6. **Network Abstraction**: Offers a `NetworkName` enum to easily switch between different Silent Data [Rollup] networks (e.g., testnet, mainnet).
 
 7. **Customizable Configuration**: Allows developers to configure providers with custom RPC URLs, network settings, and authentication details.
 
-These features make it easier for developers to integrate SilentData Rollup into their Ethereum-based applications, handling the complexities of authentication and network interactions behind the scenes.
+These features make it easier for developers to integrate Silent Data [Rollup] into their Ethereum-based applications, handling the complexities of authentication and network interactions behind the scenes.
 
 ## Prerequisites
 
@@ -52,13 +52,10 @@ If you encounter any issues, please check the following:
 
 1. Ensure you're using the correct RPC URL for your desired network.
 2. Verify that your private key is correctly set and has sufficient funds.
-3. Ensure that your token is still active on the SilentData AppChains dashboard.
+3. Ensure that your token is still active on the Silent Data AppChains dashboard.
 4. If using Fireblocks, validate your user and API keys.
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Additional Resources
-
-- [SilentData Rollup Documentation](https://docs.silentdata.com)
