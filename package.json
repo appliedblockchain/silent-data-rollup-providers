@@ -20,7 +20,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
-    "build": "npm run build -w @appliedblockchain/silentdatarollup-core -w @appliedblockchain/silentdatarollup-ethers-provider -w @appliedblockchain/silentdatarollup-ethers-provider-fireblocks -w @appliedblockchain/silentdatarollup-hardhat-plugin -w @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks",
+    "build": "npm run build -w @appliedblockchain/silentdatarollup-core -w @appliedblockchain/silentdatarollup-ethers-provider -w @appliedblockchain/silentdatarollup-ethers-provider-fireblocks -w @appliedblockchain/silentdatarollup-hardhat-plugin -w @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks -w @appliedblockchain/silentdatarollup-viem-plugin",
     "publish-packages": "npm run build && npm publish --workspaces",
     "test": "jest --projects packages/*"
   },
@@ -30,6 +30,7 @@
     "@types/jest": "29.5.13",
     "@types/node": "22.6.1",
     "jest": "29.7.0",
+    "react": "18.3.1",
     "ts-jest": "29.2.5",
     "typescript": "5.6.2"
   },
