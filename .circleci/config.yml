@@ -1,0 +1,34 @@
+version: 2.1
+
+jobs:
+  audit_build_lint_test:
+    docker:
+      - image: cimg/node:22.14.0
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Security audit
+          command: npm audit
+      - run:
+          name: Check format
+          command: npm run check-format
+      - run:
+          name: Build packages
+          command: npm run build
+      - run:
+          name: Check exports
+          command: npm run check-exports
+      - run:
+          name: Check lint
+          command: npm run lint
+      - run:
+          name: Test packages
+          command: npm run test
+
+workflows:
+  audit_build_lint_test:
+    jobs:
+      - audit_build_lint_test

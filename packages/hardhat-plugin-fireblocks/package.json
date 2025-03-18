@@ -1,0 +1,56 @@
+{
+  "name": "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks",
+  "version": "1.0.0",
+  "description": "Hardhat plugin for Silent Data [Rollup] with Fireblocks integration",
+  "author": "Applied Blockchain",
+  "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
+  "keywords": [
+    "ethereum",
+    "provider",
+    "silentdata",
+    "rollup",
+    "hardhat",
+    "fireblocks"
+  ],
+  "license": "MIT",
+  "repository": "https://github.com/appliedblockchain/silent-data-rollup-providers",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "check-exports": "attw --pack . --profile node16",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "@appliedblockchain/silentdatarollup-core": "1.0.0",
+    "@fireblocks/fireblocks-web3-provider": "1.3.8",
+    "@fireblocks/hardhat-fireblocks": "1.3.5",
+    "debug": "4.3.7",
+    "ethers": "6.13.2",
+    "fireblocks-sdk": "5.31.2"
+  },
+  "devDependencies": {
+    "@types/debug": "4.1.12",
+    "@types/node": "22.5.4",
+    "hardhat": "2.22.10",
+    "ts-node": "10.9.2",
+    "typescript": "5.6.2"
+  },
+  "peerDependencies": {
+    "@fireblocks/hardhat-fireblocks": "1.3.5",
+    "hardhat": "2.22.10"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

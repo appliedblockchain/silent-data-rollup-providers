@@ -1,0 +1,20 @@
+{
+  "name": "example-custom-rpc-nodejs",
+  "scripts": {
+    "contract-interaction": "ts-node src/contract-interaction.ts",
+    "custom-rpc": "silentdatarollup-custom-rpc",
+    "hardhat": "hardhat node",
+    "start": "npm run custom-rpc & npm run hardhat"
+  },
+  "dependencies": {
+    "@appliedblockchain/silentdatarollup-core": "file:../../packages/core",
+    "@appliedblockchain/silentdatarollup-custom-rpc": "file:../../packages/custom-rpc",
+    "@appliedblockchain/silentdatarollup-ethers-provider": "file:../../packages/ethers-provider",
+    "dotenv": "16.4.5",
+    "hardhat": "2.22.19"
+  },
+  "devDependencies": {
+    "ts-node": "10.9.2",
+    "typescript": "5.8.2"
+  }
+}
