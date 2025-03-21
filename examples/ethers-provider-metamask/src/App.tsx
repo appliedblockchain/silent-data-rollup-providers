@@ -90,13 +90,13 @@ function App() {
       await Promise.all(
         tokens.map(async (token) => {
           try {
-            const tokenContract = new SilentDataRollupContract(
-              token.address,
-              ERC20_ABI,
+            const tokenContract = new SilentDataRollupContract({
+              address: token.address,
+              abi: ERC20_ABI,
               // @ts-expect-error - provider is a SilentDataRollupProvider
-              provider,
-              ['balanceOf'],
-            )
+              runner: provider,
+              contractMethodsToSign: ['balanceOf'],
+            })
 
             const [decimals, balance] = await Promise.all([
               tokenContract.decimals(),
@@ -140,13 +140,13 @@ function App() {
 
     try {
       const { provider } = await createProvider()
-      const tokenContract = new SilentDataRollupContract(
-        tokenAddress,
-        ERC20_ABI,
+      const tokenContract = new SilentDataRollupContract({
+        address: tokenAddress,
+        abi: ERC20_ABI,
         // @ts-expect-error - provider is a SilentDataRollupProvider
-        provider,
-        ['balanceOf'],
-      )
+        runner: provider,
+        contractMethodsToSign: ['balanceOf'],
+      })
 
       const [name, symbol, decimals, balance] = await Promise.all([
         tokenContract.name(),
@@ -180,14 +180,16 @@ function App() {
 
   const transferToken = async (tokenAddress: string) => {
     try {
-      const { signer } = await createProvider()
+      const { signer, provider } = await createProvider()
 
-      const tokenContract = new SilentDataRollupContract(
-        tokenAddress,
-        ERC20_ABI,
-        signer,
-        ['transfer'],
-      )
+      const tokenContract = new SilentDataRollupContract({
+        address: tokenAddress,
+        abi: ERC20_ABI,
+        runner: signer,
+        contractMethodsToSign: ['transfer'],
+        // @ts-expect-error - provider is a SilentDataRollupProvider
+        provider,
+      })
 
       const randomWallet = Wallet.createRandom()
 
@@ -209,13 +211,13 @@ function App() {
         tokens.map(async (token) => {
           try {
             const { provider } = await createProvider()
-            const tokenContract = new SilentDataRollupContract(
-              token.address,
-              ERC20_ABI,
+            const tokenContract = new SilentDataRollupContract({
+              address: token.address,
+              abi: ERC20_ABI,
               // @ts-expect-error - provider is a SilentDataRollupProvider
-              provider,
-              ['balanceOf'],
-            )
+              runner: provider,
+              contractMethodsToSign: ['balanceOf'],
+            })
 
             const [decimals, balance] = await Promise.all([
               tokenContract.decimals(),

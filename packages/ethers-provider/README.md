@@ -83,19 +83,17 @@ const providerConfig = {
 }
 
 const provider = new SilentDataRollupProvider(providerConfig)
+const balance = await provider.getBalance('YOUR_ADDRESS')
+console.log(balance)
 
-const contractAddress = 'YOUR_CONTRACT_ADDRESS'
-const abi = [
-  /* Your contract ABI */
-]
-const methodsToSign = ['method1', 'method2'] // Contract read calls that require signing
+const contractConfig = {
+  contractAddress: 'YOUR_CONTRACT_ADDRESS'
+  abi: [ /* Your contract ABI */ ],
+  runner: provider,
+  methodsToSign: ['method1', 'method2'] // Contract read calls that require signing
+}
 
-const contract = new SilentDataRollupContract(
-  contractAddress,
-  abi,
-  provider,
-  methodsToSign,
-)
+const contract = new SilentDataRollupContract(contractConfig)
 
 // Now you can call "private" contract methods. These calls will be signed,
 // and msg.sender will be available in the contract, representing the signer's address.
