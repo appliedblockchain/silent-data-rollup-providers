@@ -1,6 +1,5 @@
 {
   "name": "@appliedblockchain/silentdatarollup-providers",
-  "version": "1.0.0",
   "description": "Custom providers for Silent Data [Rollup] compatible with ethers.js, fireblocks and Hardhat plugins",
   "author": "@appliedblockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
