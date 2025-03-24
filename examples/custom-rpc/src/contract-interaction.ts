@@ -28,13 +28,13 @@ const provider = new SilentDataRollupProvider({
   privateKey: PRIVATE_KEY,
 })
 
-const tokenContract = new SilentDataRollupContract(
-  TOKEN_ADDRESS,
-  ERC20_ABI,
+const tokenContract = new SilentDataRollupContract({
+  address: TOKEN_ADDRESS,
+  abi: ERC20_ABI,
   // @ts-expect-error - signer is a Signer
-  provider.signer,
-  ['balanceOf'],
-)
+  runner: provider.signer,
+  contractMethodsToSign: ['balanceOf'],
+})
 
 const main = async () => {
   const [decimals, name, symbol] = await Promise.all([

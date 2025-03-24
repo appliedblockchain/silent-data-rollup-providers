@@ -71,22 +71,24 @@ const provider = new SilentDataRollupFireblocksProvider({
 const balance = await provider.getBalance('YOUR_ADDRESS')
 console.log(balance)
 
-const signer = await provider.getSigner()
-const contractAddress = 'YOUR_CONTRACT_ADDRESS'
-const abi = [
-  /* Your contract ABI */
-]
-const methodsToSign = ['balance'] // Contract read calls that require signing
+const contractConfig = {
+  contractAddress: 'YOUR_CONTRACT_ADDRESS'
+  abi: [ /* Your contract ABI */ ],
+  runner: signer,
+  methodsToSign: ['method1', 'method2'] // Contract read calls that require signing
+}
 
-const contract = new SilentDataRollupContract(
-  contractAddress,
-  abi,
-  signer,
-  methodsToSign,
-)
+const contract = new SilentDataRollupContract(contractConfig)
 
-const tokenBalance = await contract.balance('YOUR_ADDRESS')
-console.log(tokenBalance)
+// Now you can call "private" contract methods. These calls will be signed,
+// and msg.sender will be available in the contract, representing the signer's address.
+const privateMethodResult = await contract.method1('param1', 'param2')
+console.log('Private method result:', privateMethodResult)
+
+// You can also call methods that don't require signing.
+// These calls won't include a signature, and msg.sender won't be available in the contract.
+const publicMethodResult = await contract.method3('param1', 'param2')
+console.log('Public method result:', publicMethodResult)
 ```
 
 **Note:** The SilentDataRollupFireblocksProvider adds an additional namespace on top of the Fireblocks provider for debugging purposes. This namespace is the same as the Fireblocks namespace with an additional `:silentdata-interceptor` suffix. For example, if the Fireblocks namespace is `fireblocks:web3-provider`, the SilentData provider's namespace would be `fireblocks:web3-provider:silentdata-interceptor`.

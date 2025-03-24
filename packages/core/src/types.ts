@@ -1,4 +1,10 @@
-import { JsonRpcPayload, Signer } from 'ethers'
+import {
+  ContractRunner,
+  InterfaceAbi,
+  JsonRpcPayload,
+  Provider,
+  Signer,
+} from 'ethers'
 import {
   HEADER_DELEGATE,
   HEADER_DELEGATE_SIGNATURE,
@@ -86,4 +92,12 @@ export type DelegateHeaders = {
   [HEADER_DELEGATE]: string
   [HEADER_DELEGATE_SIGNATURE]?: string
   [HEADER_EIP712_DELEGATE_SIGNATURE]?: string
+}
+
+export type SilentDataRollupContractConfig = {
+  address: string
+  abi: InterfaceAbi
+  runner: ContractRunner
+  contractMethodsToSign: string[]
+  provider?: Provider
 }
