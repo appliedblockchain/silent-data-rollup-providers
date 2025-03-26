@@ -1,7 +1,9 @@
 {
   "name": "example-hardhat-plugin",
   "scripts": {
-    "deploy": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/PrivateToken.ts"
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/PrivateToken.ts",
+    "deploy:simple-contract": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/SimpleContract.ts"
   },
   "devDependencies": {
     "@appliedblockchain/silentdatarollup-hardhat-plugin": "file:../../packages/hardhat-plugin",
