@@ -33,14 +33,16 @@ The project is configured in `hardhat.config.ts` to use the Silent Data Rollup n
 }
 ```
 
-## Smart Contract
+## Smart Contracts
 
 The example includes a simple `PrivateToken.sol` contract that implements a privacy-focused ERC20 token with the following features:
 
 - Implements the ERC20 standard interface
 - Only allows token holders to view their own balance through the `balanceOf` method
 
-## Deployment
+These is also a very basic contract example called `SimpleContract`.
+
+## Deployment - PrivateToken
 
 The project uses Hardhat Ignition for deployments. The deployment module is configured in `ignition/modules/PrivateToken.ts`.
 
@@ -52,14 +54,31 @@ npm run deploy
 
 This will:
 
-1. Compile the contract
+1. Compile the PrivateToken contract
+2. Deploy it to the Silent Data [Rollup] network
+
+## Deployment - SimpleContract
+
+The project uses Hardhat Ignition for deployments. The deployment module is configured in `ignition/modules/SimpleContract.ts`.
+
+To deploy the contract:
+
+```bash
+npm run deploy:simple-contract
+```
+
+This will:
+
+1. Compile the SimpleContract contract
 2. Deploy it to the Silent Data [Rollup] network
 
 ## Development
 
 ### Available Scripts
 
+- `npm run compile` - Compile all contracts
 - `npm run deploy` - Deploy the PrivateToken contract using Hardhat Ignition
+- `npm run deploy:simple-contract` - Deploy the SimpleContract contract using Hardhat Ignition
 
 ### Project Dependencies
 
