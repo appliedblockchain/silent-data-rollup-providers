@@ -2,7 +2,8 @@
   "name": "example-ethers-provider-nodejs",
   "scripts": {
     "contract-interaction": "ts-node src/contract-interaction.ts",
-    "get-balance": "ts-node src/get-balance.ts"
+    "get-balance": "ts-node src/get-balance.ts",
+    "transfer-balance": "ts-node src/transfer-balance.ts"
   },
   "dependencies": {
     "@appliedblockchain/silentdatarollup-core": "file:../../packages/core",

@@ -10,9 +10,9 @@ REQUIRED_ENV_VARS.forEach((envVar) => {
   }
 })
 
-const RPC_URL = process.env.RPC_URL as string
 const CHAIN_ID = process.env.CHAIN_ID as string
 const PRIVATE_KEY = process.env.PRIVATE_KEY as string
+const RPC_URL = process.env.RPC_URL as string
 
 const provider = new SilentDataRollupProvider({
   rpcUrl: RPC_URL,
@@ -22,8 +22,9 @@ const provider = new SilentDataRollupProvider({
 
 const main = async () => {
   const wallet = new Wallet(PRIVATE_KEY)
-  const balance = await provider.getBalance(wallet.address)
-  console.log('Balance:', formatEther(balance))
+  const walletAddress = await wallet.getAddress()
+  const balance = await provider.getBalance(walletAddress)
+  console.log(`Balance of "${walletAddress}" is ${formatEther(balance)} ETH`)
 }
 
-main()
+main().catch(console.error)

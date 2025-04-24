@@ -7,7 +7,8 @@ This repository demonstrates how to interact with the Silent Data [Rollup] using
 - Connect to the Silent Data [Rollup] network
 - Retrieve token details (name, symbol, decimals)
 - Transfer tokens to a randomly generated wallet
-- Check token balances
+- Check wallet balances
+- Transfer wallet balances
 
 ## Prerequisites
 
@@ -34,10 +35,12 @@ This repository demonstrates how to interact with the Silent Data [Rollup] using
 3. Create a `.env` file in the root directory and add your environment variables:
 
    ```plaintext
-   RPC_URL=<your_rpc_url>
    CHAIN_ID=<your_chain_id>
    PRIVATE_KEY=<your_private_key>
+   RPC_URL=<your_rpc_url>
    TOKEN_ADDRESS=<your_token_address>
+   TRANSFER_VALUE_ETH=<transfer_to_value>
+   TRANSFER_WALLET_ADDRESS=<transfer_to_private_key>
    ```
 
 ## Usage
@@ -52,4 +55,10 @@ or
 
 ```bash
 npm run get-balance
+```
+
+or
+
+```bash
+npm run transfer-balance
 ```
