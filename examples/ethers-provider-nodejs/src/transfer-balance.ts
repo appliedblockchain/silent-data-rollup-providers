@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { formatEther, parseEther, Wallet } from 'ethers'
+import { formatEther, parseEther } from 'ethers'
 
 const REQUIRED_ENV_VARS = [
   'CHAIN_ID',
