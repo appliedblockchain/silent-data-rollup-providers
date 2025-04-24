@@ -39,8 +39,8 @@ This repository demonstrates how to interact with the Silent Data [Rollup] using
    PRIVATE_KEY=<your_private_key>
    RPC_URL=<your_rpc_url>
    TOKEN_ADDRESS=<your_token_address>
-   TRANSFER_PRIVATE_KEY=<transfer_to_private_key>
    TRANSFER_VALUE_ETH=<transfer_to_value>
+   TRANSFER_WALLET_ADDRESS=<transfer_to_private_key>
    ```
 
 ## Usage

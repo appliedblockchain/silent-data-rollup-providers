@@ -6,8 +6,8 @@ const REQUIRED_ENV_VARS = [
   'CHAIN_ID',
   'PRIVATE_KEY',
   'RPC_URL',
-  'TRANSFER_PRIVATE_KEY',
   'TRANSFER_VALUE_ETH',
+  'TRANSFER_WALLET_ADDRESS',
 ] as const
 
 REQUIRED_ENV_VARS.forEach((envVar) => {
@@ -19,8 +19,8 @@ REQUIRED_ENV_VARS.forEach((envVar) => {
 const CHAIN_ID = process.env.CHAIN_ID as string
 const PRIVATE_KEY = process.env.PRIVATE_KEY as string
 const RPC_URL = process.env.RPC_URL as string
-const TRANSFER_PRIVATE_KEY = process.env.TRANSFER_PRIVATE_KEY as string
 const TRANSFER_VALUE_ETH = parseEther(process.env.TRANSFER_VALUE_ETH as string)
+const TRANSFER_WALLET_ADDRESS = process.env.TRANSFER_WALLET_ADDRESS as string
 
 const provider = new SilentDataRollupProvider({
   rpcUrl: RPC_URL,
@@ -29,27 +29,23 @@ const provider = new SilentDataRollupProvider({
 })
 
 const main = async () => {
-  const fromWallet = new Wallet(PRIVATE_KEY)
-  const fromWalletAddress = await fromWallet.getAddress()
-
-  const toWallet = new Wallet(TRANSFER_PRIVATE_KEY)
-  const toWalletAddress = await toWallet.getAddress()
+  const fromWalletAddress = await provider.signer.getAddress()
 
   const balanceBeforeFrom = await provider.getBalance(fromWalletAddress)
   console.log(
     `Balance of "${fromWalletAddress}" is ${formatEther(balanceBeforeFrom)} ETH`,
   )
 
-  const balanceBeforeTo = await provider.getBalance(toWalletAddress)
+  const balanceBeforeTo = await provider.getBalance(TRANSFER_WALLET_ADDRESS)
   console.log(
-    `Balance of "${toWalletAddress}" is ${formatEther(balanceBeforeTo)} ETH\n`,
+    `Balance of "${TRANSFER_WALLET_ADDRESS}" is ${formatEther(balanceBeforeTo)} ETH\n`,
   )
 
   console.log(
-    `Sending ${formatEther(TRANSFER_VALUE_ETH)} ETH from "${fromWalletAddress}" to "${toWalletAddress}"`,
+    `Sending ${formatEther(TRANSFER_VALUE_ETH)} ETH from "${fromWalletAddress}" to "${TRANSFER_WALLET_ADDRESS}"`,
   )
   const tx = await provider.signer.sendTransaction({
-    to: toWalletAddress,
+    to: TRANSFER_WALLET_ADDRESS,
     value: TRANSFER_VALUE_ETH,
   })
   await provider.waitForTransaction(tx.hash)
@@ -60,9 +56,9 @@ const main = async () => {
     `Balance of "${fromWalletAddress}" is ${formatEther(balanceAfterFrom)} ETH`,
   )
 
-  const balanceAfterTo = await provider.getBalance(toWalletAddress)
+  const balanceAfterTo = await provider.getBalance(TRANSFER_WALLET_ADDRESS)
   console.log(
-    `Balance of "${toWalletAddress}" is ${formatEther(balanceAfterTo)} ETH`,
+    `Balance of "${TRANSFER_WALLET_ADDRESS}" is ${formatEther(balanceAfterTo)} ETH`,
   )
 }
 
