@@ -84,4 +84,4 @@ const main = async () => {
   console.log('✅ My token balance:', formatEther(balanceAfter), symbol)
 }
 
-main()
+main().catch(console.error)
