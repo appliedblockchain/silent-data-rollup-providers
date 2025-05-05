@@ -6,15 +6,29 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 
 - Node.js (version 18 or higher)
 - npm
-- A Silent Data Rollup RPC URL
-- A private key for deployment
+- Access to a Silent Data [Rollup] RPC endpoint
 
 ## Getting Started
 
-1. Clone this repository
-2. Install dependencies: **`npm install`**
-3. Configure environment variables **`cp .env-example .env`**
-   Edit `.env` and add your: - `RPC_URL`: Your Silent Data [Rollup] RPC endpoint - `PRIVATE_KEY`: Your wallet's private key
+1. Clone the repository:
+
+   ```bash
+   git clone <repository-url>
+   cd examples/hardhat-plugin
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
+
+   ```plaintext
+   PRIVATE_KEY=<your_private_key>
+   RPC_URL=<your_rpc_url>
+   ```
 
 ## Configuration
 

@@ -1,10 +1,11 @@
 # Silent Data [Rollup] Custom RCP Example
 
+For development purposes, this repository exposes a Silent Data [Rollup] Custom RPC using hardhat.
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
 - npm
-- A private key for wallet access
 
 ## Installation
 
@@ -21,7 +22,7 @@
    npm install
    ```
 
-3. Create a `.env` file in the root directory and add your environment variables:
+3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
 
    ```plaintext
    CHAIN_ID=<hardhat_chain_id>

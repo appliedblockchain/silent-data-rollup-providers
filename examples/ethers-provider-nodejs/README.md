@@ -1,6 +1,6 @@
 # Silent Data [Rollup] Node.js Example
 
-This repository demonstrates how to interact with the Silent Data [Rollup] using Node.js and the `@appliedblockchain/silentdatarollup-ethers-provider` package. The example includes basic functionalities such as checking token balances and transferring tokens.
+This repository demonstrates how to interact with the Silent Data [Rollup] using Node.js and both `@appliedblockchain/silentdatarollup-core` and `@appliedblockchain/silentdatarollup-ethers-provider` packages.
 
 ## Features
 
@@ -15,7 +15,6 @@ This repository demonstrates how to interact with the Silent Data [Rollup] using
 - Node.js (v18 or higher)
 - npm
 - Access to a Silent Data [Rollup] RPC endpoint
-- A private key for wallet access
 
 ## Installation
 
@@ -32,7 +31,7 @@ This repository demonstrates how to interact with the Silent Data [Rollup] using
    npm install
    ```
 
-3. Create a `.env` file in the root directory and add your environment variables:
+3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
 
    ```plaintext
    CHAIN_ID=<your_chain_id>
