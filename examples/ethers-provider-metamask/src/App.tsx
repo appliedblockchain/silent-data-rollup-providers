@@ -1,6 +1,6 @@
 import { SilentDataRollupContract } from '@appliedblockchain/silentdatarollup-core'
 import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { BrowserProvider, formatUnits, Wallet } from 'ethers'
+import { BrowserProvider, formatEther, formatUnits, Wallet } from 'ethers'
 import { useEffect, useState, useRef } from 'react'
 import { ERC20_ABI } from './constants/erc20Abi'
 import './App.css'
@@ -39,8 +39,7 @@ function useSilentDataProvider() {
         provider: new SilentDataRollupProvider({
           rpcUrl: process.env.REACT_APP_ROLLUP_RPC_URL!,
           chainId: Number(process.env.REACT_APP_CHAIN_ID!),
-          // @ts-expect-error - signer is a Signer
-          signer: signer,
+          signer,
           delegate: true,
         }),
       }
@@ -69,7 +68,7 @@ function App() {
     try {
       const { provider } = await createProvider()
       const balance = await provider.getBalance(address)
-      setBalance(balance.toString())
+      setBalance(formatEther(balance.toString()))
     } catch (error) {
       console.error('Error fetching balance:', error)
     }
@@ -93,7 +92,6 @@ function App() {
             const tokenContract = new SilentDataRollupContract({
               address: token.address,
               abi: ERC20_ABI,
-              // @ts-expect-error - provider is a SilentDataRollupProvider
               runner: provider,
               contractMethodsToSign: ['balanceOf'],
             })
@@ -143,7 +141,6 @@ function App() {
       const tokenContract = new SilentDataRollupContract({
         address: tokenAddress,
         abi: ERC20_ABI,
-        // @ts-expect-error - provider is a SilentDataRollupProvider
         runner: provider,
         contractMethodsToSign: ['balanceOf'],
       })
@@ -187,7 +184,6 @@ function App() {
         abi: ERC20_ABI,
         runner: signer,
         contractMethodsToSign: ['transfer'],
-        // @ts-expect-error - provider is a SilentDataRollupProvider
         provider,
       })
 
@@ -214,7 +210,6 @@ function App() {
             const tokenContract = new SilentDataRollupContract({
               address: token.address,
               abi: ERC20_ABI,
-              // @ts-expect-error - provider is a SilentDataRollupProvider
               runner: provider,
               contractMethodsToSign: ['balanceOf'],
             })

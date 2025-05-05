@@ -6,15 +6,30 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 
 - Node.js (version 18 or higher)
 - npm
-- A Silent Data Rollup RPC URL
-- A private key for deployment
+- Access to a Silent Data [Rollup] RPC endpoint
 
 ## Getting Started
 
-1. Clone this repository
-2. Install dependencies: **`npm install`**
-3. Configure environment variables **`cp .env-example .env`**
-   Edit `.env` and add your: - `RPC_URL`: Your Silent Data [Rollup] RPC endpoint - `FIREBLOCKS_API_KEY`: Your Fireblocks API key - `FIREBLOCKS_VAULT_ACCOUNT_ID`: Your Fireblocks vault account ID
+1. Clone the repository:
+
+   ```bash
+   git clone <repository-url>
+   cd examples/hardhat-plugin
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
+
+   ```plaintext
+   FIREBLOCKS_API_KEY=<your_fireblocks_api_key>
+   FIREBLOCKS_VAULT_ACCOUNT_ID=<your_fireblocks_vault_account_id>
+   RPC_URL=<your_rpc_url>
+   ```
 
 ## Configuration
 

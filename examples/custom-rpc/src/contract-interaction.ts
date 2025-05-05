@@ -31,7 +31,6 @@ const provider = new SilentDataRollupProvider({
 const tokenContract = new SilentDataRollupContract({
   address: TOKEN_ADDRESS,
   abi: ERC20_ABI,
-  // @ts-expect-error - signer is a Signer
   runner: provider.signer,
   contractMethodsToSign: ['balanceOf'],
 })

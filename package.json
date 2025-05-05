@@ -19,7 +19,6 @@
     "./packages/*"
   ],
   "scripts": {
-    "bootstrap": "npm install && npm run build && npm install --prefix ./examples/custom-rpc && npm install --prefix ./examples/ethers-provider-metamask && npm install --prefix ./examples/ethers-provider-nodejs && npm install --prefix ./examples/hardhat-plugin && npm install --prefix ./examples/hardhat-plugin-fireblocks",
     "build": "npm run build -w @appliedblockchain/silentdatarollup-core -w @appliedblockchain/silentdatarollup-custom-rpc -w @appliedblockchain/silentdatarollup-ethers-provider -w @appliedblockchain/silentdatarollup-ethers-provider-fireblocks -w @appliedblockchain/silentdatarollup-hardhat-plugin -w @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks",
     "changeset": "changeset",
     "changeset:version": "changeset version",
