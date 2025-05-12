@@ -1,0 +1,17 @@
+{
+  "name": "example-ethers-provider-nodejs",
+  "scripts": {
+    "contract-interaction": "ts-node src/contract-interaction.ts",
+    "get-balance": "ts-node src/get-balance.ts",
+    "transfer-balance": "ts-node src/transfer-balance.ts"
+  },
+  "dependencies": {
+    "@appliedblockchain/silentdatarollup-core": "1.0.1",
+    "@appliedblockchain/silentdatarollup-ethers-provider": "1.0.1",
+    "dotenv": "16.4.5"
+  },
+  "devDependencies": {
+    "ts-node": "10.9.2",
+    "typescript": "5.7.3"
+  }
+}
