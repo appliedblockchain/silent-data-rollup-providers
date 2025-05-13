@@ -1,0 +1,32 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/custom-rpc" },
+    { "path": "packages/ethers-provider" },
+    { "path": "packages/ethers-provider-fireblocks" },
+    { "path": "packages/hardhat-plugin" },
+    { "path": "packages/hardhat-plugin-fireblocks" }
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@appliedblockchain/silentdatarollup-core": ["packages/core/src"],
+      "@appliedblockchain/silentdatarollup-custom-rpc": [
+        "packages/custom-rpc/src"
+      ],
+      "@appliedblockchain/silentdatarollup-ethers-provider": [
+        "packages/ethers-provider/src"
+      ],
+      "@appliedblockchain/silentdatarollup-ethers-provider-fireblocks": [
+        "packages/ethers-provider-fireblocks/src"
+      ],
+      "@appliedblockchain/silentdatarollup-hardhat-plugin": [
+        "packages/hardhat-plugin/src"
+      ],
+      "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks": [
+        "packages/hardhat-plugin-fireblocks/src"
+      ]
+    }
+  }
+}
