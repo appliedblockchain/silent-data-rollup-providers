@@ -5,3 +5,5 @@ export const SIGN_RPC_METHODS = [
   'eth_getProof',
   'eth_getTransactionReceipt',
 ]
+
+export const DEBUG_NAMESPACE = 'silentdata:ethers-provider'
