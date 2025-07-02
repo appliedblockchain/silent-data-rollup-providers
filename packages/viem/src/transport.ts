@@ -12,7 +12,7 @@ export const sdTransport = (
   const ethersProvider = new SilentDataRollupProvider(providerConfig)
   const transport = custom({
     request: async ({ method, params }) => {
-      const txData = params[0] as Record<string, unknown>
+      const txData = (params?.[0] ?? {}) as Record<string, unknown>
 
       // Fill in the nonce if it's not provided
       if (
@@ -29,7 +29,7 @@ export const sdTransport = (
       }
 
       // Don't fetch transaction details. For security reasons the RPC fails if we do.
-      if (method === 'eth_getBlockByNumber') {
+      if (method === 'eth_getBlockByNumber' && Array.isArray(params) && params.length > 1) {
         params[1] = false
       }
 
