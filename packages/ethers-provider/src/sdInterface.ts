@@ -9,9 +9,10 @@ const debugLog = debug(DEBUG_NAMESPACE)
  */
 export interface SDLogDescription extends LogDescription {
   /**
-   * If this is a PrivateEvent, this property will contain the decoded inner log
+   * Only present for PrivateEvents - contains the decoded inner log
+   * If decoding failed, this will be null
    */
-  innerLog?: LogDescription
+  innerLog?: LogDescription | null
 }
 
 /**
@@ -24,8 +25,16 @@ export class SDInterface extends Interface {
    * @param log - The log to parse
    * @returns The parsed log description with additional private event details if applicable
    */
-  parseLog(log: Parameters<Interface['parseLog']>[0]): SDLogDescription {
-    const parsedLog = super.parseLog(log) as SDLogDescription
+  parseLog(log: Parameters<Interface['parseLog']>[0]): SDLogDescription | null {
+    const parsedLog = super.parseLog(log) as SDLogDescription | null
+
+    // If parsing failed, return null (this is valid behavior)
+    if (!parsedLog) {
+      debugLog(
+        'Failed to parse log - no matching event found or event is anonymous',
+      )
+      return null
+    }
 
     // Check if this is a PrivateEvent
     if (parsedLog.name === 'PrivateEvent') {
@@ -36,6 +45,9 @@ export class SDInterface extends Interface {
       debugLog(
         `PrivateEvent - eventType: ${eventType}, payload length: ${payload?.length || 0}`,
       )
+
+      // Initialize innerLog to null for PrivateEvents
+      parsedLog.innerLog = null
 
       try {
         // Make sure the payload is not empty
@@ -70,6 +82,10 @@ export class SDInterface extends Interface {
               `Successfully decoded inner log: ${innerLogDescription.name}`,
             )
             parsedLog.innerLog = innerLogDescription
+          } else {
+            debugLog(
+              'Failed to parse inner log - no matching inner event found',
+            )
           }
         } catch (innerError) {
           debugLog(`Failed to parse synthetic log for inner log:`, innerError)

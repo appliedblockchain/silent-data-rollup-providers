@@ -29,7 +29,11 @@ export const sdTransport = (
       }
 
       // Don't fetch transaction details. For security reasons the RPC fails if we do.
-      if (method === 'eth_getBlockByNumber' && Array.isArray(params) && params.length > 1) {
+      if (
+        method === 'eth_getBlockByNumber' &&
+        Array.isArray(params) &&
+        params.length > 1
+      ) {
         params[1] = false
       }
 
