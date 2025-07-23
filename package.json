@@ -11,7 +11,8 @@
     "ethers",
     "fireblocks",
     "hardhat",
-    "custom-rpc"
+    "custom-rpc",
+    "viem"
   ],
   "license": "MIT",
   "repository": "https://github.com/appliedblockchain/silent-data-rollup-providers",
@@ -19,11 +20,11 @@
     "./packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w @appliedblockchain/silentdatarollup-core -w @appliedblockchain/silentdatarollup-custom-rpc -w @appliedblockchain/silentdatarollup-ethers-provider -w @appliedblockchain/silentdatarollup-ethers-provider-fireblocks -w @appliedblockchain/silentdatarollup-hardhat-plugin -w @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks",
+    "build": "npm run build -w @appliedblockchain/silentdatarollup-core -w @appliedblockchain/silentdatarollup-custom-rpc -w @appliedblockchain/silentdatarollup-ethers-provider -w @appliedblockchain/silentdatarollup-ethers-provider-fireblocks -w @appliedblockchain/silentdatarollup-hardhat-plugin -w @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks -w @appliedblockchain/silentdatarollup-viem",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
-    "check-exports": "npm run check-exports -w @appliedblockchain/silentdatarollup-core -w @appliedblockchain/silentdatarollup-custom-rpc -w @appliedblockchain/silentdatarollup-ethers-provider -w @appliedblockchain/silentdatarollup-ethers-provider-fireblocks -w @appliedblockchain/silentdatarollup-hardhat-plugin -w @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks",
+    "check-exports": "npm run check-exports -w @appliedblockchain/silentdatarollup-core -w @appliedblockchain/silentdatarollup-custom-rpc -w @appliedblockchain/silentdatarollup-ethers-provider -w @appliedblockchain/silentdatarollup-ethers-provider-fireblocks -w @appliedblockchain/silentdatarollup-hardhat-plugin -w @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks -w @appliedblockchain/silentdatarollup-viem",
     "check-format": "prettier --check .",
     "format": "prettier --write .",
     "lint": "eslint .",
