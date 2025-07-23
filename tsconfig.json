@@ -6,7 +6,8 @@
     { "path": "packages/ethers-provider" },
     { "path": "packages/ethers-provider-fireblocks" },
     { "path": "packages/hardhat-plugin" },
-    { "path": "packages/hardhat-plugin-fireblocks" }
+    { "path": "packages/hardhat-plugin-fireblocks" },
+    { "path": "packages/viem" }
   ],
   "compilerOptions": {
     "baseUrl": ".",
@@ -26,7 +27,8 @@
       ],
       "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks": [
         "packages/hardhat-plugin-fireblocks/src"
-      ]
+      ],
+      "@appliedblockchain/silentdatarollup-viem": ["packages/viem/src"]
     }
   }
 }

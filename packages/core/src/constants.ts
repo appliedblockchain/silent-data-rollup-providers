@@ -3,6 +3,7 @@ export const SIGN_RPC_METHODS = [
   'eth_getTransactionCount',
   'eth_getProof',
   'eth_getTransactionReceipt',
+  'eth_estimateGas',
 ]
 
 export const eip721Domain = {
