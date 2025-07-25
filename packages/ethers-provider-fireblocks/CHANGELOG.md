@@ -1,5 +1,13 @@
 # @appliedblockchain/silentdatarollup-ethers-provider-fireblocks
 
+## 1.0.3
+
+### Patch Changes
+
+- Estimate gas when sending transaction
+- Updated dependencies
+  - @appliedblockchain/silentdatarollup-core@1.0.3
+
 ## 1.0.2
 
 ### Patch Changes

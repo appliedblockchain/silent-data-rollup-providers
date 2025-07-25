@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-custom-rpc",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Custom RPC for Silent Data [Rollup]",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
@@ -25,7 +25,7 @@
     "prepack": "npm run build"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "1.0.2",
+    "@appliedblockchain/silentdatarollup-core": "1.0.3",
     "body-parser": "1.20.3",
     "dotenv": "16.4.7",
     "ethers": "6.13.2",
