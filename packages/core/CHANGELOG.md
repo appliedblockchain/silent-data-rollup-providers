@@ -1,5 +1,12 @@
 # @appliedblockchain/silentdatarollup-core
 
+## 1.0.2
+
+### Patch Changes
+
+- Support Private Events
+- Sign eth_estimateGas
+
 ## 1.0.1
 
 ### Patch Changes
