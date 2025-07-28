@@ -1,5 +1,11 @@
 # @appliedblockchain/silentdatarollup-core
 
+## 1.0.3
+
+### Patch Changes
+
+- Estimate gas when sending transaction
+
 ## 1.0.2
 
 ### Patch Changes
