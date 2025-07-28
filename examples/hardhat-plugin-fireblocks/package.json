@@ -4,7 +4,7 @@
     "deploy": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/PrivateToken.ts"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks": "1.0.1",
+    "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks": "1.0.3",
     "@nomicfoundation/hardhat-ignition-ethers": "0.15.7",
     "@nomicfoundation/hardhat-toolbox": "5.0.0",
     "@openzeppelin/contracts": "5.1.0",
