@@ -31,6 +31,9 @@ class CustomContractRunner implements ContractRunner {
       'latest',
     )
     tx.nonce = latestNonce
+    if (!tx.gasLimit) {
+      tx.gasLimit = await this.provider.estimateGas(tx)
+    }
     return this.signer.sendTransaction(tx)
   }
 }
