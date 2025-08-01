@@ -15,8 +15,8 @@ import {
 } from './constants'
 
 export enum ChainId {
-  MAINNET = 51966,
-  TESTNET = 1001,
+  MAINNET = 380929,
+  TESTNET = 381185,
 }
 
 export enum NetworkName {
