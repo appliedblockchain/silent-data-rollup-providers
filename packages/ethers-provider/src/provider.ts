@@ -36,19 +36,22 @@ function isPromise<T = any>(value: any): value is Promise<T> {
   return value && typeof value.then === 'function'
 }
 
-function getNetwork(networkName?: NetworkName | string, chainId?: number): Network | undefined {
+function getNetwork(
+  networkName?: NetworkName | string,
+  chainId?: number,
+): Network | undefined {
   // If chainId is provided, use it with whatever network name is given
   if (chainId) {
     return new Network(networkName ?? 'unknown', chainId)
   }
-  
+
   // If no chainId, check if it's a predefined network and use default chainId
   if (networkName === NetworkName.MAINNET) {
     return new Network(networkName, ChainId.MAINNET)
   } else if (networkName === NetworkName.TESTNET) {
     return new Network(networkName, ChainId.TESTNET)
   }
-  
+
   // No chainId and not a predefined network - let ethers auto-detect
   return undefined
 }
