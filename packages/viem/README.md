@@ -45,7 +45,7 @@ import {
   type CallParameters,
   publicActions,
 } from 'viem'
-import { transport } from '@appliedblockchain/silentdatarollup-viem'
+import { sdTransport } from '@appliedblockchain/silentdatarollup-viem'
 
 // For transaction signing and sending, create an account from the private key
 const account = privateKeyToAccount(providerConfig.privateKey as `0x${string}`)
@@ -61,7 +61,7 @@ const transport = sdTransport({
   privateKey: 'YOUR_PRIVATE_KEY',
 })
 
-const client = createPublicClient({
+const publicClient = createPublicClient({
   transport,
 })
 
