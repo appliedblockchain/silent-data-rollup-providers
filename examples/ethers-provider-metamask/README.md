@@ -33,8 +33,8 @@ This repository demonstrates how to interact with the Silent Data [Rollup] using
 3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
 
    ```plaintext
-   REACT_APP_CHAIN_ID=<your_chain_id>
-   REACT_APP_ROLLUP_RPC_URL=<your_rpc_url>
+   VITE_CHAIN_ID=<your_chain_id>
+   VITE_ROLLUP_RPC_URL=<your_rpc_url>
    ```
 
 ## Usage
@@ -42,5 +42,5 @@ This repository demonstrates how to interact with the Silent Data [Rollup] using
 To run the example, use the following command:
 
 ```bash
-npm run start
+npm run dev
 ```

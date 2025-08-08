@@ -101,7 +101,7 @@ describe('SilentDataRollupProvider', () => {
         ...config,
       }
       provider = new SilentDataRollupProvider(providerConfig)
-
+      const { chainId } = await provider.getNetwork()
       for (const [method, expectedHeadersList] of Object.entries(
         expectedHeaders,
       )) {
@@ -117,7 +117,10 @@ describe('SilentDataRollupProvider', () => {
           let recoveredSignerAddress: string | undefined
           if (expectedHeadersList.includes(HEADER_SIGNATURE)) {
             const timestamp = requestData.headers[HEADER_TIMESTAMP]
-            const payload = JSON.stringify(requestData.requestBody) + timestamp
+            const payload =
+              chainId.toString() +
+              JSON.stringify(requestData.requestBody) +
+              timestamp
 
             const signature = requestData.headers[HEADER_SIGNATURE]
             recoveredSignerAddress = verifyMessage(payload, signature as string)
@@ -143,7 +146,7 @@ describe('SilentDataRollupProvider', () => {
             }
 
             recoveredSignerAddress = verifyTypedData(
-              eip721Domain,
+              { ...eip721Domain, chainId },
               types,
               message,
               signature as string,
@@ -158,8 +161,11 @@ describe('SilentDataRollupProvider', () => {
 
             if (expectedHeadersList.includes(HEADER_DELEGATE_SIGNATURE)) {
               const signature = requestData.headers[HEADER_DELEGATE_SIGNATURE]
+              const signedMessage =
+                chainId.toString() +
+                (requestData.headers[HEADER_DELEGATE] as string)
               recoveredDelegateSignerAddress = verifyMessage(
-                requestData.headers[HEADER_DELEGATE] as string,
+                signedMessage,
                 signature as string,
               )
             } else if (
@@ -169,7 +175,7 @@ describe('SilentDataRollupProvider', () => {
                 requestData.headers[HEADER_EIP712_DELEGATE_SIGNATURE]
 
               recoveredDelegateSignerAddress = verifyTypedData(
-                eip721Domain,
+                { ...eip721Domain, chainId },
                 delegateEIP721Types,
                 xDelegate,
                 signature as string,

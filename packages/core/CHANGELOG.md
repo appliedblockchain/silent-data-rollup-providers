@@ -1,5 +1,13 @@
 # @appliedblockchain/silentdatarollup-core
 
+## 1.0.4
+
+### Patch Changes
+
+- Chain id added as domain separator
+  Packages improvements
+  Examples improvements and fixes
+
 ## 1.0.3
 
 ### Patch Changes

@@ -9,6 +9,7 @@
     { "path": "packages/hardhat-plugin-fireblocks" },
     { "path": "packages/viem" }
   ],
+  "exclude": ["**/dist/**", "**/node_modules/**"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {

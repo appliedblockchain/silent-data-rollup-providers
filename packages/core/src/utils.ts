@@ -39,6 +39,7 @@ export async function signAuthHeaderTypedData(
   signer: any,
   payload: JsonRpcPayload | JsonRpcPayload[],
   timestamp: string,
+  chainId: string,
 ): Promise<string> {
   log('Preparing payload for signTypedData')
   const preparePayload = (p: JsonRpcPayload) => ({
@@ -56,12 +57,10 @@ export async function signAuthHeaderTypedData(
   }
 
   const types = getAuthEIP721Types(payload)
+  const domain = { ...eip721Domain, chainId }
 
-  log(
-    'Signing typed data',
-    JSON.stringify({ eip721Domain, types, message }, null, 2),
-  )
-  const signature = await signer.signTypedData(eip721Domain, types, message)
+  log('Signing typed data', JSON.stringify({ domain, types, message }, null, 2))
+  const signature = await signer.signTypedData(domain, types, message)
 
   log('Signature generated:', signature)
   return signature
@@ -71,10 +70,11 @@ export async function signAuthHeaderRawMessage(
   signer: any,
   payload: JsonRpcPayload | JsonRpcPayload[],
   timestamp: string,
+  chainId: string,
 ): Promise<string> {
   log('Preparing raw message for signing')
   const serialRequest = JSON.stringify(payload)
-  const xMessage = serialRequest + timestamp
+  const xMessage = chainId + serialRequest + timestamp
   log('Raw message:', xMessage)
   const signature = await signer.signMessage(xMessage)
   log('Raw signature generated:', signature)
@@ -83,12 +83,13 @@ export async function signAuthHeaderRawMessage(
 
 export async function signTypedDelegateHeader(
   signer: any,
+  chainId: string,
   message: DelegateSignerMessage,
 ) {
-  log('Signing typed delegate header')
+  log('Signing typed delegate header', { chainId, message })
 
   const signature = await signer.signTypedData(
-    eip721Domain,
+    { ...eip721Domain, chainId },
     delegateEIP721Types,
     message,
   )
@@ -99,12 +100,11 @@ export async function signTypedDelegateHeader(
 
 export async function signRawDelegateHeader(
   signer: any,
-  message: DelegateSignerMessage,
+  message: string,
 ): Promise<string> {
-  log('Signing raw delegate header')
-  log('Raw message:', message)
+  log('Signing raw delegate header', message)
 
-  const signature = await signer.signMessage(JSON.stringify(message))
+  const signature = await signer.signMessage(message)
 
   log('Raw signature generated:', signature)
   return signature
@@ -120,6 +120,8 @@ export async function getAuthHeaders(
     [HEADER_TIMESTAMP]: xTimestamp,
   }
 
+  const chainId = (await signer.provider!.getNetwork()).chainId.toString()
+
   switch (signatureType) {
     case SignatureType.Raw:
       log('Generating raw signature')
@@ -127,6 +129,7 @@ export async function getAuthHeaders(
         signer,
         payload,
         xTimestamp,
+        chainId,
       )
       break
     case SignatureType.EIP712:
@@ -135,6 +138,7 @@ export async function getAuthHeaders(
         signer,
         payload,
         xTimestamp,
+        chainId,
       )
       break
     default:

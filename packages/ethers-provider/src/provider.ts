@@ -36,15 +36,24 @@ function isPromise<T = any>(value: any): value is Promise<T> {
   return value && typeof value.then === 'function'
 }
 
-function getNetwork(name: NetworkName, chainId?: number): Network {
-  switch (name) {
-    case NetworkName.MAINNET:
-      return new Network(name, chainId || ChainId.MAINNET)
-    case NetworkName.TESTNET:
-      return new Network(name, chainId || ChainId.TESTNET)
-    default:
-      assertArgument(false, 'unsupported network', 'network', name)
+function getNetwork(
+  networkName?: NetworkName | string,
+  chainId?: number,
+): Network | undefined {
+  // If chainId is provided, use it with whatever network name is given
+  if (chainId) {
+    return new Network(networkName ?? 'custom', chainId)
   }
+
+  // If no chainId, check if it's a predefined network and use default chainId
+  if (networkName === NetworkName.MAINNET) {
+    return new Network(networkName, ChainId.MAINNET)
+  } else if (networkName === NetworkName.TESTNET) {
+    return new Network(networkName, ChainId.TESTNET)
+  }
+
+  // No chainId and not a predefined network - let ethers auto-detect
+  return undefined
 }
 
 const providerDefaultOptions: JsonRpcApiProviderOptions = {
@@ -57,10 +66,6 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
   private baseProvider: SilentDataRollupBase
 
   constructor(config: SilentDataRollupProviderConfig) {
-    if (!config.network) {
-      config.network = NetworkName.MAINNET
-    }
-
     assertArgument(config.rpcUrl, 'rpcUrl is mandatory', 'config', config)
 
     const network = getNetwork(config.network, config.chainId)
@@ -138,8 +143,8 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
 
         // Now clone the filter without the custom property to avoid sending it to the RPC
         if (isPrivateLogsRequest) {
-          const { _isPrivateEvent, ...filterCopy } = filter
-          payload.params[0] = filterCopy
+          delete filter._isPrivateEvent
+          payload.params[0] = filter
         }
       }
     }
