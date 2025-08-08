@@ -7,6 +7,7 @@ import './App.css'
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ethereum?: any
   }
 }
@@ -18,6 +19,15 @@ interface Token {
   balance: string
 }
 
+const REQUIRED_ENV_VARS = ['VITE_CHAIN_ID', 'VITE_ROLLUP_RPC_URL'] as const
+REQUIRED_ENV_VARS.forEach((envVar) => {
+  if (!import.meta.env[envVar]) {
+    throw new Error(`${envVar} environment variable is required`)
+  }
+})
+const CHAIN_ID = import.meta.env.VITE_CHAIN_ID
+const RPC_URL = import.meta.env.VITE_ROLLUP_RPC_URL
+
 const STORAGE_NAMESPACE = 'silentdata-rollup:'
 const TOKENS_STORAGE_KEY = `${STORAGE_NAMESPACE}tokens`
 
@@ -26,6 +36,7 @@ localStorage.debug = 'silentdata:*'
 function useSilentDataProvider() {
   const providerRef = useRef<{
     provider: SilentDataRollupProvider
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     signer: any
   } | null>(null)
 
@@ -37,8 +48,8 @@ function useSilentDataProvider() {
       providerRef.current = {
         signer,
         provider: new SilentDataRollupProvider({
-          rpcUrl: process.env.REACT_APP_ROLLUP_RPC_URL!,
-          chainId: Number(process.env.REACT_APP_CHAIN_ID!),
+          rpcUrl: RPC_URL,
+          chainId: Number(CHAIN_ID),
           signer,
           delegate: true,
         }),

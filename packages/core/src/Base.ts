@@ -45,6 +45,7 @@ export class SilentDataRollupBase {
   private cachedHeadersExpiry: number = 0
   public contract: Contract | null = null
   public contractMethodsToSign: string[] = []
+  private _cachedNetwork: any = null
 
   constructor(config: BaseConfig) {
     this.config = {
@@ -73,6 +74,19 @@ export class SilentDataRollupBase {
     }
 
     return null
+  }
+
+  /**
+   * Get cached network with simple caching
+   * @param provider - The provider to get the network from
+   * @returns Promise<Network> - The cached or freshly fetched network
+   */
+  public async getCachedNetwork(provider: any): Promise<any> {
+    if (!this._cachedNetwork) {
+      this._cachedNetwork = await provider.getNetwork()
+      log('Network cached:', this._cachedNetwork)
+    }
+    return this._cachedNetwork
   }
 
   public async getDelegateSigner(provider: any): Promise<Signer | null> {
@@ -141,12 +155,11 @@ export class SilentDataRollupBase {
    */
   protected async signRawDelegateHeader(
     provider: any,
-    message: DelegateSignerMessage,
+    message: string,
   ): Promise<string> {
-    log('signRawDelegateHeader: Signing raw delegate header')
-    log('signRawDelegateHeader: Raw message:', JSON.stringify(message, null, 2))
+    log('signRawDelegateHeader: Signing raw delegate header', message)
 
-    const signature = await provider.signer.signMessage(JSON.stringify(message))
+    const signature = await provider.signer.signMessage(message)
 
     log('signRawDelegateHeader: Raw signature generated:', signature)
     return signature
@@ -161,6 +174,7 @@ export class SilentDataRollupBase {
    */
   protected async signTypedDelegateHeader(
     provider: any,
+    chainId: string,
     message: DelegateSignerMessage,
   ): Promise<string> {
     log('signTypedDelegateHeader: Signing typed delegate header')
@@ -170,7 +184,7 @@ export class SilentDataRollupBase {
     )
 
     const signature = await provider.signer.signTypedData(
-      eip721Domain,
+      { ...eip721Domain, chainId },
       delegateEIP721Types,
       message,
     )
@@ -207,18 +221,27 @@ export class SilentDataRollupBase {
         [HEADER_DELEGATE]: JSON.stringify(delegateSignerMessage),
       }
 
+      const chainId = (await this.getCachedNetwork(provider)).chainId.toString()
+
       switch (signatureType) {
-        case SignatureType.Raw:
+        case SignatureType.Raw: {
           log('Generating delegate raw signature')
+          const delegateMessageToSign =
+            chainId + JSON.stringify(delegateSignerMessage)
           headers[HEADER_DELEGATE_SIGNATURE] = await this.signRawDelegateHeader(
             provider,
-            delegateSignerMessage,
+            delegateMessageToSign,
           )
           break
+        }
         case SignatureType.EIP712:
           log('Generating delegate EIP712 signature')
           headers[HEADER_EIP712_DELEGATE_SIGNATURE] =
-            await this.signTypedDelegateHeader(provider, delegateSignerMessage)
+            await this.signTypedDelegateHeader(
+              provider,
+              chainId,
+              delegateSignerMessage,
+            )
           break
         default:
           throw new Error(`Unsupported signature type: ${signatureType}`)
@@ -244,6 +267,7 @@ export class SilentDataRollupBase {
     const headers: AuthHeaders = {
       [HEADER_TIMESTAMP]: xTimestamp,
     }
+    const chainId = (await this.getCachedNetwork(provider)).chainId.toString()
 
     const signatureType = this.config.authSignatureType
 
@@ -254,6 +278,7 @@ export class SilentDataRollupBase {
           provider,
           payload,
           xTimestamp,
+          chainId,
         )
         break
       case SignatureType.EIP712:
@@ -262,6 +287,7 @@ export class SilentDataRollupBase {
           provider,
           payload,
           xTimestamp,
+          chainId,
         )
         break
       default:
@@ -276,8 +302,9 @@ export class SilentDataRollupBase {
     provider: any,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
+    chainId: string,
   ): Promise<string> {
-    const xMessage = this.prepareSignatureMessage(payload, timestamp)
+    const xMessage = this.prepareSignatureMessage(chainId, payload, timestamp)
     const delegateSigner = await this.getDelegateSigner(this)
     const signer = delegateSigner ?? provider.signer
     const signature = await this.signMessage(signer, xMessage)
@@ -289,22 +316,18 @@ export class SilentDataRollupBase {
     provider: any,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
+    chainId: string,
   ): Promise<string> {
     const message = this.prepareSignatureTypedData(payload, timestamp)
     const types = getAuthEIP721Types(payload)
     const delegateSigner = await this.getDelegateSigner(this)
     const signer = delegateSigner ?? provider.signer
-
+    const domain = { ...eip721Domain, chainId }
     log(
       'Signing typed data',
-      JSON.stringify({ message, types, eip721Domain }, null, 2),
+      JSON.stringify({ message, types, domain }, null, 2),
     )
-    const signature = await this.signTypedData(
-      signer,
-      eip721Domain,
-      types,
-      message,
-    )
+    const signature = await this.signTypedData(signer, domain, types, message)
 
     log('Message signed. Signature:', signature)
     return signature
@@ -349,6 +372,7 @@ export class SilentDataRollupBase {
    * Prepares the message to be signed for the x-signature header.
    */
   public prepareSignatureMessage(
+    chainId: string,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
   ): string {
@@ -357,7 +381,7 @@ export class SilentDataRollupBase {
       timestamp,
     })
     const serialRequest = JSON.stringify(payload)
-    const xMessage = serialRequest + timestamp
+    const xMessage = chainId + serialRequest + timestamp
     log('Raw message to be signed:', xMessage)
     return xMessage
   }

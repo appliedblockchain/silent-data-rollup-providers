@@ -46,7 +46,8 @@
     "typescript-eslint": "8.26.1"
   },
   "overrides": {
-    "cookie": "0.7.0"
+    "cookie": "0.7.0",
+    "tmp": "0.2.4"
   },
   "engines": {
     "node": ">=18.0.0"

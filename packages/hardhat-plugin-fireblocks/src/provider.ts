@@ -199,6 +199,7 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
       [HEADER_TIMESTAMP]: xTimestamp,
     }
 
+    const chainId = await this.getChainId()
     const signatureType = this.config?.authSignatureType ?? SignatureType.Raw
 
     let content
@@ -206,6 +207,7 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
       case SignatureType.Raw:
         // eslint-disable-next-line no-case-declarations
         const preparedMessage = this.baseProvider.prepareSignatureMessage(
+          chainId.toString(),
           rpcRequest,
           xTimestamp,
         )
@@ -224,11 +226,12 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
             EIP712Domain: [
               { name: 'name', type: 'string' },
               { name: 'version', type: 'string' },
+              { name: 'chainId', type: 'uint256' },
             ],
             ...types,
           },
           primaryType: 'Call',
-          domain: eip721Domain,
+          domain: { ...eip721Domain, chainId },
           message: message,
         }
 

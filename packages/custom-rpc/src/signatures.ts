@@ -52,8 +52,10 @@ export function validateRFC3339Timestamp(timestamp: string): boolean {
 export function recoverSerialSigner(
   message: string,
   signature: string,
+  chainId: bigint,
 ): string | null {
   try {
+    message = chainId.toString() + message
     const messageHash = ethers.hashMessage(message)
     const recoveredAddress = ethers.recoverAddress(messageHash, signature)
     return recoveredAddress
@@ -71,9 +73,10 @@ export function recoverSerialSigner(
 export function recoverTypedSigner(
   data: any,
   signature: string,
+  chainId: bigint,
 ): string | null {
   try {
-    const domain = eip721Domain
+    const domain = { ...eip721Domain, chainId }
     const types = {
       Request: [
         { name: 'method', type: 'string' },
@@ -108,6 +111,7 @@ export function recoverSignerWithDelegate(
   delegateSignature: string,
   message: string,
   isEIP712: boolean,
+  chainId: bigint,
 ): { delegate: string; delegator: string } | null {
   try {
     // Parse the delegate ticket
@@ -131,9 +135,9 @@ export function recoverSignerWithDelegate(
         params: JSON.stringify(JSON.parse(message).params),
         timestamp: ticket.timestamp,
       }
-      delegateAddress = recoverTypedSigner(data, delegateSignature)
+      delegateAddress = recoverTypedSigner(data, delegateSignature, chainId)
     } else {
-      delegateAddress = recoverSerialSigner(message, delegateSignature)
+      delegateAddress = recoverSerialSigner(message, delegateSignature, chainId)
     }
 
     if (
@@ -150,7 +154,7 @@ export function recoverSignerWithDelegate(
     }
 
     const delegatorAddress = ethers.verifyTypedData(
-      eip721Domain,
+      { ...eip721Domain, chainId },
       delegateEIP721Types,
       ticketData,
       ticket.signature,
@@ -174,6 +178,7 @@ export function recoverSignerWithDelegate(
 export function recoverSigner(
   headers: Record<string, string>,
   body: string,
+  chainId: bigint,
 ): string | null {
   // Check if required headers are present
   const timestamp = headers[HEADER_TIMESTAMP]
@@ -210,6 +215,7 @@ export function recoverSigner(
       delegateSignature || eip712DelegateSignature || '',
       body,
       !!eip712DelegateSignature,
+      chainId,
     )
 
     return result ? result.delegator : null
@@ -219,7 +225,7 @@ export function recoverSigner(
   if (signature) {
     // For EIP-191 signatures, we sign the request body + timestamp
     const message = `${body}${timestamp}`
-    return recoverSerialSigner(message, signature)
+    return recoverSerialSigner(message, signature, chainId)
   }
 
   if (eip712Signature) {
@@ -232,7 +238,7 @@ export function recoverSigner(
         timestamp,
       }
 
-      return recoverTypedSigner(data, eip712Signature)
+      return recoverTypedSigner(data, eip712Signature, chainId)
     } catch {
       return null
     }

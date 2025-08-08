@@ -93,10 +93,11 @@ export function createRpcValidationMiddleware(
       next()
       return
     }
-
+    const { chainId } = await provider.getNetwork()
     const signer = recoverSigner(
       req.headers as Record<string, string>,
       bodyString,
+      chainId,
     )
 
     if (

@@ -1,9 +1,9 @@
 export const SIGN_RPC_METHODS = [
+  'eth_estimateGas',
+  'eth_getProof',
   'eth_getTransactionByHash',
   'eth_getTransactionCount',
-  'eth_getProof',
   'eth_getTransactionReceipt',
-  'eth_estimateGas',
 ]
 
 export const eip721Domain = {
@@ -28,7 +28,7 @@ export const HEADER_DELEGATE = 'x-delegate'
 export const HEADER_DELEGATE_SIGNATURE = 'x-delegate-signature'
 export const HEADER_EIP712_DELEGATE_SIGNATURE = 'x-eip712-delegate-signature'
 
-export const DEFAULT_DELEGATE_EXPIRES = 24 * 60 * 60 // 1 day
+export const DEFAULT_DELEGATE_EXPIRES = 10 * 60 * 60 // 10 hours
 
 /**
  * A buffer time (in seconds) added to the current time when verifying the validity of a delegate.

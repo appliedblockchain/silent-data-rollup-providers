@@ -8,12 +8,13 @@ import {
   SilentDataRollupBase,
 } from '@appliedblockchain/silentdatarollup-core'
 import debug from 'debug'
-import { hashMessage, JsonRpcPayload } from 'ethers'
+import { hashMessage, JsonRpcPayload, Signer } from 'ethers'
 import {
   PeerType,
   TransactionArguments,
   TransactionOperation,
 } from 'fireblocks-sdk'
+import { EIP712Domain } from './constants'
 
 const log = debug(DEBUG_NAMESPACE)
 
@@ -60,11 +61,10 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
 
   public async signRawDelegateHeader(
     provider: any,
-    message: DelegateSignerMessage,
+    message: string,
   ): Promise<string> {
-    const stringifiedMessage = JSON.stringify(message)
-    log('Signing raw delegate header. Message:', stringifiedMessage)
-    const hashedMessage = hashMessage(stringifiedMessage).slice(2)
+    log('Signing raw delegate header. Message:', message)
+    const hashedMessage = hashMessage(message).slice(2)
     return this.createPersonalSignature(
       provider,
       hashedMessage,
@@ -75,20 +75,18 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
 
   public async signTypedDelegateHeader(
     provider: any,
+    chainId: string,
     message: DelegateSignerMessage,
   ) {
     log('Signing typed delegate header. Message:', message)
 
     const content = {
       types: {
-        EIP712Domain: [
-          { name: 'name', type: 'string' },
-          { name: 'version', type: 'string' },
-        ],
+        EIP712Domain,
         ...delegateEIP721Types,
       },
       primaryType: 'Ticket',
-      domain: eip721Domain,
+      domain: { ...eip721Domain, chainId },
       message: message,
     }
 
@@ -105,9 +103,10 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     provider: any,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
+    chainId: string,
   ): Promise<string> {
     log('Preparing raw message for signing')
-    const message = this.prepareSignatureMessage(payload, timestamp)
+    const message = this.prepareSignatureMessage(chainId, payload, timestamp)
     log('Raw message:', message)
     let signature: string
     if (this.config.delegate) {
@@ -134,20 +133,17 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     provider: any,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
+    chainId: string,
   ): Promise<string> {
     const types = getAuthEIP721Types(payload)
     const message = this.prepareSignatureTypedData(payload, timestamp)
-
     const content = {
       types: {
-        EIP712Domain: [
-          { name: 'name', type: 'string' },
-          { name: 'version', type: 'string' },
-        ],
+        EIP712Domain,
         ...types,
       },
       primaryType: 'Call',
-      domain: eip721Domain,
+      domain: { ...eip721Domain, chainId },
       message: message,
     }
 
@@ -155,8 +151,9 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     let signature: string
     if (this.config.delegate) {
       const delegateSigner = await this.getDelegateSigner(this)
-      signature = await delegateSigner!.signTypedData(
-        eip721Domain,
+      const domain = { ...eip721Domain, chainId: chainId.toString() }
+      signature = await (delegateSigner as Signer).signTypedData(
+        domain,
         types,
         message,
       )

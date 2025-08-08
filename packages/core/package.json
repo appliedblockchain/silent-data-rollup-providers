@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Core library for Silent Data [Rollup]",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
@@ -29,7 +29,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/tests.ts --format cjs,esm --dts --clean",
+    "build": "tsc --noEmit && tsup src/index.ts src/tests.ts --format cjs,esm --dts --clean",
     "check-exports": "attw --pack . --profile node16",
     "prepack": "npm run build"
   },
