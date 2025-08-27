@@ -1,4 +1,5 @@
 import {
+  Contract,
   ContractRunner,
   InterfaceAbi,
   JsonRpcPayload,
@@ -100,4 +101,9 @@ export type SilentDataRollupContractConfig = {
   runner: ContractRunner
   contractMethodsToSign: string[]
   provider?: Provider
+}
+
+export type ContractInfo = {
+  contract: Contract
+  contractMethodsToSign: string[]
 }

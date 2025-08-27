@@ -1,8 +1,7 @@
 import debug from 'debug'
-import { Contract, JsonRpcPayload, Signer, Wallet } from 'ethers'
+import { JsonRpcPayload, Signer, Wallet } from 'ethers'
 import {
   DEBUG_NAMESPACE,
-  delegateEIP721Types,
   eip721Domain,
   HEADER_EIP712_SIGNATURE,
   HEADER_SIGNATURE,
@@ -11,7 +10,7 @@ import {
 import {
   AuthHeaders,
   AuthSignatureMessageRequest,
-  DelegateSignerMessage,
+  ContractInfo,
   SignatureType,
 } from './types'
 
@@ -35,7 +34,7 @@ export function getAuthEIP721Types(payload: JsonRpcPayload | JsonRpcPayload[]) {
   }
 }
 
-export async function signAuthHeaderTypedData(
+async function signAuthHeaderTypedData(
   signer: any,
   payload: JsonRpcPayload | JsonRpcPayload[],
   timestamp: string,
@@ -66,7 +65,7 @@ export async function signAuthHeaderTypedData(
   return signature
 }
 
-export async function signAuthHeaderRawMessage(
+async function signAuthHeaderRawMessage(
   signer: any,
   payload: JsonRpcPayload | JsonRpcPayload[],
   timestamp: string,
@@ -81,46 +80,16 @@ export async function signAuthHeaderRawMessage(
   return signature
 }
 
-export async function signTypedDelegateHeader(
-  signer: any,
-  chainId: string,
-  message: DelegateSignerMessage,
-) {
-  log('Signing typed delegate header', { chainId, message })
-
-  const signature = await signer.signTypedData(
-    { ...eip721Domain, chainId },
-    delegateEIP721Types,
-    message,
-  )
-
-  log('Signature generated:', signature)
-  return signature
-}
-
-export async function signRawDelegateHeader(
-  signer: any,
-  message: string,
-): Promise<string> {
-  log('Signing raw delegate header', message)
-
-  const signature = await signer.signMessage(message)
-
-  log('Raw signature generated:', signature)
-  return signature
-}
-
 export async function getAuthHeaders(
   signer: Signer,
   payload: JsonRpcPayload | JsonRpcPayload[],
+  chainId: string,
   signatureType: SignatureType,
 ): Promise<AuthHeaders> {
   const xTimestamp = new Date().toISOString()
   const headers: AuthHeaders = {
     [HEADER_TIMESTAMP]: xTimestamp,
   }
-
-  const chainId = (await signer.provider!.getNetwork()).chainId.toString()
 
   switch (signatureType) {
     case SignatureType.Raw:
@@ -158,29 +127,25 @@ export async function getAuthHeaders(
  * The function performs the following checks:
  * 1. Verifies if the payload is an `eth_call`.
  * 2. Extracts the method signature from the call data.
- * 3. Compares the signature against a provided list of methods requiring signing.
- * 4. Uses the contract's ABI to match the method signature with known methods.
+ * 3. Compares the signature against the list of contracts and their methods requiring signing.
+ * 4. Uses each contract's ABI to match the method signature with known methods.
  *
  * By accurately identifying these calls, we can add appropriate authentication headers
  * to the request, enabling the smart contract to verify the caller's identity.
  *
  * @param payload - The JSON-RPC payload to analyze.
- * @param contractMethodsToSign - An array of method names that require signing.
- * @param contract - The contract instance containing the ABI information.
+ * @param contracts - An array of contract information containing contracts and their methods to sign.
  * @returns {boolean} True if the call is to a method that requires signing, false otherwise.
- * @throws {Error} If contractMethodsToSign or contract is not provided.
  */
 export function isSignableContractCall(
   payload: JsonRpcPayload,
-  contractMethodsToSign?: string[],
-  contract?: Contract | null,
+  contracts: ContractInfo[],
 ): boolean {
-  // Return false if contractMethodsToSign or contract is not provided
-  if (!contractMethodsToSign || !contract) {
+  // Return false if no contracts are provided
+  if (!contracts || contracts.length === 0) {
     return false
   }
   log('Checking if contract call is signable')
-  log('Contract methods to sign:', contractMethodsToSign)
 
   if (payload.method !== 'eth_call') {
     log('Payload method is not eth_call, returning false')
@@ -193,8 +158,35 @@ export function isSignableContractCall(
     return false
   }
 
-  const methodSignature = params[0].data.slice(2, 10)
-  log('Method signature:', methodSignature)
+  const callTarget = params[0].to
+  if (!callTarget) {
+    log('Missing call target, returning false')
+    return false
+  }
+  log(`Call target: ${callTarget}`)
+
+  const contractIndex = contracts.findIndex(
+    (c) =>
+      c.contract.target.toString().toLowerCase() === callTarget.toLowerCase(),
+  )
+  if (contractIndex < 0) {
+    log('Contract not found, returning false')
+    return false
+  }
+
+  const callData = params[0].data
+  if (!callData) {
+    log('Missing call data, returning false')
+    return false
+  }
+  const methodSignature = callData.slice(2, 10)
+  if (!methodSignature) {
+    log('Missing method signature, returning false')
+    return false
+  }
+  log(`Method signature: ${methodSignature}`)
+
+  const { contract, contractMethodsToSign } = contracts[contractIndex]
 
   const isSignable = contractMethodsToSign.some((methodName) => {
     const fragment = contract.interface.getFunction(methodName)

@@ -182,11 +182,7 @@ export class SilentDataRollupFireblocksProvider extends BrowserProvider {
 
         const requiresAuthHeaders =
           SIGN_RPC_METHODS.includes(payload.method) ||
-          isSignableContractCall(
-            payload,
-            this.baseProvider.contractMethodsToSign,
-            this.baseProvider.contract,
-          )
+          isSignableContractCall(payload, this.baseProvider.contracts)
 
         const delegateHeaders = []
         if (requiresAuthHeaders) {

@@ -1,5 +1,5 @@
 {
-  "name": "example-custom-rpc-nodejs",
+  "name": "example-custom-rpc",
   "scripts": {
     "contract-interaction": "ts-node src/contract-interaction.ts",
     "custom-rpc": "silentdatarollup-custom-rpc",

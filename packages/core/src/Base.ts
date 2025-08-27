@@ -23,6 +23,7 @@ import {
   AuthHeaders,
   AuthSignatureMessage,
   BaseConfig,
+  ContractInfo,
   DelegateConfig,
   DelegateHeaders,
   DelegateSignerMessage,
@@ -43,8 +44,8 @@ export class SilentDataRollupBase {
   private delegateSignerExpires: number = 0
   private cachedDelegateHeaders: DelegateHeaders | null = null
   private cachedHeadersExpiry: number = 0
-  public contract: Contract | null = null
-  public contractMethodsToSign: string[] = []
+  private delegateHeadersPromise: Promise<DelegateHeaders> | null = null
+  public contracts: ContractInfo[] = []
   private _cachedNetwork: any = null
 
   constructor(config: BaseConfig) {
@@ -195,11 +196,33 @@ export class SilentDataRollupBase {
 
   public async getDelegateHeaders(provider: any): Promise<DelegateHeaders> {
     log('Getting delegate headers')
+
+    if (!this.delegateHeadersPromise) {
+      this.delegateHeadersPromise = this.generateDelegateHeaders(provider)
+    }
+
+    const currentPromise = this.delegateHeadersPromise
+    try {
+      return await currentPromise
+    } catch (error) {
+      log('Error getting delegate headers:', error)
+      throw new Error('Failed to get delegate headers')
+    } finally {
+      if (this.delegateHeadersPromise === currentPromise) {
+        this.delegateHeadersPromise = null
+      }
+    }
+  }
+
+  public async generateDelegateHeaders(
+    provider: any,
+  ): Promise<DelegateHeaders> {
     const now = Math.floor(Date.now() / 1000)
     const signatureType = this.config.authSignatureType
     const isCachedHeadersValid =
       this.cachedDelegateHeaders &&
       this.cachedHeadersExpiry - DELEGATE_EXPIRATION_THRESHOLD_BUFFER > now
+
     if (isCachedHeadersValid) {
       log('Returning cached delegate headers')
       return this.cachedDelegateHeaders as DelegateHeaders
@@ -364,8 +387,10 @@ export class SilentDataRollupBase {
 
   public setContract(contract: Contract, contractMethodsToSign: string[]) {
     log('Setting contract and methods to sign: ', contractMethodsToSign)
-    this.contract = contract
-    this.contractMethodsToSign = contractMethodsToSign
+    this.contracts.push({
+      contract,
+      contractMethodsToSign,
+    })
   }
 
   /**

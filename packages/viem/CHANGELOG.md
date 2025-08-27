@@ -1,12 +1,21 @@
 # @appliedblockchain/silentdatarollup-viem
 
+## 1.0.5
+
+### Patch Changes
+
+- Fix bugs and other improvements
+- Updated dependencies
+  - @appliedblockchain/silentdatarollup-core@1.0.5
+  - @appliedblockchain/silentdatarollup-ethers-provider@1.0.5
+
 ## 1.0.4
 
 ### Patch Changes
 
 - Chain id added as domain separator
-  Packages improvements
-  Examples improvements and fixes
+- Packages improvements
+- Examples improvements and fixes
 - Updated dependencies
   - @appliedblockchain/silentdatarollup-core@1.0.4
   - @appliedblockchain/silentdatarollup-ethers-provider@1.0.4
