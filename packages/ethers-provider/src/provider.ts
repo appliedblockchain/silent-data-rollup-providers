@@ -156,11 +156,7 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
     const requiresAuthHeaders =
       isPrivateLogsRequest ||
       SIGN_RPC_METHODS.includes(payload.method) ||
-      isSignableContractCall(
-        payload,
-        this.baseProvider.contractMethodsToSign,
-        this.baseProvider.contract,
-      )
+      isSignableContractCall(payload, this.baseProvider.contracts)
 
     if (requiresAuthHeaders) {
       if (this.config.delegate) {

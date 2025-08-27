@@ -18,6 +18,7 @@ const log = debug(DEBUG_NAMESPACE)
 export class HardhatSilentDataRollupProvider extends ProviderWrapper {
   public signer: HardhatEthersSigner
   private config: SilentdataNetworkConfig
+  private _cachedNetwork: any = null
 
   constructor(
     signer: any,
@@ -100,12 +101,30 @@ export class HardhatSilentDataRollupProvider extends ProviderWrapper {
     [HEADER_EIP712_SIGNATURE]?: string
   }> {
     log('Getting auth headers for request', JSON.stringify(request, null, 2))
+    const chainId = await this.getCachedNetwork()
     const headers = await getAuthHeaders(
       this.signer,
       request,
+      chainId,
       this.config.authSignatureType!,
     )
     log('Auth headers generated successfully', headers)
     return headers
+  }
+
+  /**
+   * Get cached network with simple caching
+   * @returns Promise<Network> - The cached or freshly fetched network
+   */
+  private async getCachedNetwork(): Promise<any> {
+    if (!this._cachedNetwork) {
+      const clonedProvider = this.cloneWrappedProvider()
+      const chainIdHex = await clonedProvider.request({
+        method: 'eth_chainId',
+        params: [],
+      })
+      this._cachedNetwork = Number(chainIdHex).toString()
+    }
+    return this._cachedNetwork
   }
 }

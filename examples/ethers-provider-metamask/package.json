@@ -1,5 +1,5 @@
 {
-  "name": "ethers-provider-metamask-vite",
+  "name": "example-ethers-provider-metamask",
   "private": true,
   "version": "0.0.0",
   "type": "module",
