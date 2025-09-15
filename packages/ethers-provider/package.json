@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-ethers-provider",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Ethers.js provider for Silent Data [Rollup]",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
@@ -32,7 +32,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "1.0.5",
+    "@appliedblockchain/silentdatarollup-core": "1.0.6",
     "debug": "4.3.7",
     "ethers": "6.13.2"
   },
