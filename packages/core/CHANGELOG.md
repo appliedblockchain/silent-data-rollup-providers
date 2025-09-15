@@ -1,5 +1,11 @@
 # @appliedblockchain/silentdatarollup-core
 
+## 1.0.6
+
+### Patch Changes
+
+- Fix issue when getting private events
+
 ## 1.0.5
 
 ### Patch Changes

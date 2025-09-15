@@ -143,8 +143,9 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
 
         // Now clone the filter without the custom property to avoid sending it to the RPC
         if (isPrivateLogsRequest) {
-          delete filter._isPrivateEvent
-          payload.params[0] = filter
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { _isPrivateEvent, ...filterWithoutPrivateEvent } = filter
+          payload.params[0] = filterWithoutPrivateEvent
         }
       }
     }
