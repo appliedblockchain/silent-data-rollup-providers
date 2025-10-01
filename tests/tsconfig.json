@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src", "ignition/modules", "hardhat.config.ts"],
+  "exclude": [
+    "node_modules",
+    "artifacts",
+    "cache",
+    "contracts",
+    "ignition/deployments"
+  ]
+}

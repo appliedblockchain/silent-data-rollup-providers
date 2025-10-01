@@ -1,5 +1,13 @@
 # @appliedblockchain/silentdatarollup-core
 
+## 1.0.7
+
+### Patch Changes
+
+- Signature requirement on eth_getTransactionCount removed
+- Private events contract added to examples
+- Tests added
+
 ## 1.0.6
 
 ### Patch Changes

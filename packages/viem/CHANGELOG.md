@@ -1,5 +1,16 @@
 # @appliedblockchain/silentdatarollup-viem
 
+## 1.0.7
+
+### Patch Changes
+
+- Signature requirement on eth_getTransactionCount removed
+- Private events contract added to examples
+- Tests added
+- Updated dependencies
+  - @appliedblockchain/silentdatarollup-core@1.0.7
+  - @appliedblockchain/silentdatarollup-ethers-provider@1.0.7
+
 ## 1.0.6
 
 ### Patch Changes

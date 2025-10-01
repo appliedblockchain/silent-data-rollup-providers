@@ -25,12 +25,6 @@ class CustomContractRunner implements ContractRunner {
   }
 
   async sendTransaction(tx: TransactionRequest): Promise<TransactionResponse> {
-    const signerAddress = await this.signer.getAddress()
-    const latestNonce = await this.provider.getTransactionCount(
-      signerAddress,
-      'latest',
-    )
-    tx.nonce = latestNonce
     if (!tx.gasLimit) {
       tx.gasLimit = await this.provider.estimateGas(tx)
     }

@@ -1,34 +1,30 @@
 version: 2.1
 
+setup: true
+
+orbs:
+  continuation: circleci/continuation@1
+
 jobs:
-  audit_build_lint_test:
+  choose-config:
     docker:
-      - image: cimg/node:22.14.0
+      - image: cimg/base:stable
     steps:
       - checkout
       - run:
-          name: Install dependencies
-          command: npm install
-      - run:
-          name: Security audit
-          command: npm audit
-      - run:
-          name: Check format
-          command: npm run check-format
-      - run:
-          name: Build packages
-          command: npm run build
-      - run:
-          name: Check exports
-          command: npm run check-exports
-      - run:
-          name: Check lint
-          command: npm run lint
-      - run:
-          name: Test packages
-          command: npm run test
+          name: Pick config
+          command: |
+            if [ -f .circleci/private-config.yml ]; then
+              echo "export CONFIG_PATH=.circleci/private-config.yml" >> "$BASH_ENV"
+              echo "Using private-config.yml"
+            else
+              echo "export CONFIG_PATH=.circleci/public-config.yml" >> "$BASH_ENV"
+              echo "Using public-config.yml"
+            fi
+      - continuation/continue:
+          configuration_path: '$CONFIG_PATH'
 
 workflows:
-  audit_build_lint_test:
+  setup:
     jobs:
-      - audit_build_lint_test
+      - choose-config

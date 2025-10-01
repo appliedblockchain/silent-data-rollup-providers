@@ -2,7 +2,6 @@ export const SIGN_RPC_METHODS = [
   'eth_estimateGas',
   'eth_getProof',
   'eth_getTransactionByHash',
-  'eth_getTransactionCount',
   'eth_getTransactionReceipt',
 ]
 

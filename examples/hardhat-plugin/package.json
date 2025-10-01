@@ -3,16 +3,17 @@
   "version": "0.0.1",
   "scripts": {
     "compile": "npx hardhat compile",
-    "deploy": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/PrivateToken.ts",
+    "deploy:private-token": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/PrivateToken.ts",
+    "deploy:private-events": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/PrivateEvents.ts",
     "deploy:simple-contract": "npx hardhat compile && npx hardhat ignition deploy ignition/modules/SimpleContract.ts"
   },
   "dependencies": {
     "@appliedblockchain/silentdatarollup-hardhat-plugin": "*",
-    "@nomicfoundation/hardhat-ignition-ethers": "0.15.7",
+    "@nomicfoundation/hardhat-ignition-ethers": "0.15.9",
     "@nomicfoundation/hardhat-toolbox": "5.0.0",
     "@openzeppelin/contracts": "5.1.0",
     "dotenv": "16.4.5",
-    "hardhat": "2.22.10"
+    "hardhat": "^2.18.0"
   },
   "devDependencies": {
     "ts-node": "10.9.2",

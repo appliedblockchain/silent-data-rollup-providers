@@ -296,7 +296,6 @@ export function validateMethodAccess(
   headers?: Record<string, string>,
 ): boolean {
   switch (method) {
-    case 'eth_getTransactionCount':
     case 'eth_getProof':
       // Only validate if signer is not empty
       if (!signer) {
