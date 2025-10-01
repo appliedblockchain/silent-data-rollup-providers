@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Hardhat plugin for Silent Data [Rollup] with Fireblocks integration",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
@@ -32,7 +32,7 @@
     "prepack": "npm run build"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "1.0.6",
+    "@appliedblockchain/silentdatarollup-core": "1.0.7",
     "@fireblocks/fireblocks-web3-provider": "1.3.8",
     "@fireblocks/hardhat-fireblocks": "1.3.5",
     "debug": "4.3.7",
@@ -47,8 +47,8 @@
     "typescript": "5.6.2"
   },
   "peerDependencies": {
-    "@fireblocks/hardhat-fireblocks": "1.3.5",
-    "hardhat": "2.22.10"
+    "@fireblocks/hardhat-fireblocks": "^1.0.0",
+    "hardhat": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

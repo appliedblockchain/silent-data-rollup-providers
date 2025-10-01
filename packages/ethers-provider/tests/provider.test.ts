@@ -30,6 +30,9 @@ describe('SilentDataRollupProvider', () => {
   let provider: SilentDataRollupProvider
   const wallet = Wallet.createRandom()
   const NETWORK = NetworkName.TESTNET
+  // Valid transaction hash for testing eth_getTransactionReceipt
+  const TEST_TX_HASH =
+    '0x68ea69fd8b5dfa589a7a983c324ab153a33356320207885a9bba84425598dcaa'
 
   beforeAll(async () => {
     ;({ customRpcServer, getNextRequest, customRpcUrl } =
@@ -46,7 +49,7 @@ describe('SilentDataRollupProvider', () => {
         name: 'Raw Signature',
         config: { authSignatureType: SignatureType.Raw, delegate: false },
         expectedHeaders: {
-          eth_getTransactionCount: [HEADER_TIMESTAMP, HEADER_SIGNATURE],
+          eth_getTransactionReceipt: [HEADER_TIMESTAMP, HEADER_SIGNATURE],
           eth_blockNumber: [],
         },
       },
@@ -54,7 +57,10 @@ describe('SilentDataRollupProvider', () => {
         name: 'EIP712 Signature',
         config: { authSignatureType: SignatureType.EIP712, delegate: false },
         expectedHeaders: {
-          eth_getTransactionCount: [HEADER_TIMESTAMP, HEADER_EIP712_SIGNATURE],
+          eth_getTransactionReceipt: [
+            HEADER_TIMESTAMP,
+            HEADER_EIP712_SIGNATURE,
+          ],
           eth_blockNumber: [],
         },
       },
@@ -65,7 +71,7 @@ describe('SilentDataRollupProvider', () => {
           delegate: true,
         },
         expectedHeaders: {
-          eth_getTransactionCount: [
+          eth_getTransactionReceipt: [
             HEADER_TIMESTAMP,
             HEADER_SIGNATURE,
             HEADER_DELEGATE,
@@ -78,7 +84,7 @@ describe('SilentDataRollupProvider', () => {
         name: 'EIP712 Signature with Delegate',
         config: { authSignatureType: SignatureType.EIP712, delegate: true },
         expectedHeaders: {
-          eth_getTransactionCount: [
+          eth_getTransactionReceipt: [
             HEADER_TIMESTAMP,
             HEADER_EIP712_SIGNATURE,
             HEADER_DELEGATE,
@@ -106,8 +112,8 @@ describe('SilentDataRollupProvider', () => {
         expectedHeaders,
       )) {
         const requestDataPromise = getNextRequest(method)
-        if (method === 'eth_getTransactionCount') {
-          await provider.getTransactionCount(wallet.address)
+        if (method === 'eth_getTransactionReceipt') {
+          await provider.getTransactionReceipt(TEST_TX_HASH)
         } else if (method === 'eth_blockNumber') {
           await provider.getBlockNumber()
         }

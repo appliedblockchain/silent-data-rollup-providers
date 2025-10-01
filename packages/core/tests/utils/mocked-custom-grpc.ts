@@ -5,7 +5,7 @@ import http from 'http'
 export interface ResponseBody {
   jsonrpc: string
   id: any
-  result?: string
+  result?: string | null
 }
 
 export interface RequestData {
@@ -61,6 +61,9 @@ export function createCustomRpcServer(
 
           if (requestBody.method === 'eth_chainId') {
             responseBody.result = `0x${CHAIN_ID.toString(16)}`
+          } else if (requestBody.method === 'eth_getTransactionReceipt') {
+            // Return null for transaction receipt (transaction not found)
+            responseBody.result = null
           } else {
             // TODO: If we need to implement other methods, we can do it here
             responseBody.result = '0x0'

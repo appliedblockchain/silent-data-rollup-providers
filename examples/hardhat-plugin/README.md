@@ -63,12 +63,27 @@ The project uses Hardhat Ignition for deployments. The deployment module is conf
 To deploy the contract:
 
 ```bash
-npm run deploy
+npm run deploy:private-token
 ```
 
 This will:
 
 1. Compile the PrivateToken contract
+2. Deploy it to the Silent Data [Rollup] network
+
+## Deployment - PrivateEvents
+
+The project uses Hardhat Ignition for deployments. The deployment module is configured in `ignition/modules/PrivateEvents.ts`.
+
+To deploy the contract:
+
+```bash
+npm run deploy:private-events
+```
+
+This will:
+
+1. Compile the PrivateEvents contract
 2. Deploy it to the Silent Data [Rollup] network
 
 ## Deployment - SimpleContract
@@ -91,7 +106,8 @@ This will:
 ### Available Scripts
 
 - `npm run compile` - Compile all contracts
-- `npm run deploy` - Deploy the PrivateToken contract using Hardhat Ignition
+- `npm run deploy:private-token` - Deploy the PrivateToken contract using Hardhat Ignition
+- `npm run deploy:private-events` - Deploy the PrivateEvents contract using Hardhat Ignition
 - `npm run deploy:simple-contract` - Deploy the SimpleContract contract using Hardhat Ignition
 
 ### Project Dependencies
