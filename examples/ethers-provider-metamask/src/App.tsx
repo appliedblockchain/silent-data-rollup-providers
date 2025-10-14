@@ -1,6 +1,12 @@
 import { SilentDataRollupContract } from '@appliedblockchain/silentdatarollup-core'
 import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { BrowserProvider, formatEther, formatUnits, Wallet } from 'ethers'
+import {
+  BrowserProvider,
+  formatEther,
+  formatUnits,
+  Wallet,
+  type ContractRunner,
+} from 'ethers'
 import { useEffect, useState, useRef } from 'react'
 import { ERC20_ABI } from './constants/erc20Abi'
 import './App.css'
@@ -50,6 +56,7 @@ function useSilentDataProvider() {
         provider: new SilentDataRollupProvider({
           rpcUrl: RPC_URL,
           chainId: Number(CHAIN_ID),
+          // @ts-expect-error signer is Signer
           signer,
           delegate: true,
         }),
@@ -92,8 +99,8 @@ function App() {
     }
 
     try {
-      const { signer, provider } = await createProvider()
-      const address = await signer.getAddress()
+      const { provider } = await createProvider()
+      const address = await provider.signer.getAddress()
       setAddress(address)
       await getBalance(address)
 
@@ -103,7 +110,7 @@ function App() {
             const tokenContract = new SilentDataRollupContract({
               address: token.address,
               abi: ERC20_ABI,
-              runner: provider,
+              runner: provider as unknown as ContractRunner,
               contractMethodsToSign: ['balanceOf'],
             })
 
@@ -152,7 +159,7 @@ function App() {
       const tokenContract = new SilentDataRollupContract({
         address: tokenAddress,
         abi: ERC20_ABI,
-        runner: provider,
+        runner: provider as unknown as ContractRunner,
         contractMethodsToSign: ['balanceOf'],
       })
 
@@ -188,21 +195,18 @@ function App() {
 
   const transferToken = async (tokenAddress: string) => {
     try {
-      const { signer, provider } = await createProvider()
+      const { provider } = await createProvider()
 
       const tokenContract = new SilentDataRollupContract({
         address: tokenAddress,
         abi: ERC20_ABI,
-        runner: signer,
-        contractMethodsToSign: ['transfer'],
-        provider,
+        runner: provider.signer as unknown as ContractRunner,
+        contractMethodsToSign: [],
       })
 
       const randomWallet = Wallet.createRandom()
 
       const transferTx = await tokenContract.transfer(randomWallet.address, 100)
-
-      console.log('transferTx=', transferTx)
 
       await transferTx.wait()
     } catch (error) {
@@ -221,7 +225,7 @@ function App() {
             const tokenContract = new SilentDataRollupContract({
               address: token.address,
               abi: ERC20_ABI,
-              runner: provider,
+              runner: provider as unknown as ContractRunner,
               contractMethodsToSign: ['balanceOf'],
             })
 
@@ -245,10 +249,7 @@ function App() {
   return (
     <div className="wallet-container">
       <div className="wallet-card">
-        <button className="refresh-button" onClick={refreshBalances}>
-          ↻ Refresh
-        </button>
-        <h1>Silent Data [Rollup] Wallet</h1>
+        <h1>Silent Data Wallet</h1>
 
         <div className="connect-section">
           <button
@@ -265,6 +266,12 @@ function App() {
             )}
           </button>
         </div>
+
+        {address ? (
+          <button className="refresh-button" onClick={refreshBalances}>
+            ↻ Refresh Balances
+          </button>
+        ) : null}
 
         {balance && (
           <div className="balance-section">
@@ -294,10 +301,15 @@ function App() {
             <div className="tokens-list">
               {tokens.map((token) => (
                 <div key={token.address} className="token-card">
-                  <div className="token-info">
+                  <div>
                     <span className="token-name">{token.name}</span>
-                    <span className="token-symbol">({token.symbol})</span>
+                  </div>
+                  <div>
+                    <span className="token-address">{token.address}</span>
+                  </div>
+                  <div>
                     <span className="token-balance">{token.balance}</span>
+                    <span className="token-symbol">{token.symbol}</span>
                   </div>
                   <div className="token-actions">
                     <button

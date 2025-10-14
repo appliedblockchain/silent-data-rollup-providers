@@ -1,5 +1,14 @@
 # @appliedblockchain/silentdatarollup-ethers-provider-fireblocks
 
+## 1.0.8
+
+### Patch Changes
+
+- Fix viem package
+- Add swc header to the ethers provider
+- Updated dependencies
+  - @appliedblockchain/silentdatarollup-core@1.0.8
+
 ## 1.0.7
 
 ### Patch Changes

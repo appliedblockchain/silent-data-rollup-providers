@@ -1,4 +1,4 @@
-# Silent Data [Rollup] Providers - Ethers Provider Fireblocks Package
+# Silent Data Providers - Ethers Provider Fireblocks Package
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@
 
 ## Introduction
 
-Custom providers for Silent Data [Rollup], compatible with ethers.js for Fireblocks integration.
+Custom providers for Silent Data, compatible with ethers.js for Fireblocks integration.
 
 ## Prerequisites
 
@@ -99,7 +99,7 @@ To enable debugging for the SilentData interceptor, you can set the following en
 DEBUG=fireblocks:web3-provider:silentdata-interceptor
 ```
 
-This will output debug information specific to the SilentData interceptor, helping you troubleshoot issues related to the Silent Data [Rollup] integration with Fireblocks.
+This will output debug information specific to the SilentData interceptor, helping you troubleshoot issues related to the Silent Data integration with Fireblocks.
 
 ## Troubleshooting
 
@@ -115,7 +115,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Additional Resources
 
-- [Silent Data [Rollup] Documentation](https://docs.silentdata.com)
+- [Silent Data Documentation](https://docs.silentdata.com)
 - [Ethers.js Documentation](https://docs.ethers.org/v6/)
 - [Fireblocks Developer Documentation](https://developers.fireblocks.com/api)
 - [Fireblocks Web3 Provider](https://developers.fireblocks.com/reference/evm-web3-provider)

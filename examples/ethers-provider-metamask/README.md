@@ -1,10 +1,10 @@
-# Silent Data [Rollup] MetaMask Example
+# Silent Data MetaMask Example
 
-This repository demonstrates how to interact with the Silent Data [Rollup] using MetaMask and both `@appliedblockchain/silentdatarollup-core` and `@appliedblockchain/silentdatarollup-ethers-provider` packages.
+This repository demonstrates how to interact with the Silent Data using MetaMask and both `@appliedblockchain/silentdatarollup-core` and `@appliedblockchain/silentdatarollup-ethers-provider` packages.
 
 ## Features
 
-- Connect to the Silent Data [Rollup] network
+- Connect to the Silent Data network
 - Check wallet balances
 - Add and remove tokens
 - Transfer tokens to a randomly generated wallet
@@ -13,7 +13,7 @@ This repository demonstrates how to interact with the Silent Data [Rollup] using
 
 - Node.js (v18 or higher)
 - npm
-- Access to a Silent Data [Rollup] RPC endpoint
+- Access to a Silent Data RPC endpoint
 
 ## Installation
 

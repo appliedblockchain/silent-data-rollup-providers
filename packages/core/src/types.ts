@@ -3,7 +3,6 @@ import {
   ContractRunner,
   InterfaceAbi,
   JsonRpcPayload,
-  Provider,
   Signer,
 } from 'ethers'
 import {
@@ -100,7 +99,6 @@ export type SilentDataRollupContractConfig = {
   abi: InterfaceAbi
   runner: ContractRunner
   contractMethodsToSign: string[]
-  provider?: Provider
 }
 
 export type ContractInfo = {

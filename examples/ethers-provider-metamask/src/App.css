@@ -1,78 +1,70 @@
-.App {
-  text-align: center;
+/* ===== CSS VARIABLES ===== */
+:root {
+  --primary-color: #646cff;
+  --primary-hover: #535bf2;
+  --secondary-color: #2a2a3c;
+  --accent-color: #4caf50;
+  --text-primary: white;
+  --text-secondary: #8888a5;
+  --text-dark: #2d2c34;
+
+  --bg-gradient: linear-gradient(135deg, #1e1e2f 0%, #2d2b42 100%);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-light: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+  --border-radius: 12px;
+  --border-radius-large: 20px;
+  --transition: all 0.3s ease;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
+/* ===== LAYOUT COMPONENTS ===== */
 .wallet-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #1e1e2f 0%, #2d2b42 100%);
+  background: var(--bg-gradient);
 }
 
 .wallet-card {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
   backdrop-filter: blur(10px);
-  border-radius: 20px;
+  border-radius: var(--border-radius-large);
   padding: 2rem;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  max-width: 500px;
+  box-shadow: var(--glass-shadow);
+  border: 1px solid var(--glass-border);
 }
 
+/* ===== TYPOGRAPHY ===== */
 h1 {
-  color: white;
+  color: var(--text-primary);
   text-align: center;
   margin-bottom: 2rem;
   font-size: 1.8rem;
 }
 
+.tokens-title {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+/* ===== BUTTONS ===== */
 .connect-button {
   width: 100%;
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   border: none;
-  background: #646cff;
-  color: white;
+  background: var(--primary-color);
+  color: var(--text-primary);
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,29 +72,53 @@ h1 {
 }
 
 .connect-button:hover {
-  background: #535bf2;
+  background: var(--primary-hover);
   transform: translateY(-2px);
 }
 
 .connect-button.connected {
-  background: #2a2a3c;
+  background: var(--secondary-color);
 }
 
+.refresh-button,
+.token-action-button {
+  padding: 0.8rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.refresh-button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.refresh-button:hover,
+.token-action-button:hover {
+  background: rgba(100, 108, 255, 0.1);
+}
+
+/* ===== STATUS INDICATORS ===== */
 .status-dot {
   width: 8px;
   height: 8px;
-  background: #4caf50;
+  background: var(--accent-color);
   border-radius: 50%;
 }
 
+/* ===== BALANCE SECTION ===== */
 .balance-section {
   margin-top: 2rem;
 }
 
 .balance-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-light);
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
@@ -110,68 +126,47 @@ h1 {
 }
 
 .balance-label {
-  color: #8888a5;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
 .balance-amount {
-  color: white;
+  color: var(--text-primary);
   font-size: 1.8rem;
   font-weight: bold;
 }
 
 .balance-currency {
-  color: #646cff;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
-.refresh-button {
-  width: 100%;
-  padding: 0.8rem;
-  border-radius: 12px;
-  border: 1px solid #646cff;
-  background: transparent;
-  color: #646cff;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.refresh-button:hover {
-  background: rgba(100, 108, 255, 0.1);
-}
-
+/* ===== TOKEN COMPONENTS ===== */
 .token-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bg-light);
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 1rem;
-}
-
-.token-info {
-  display: flex;
   gap: 0.5rem;
-  align-items: center;
 }
 
 .token-name {
-  color: white;
+  color: var(--text-primary);
   font-weight: bold;
 }
 
-.token-symbol {
-  color: #8888a5;
+.token-address,
+.token-symbol,
+.token-balance {
+  color: var(--text-primary);
+  font-size: 0.9rem;
 }
 
-.token-balance {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: white;
+.token-symbol {
+  margin-left: 0.25rem;
 }
 
 .token-actions {
@@ -179,21 +174,7 @@ h1 {
   gap: 1rem;
 }
 
-.token-action-button {
-  padding: 0.8rem;
-  border-radius: 12px;
-  border: 1px solid #646cff;
-  background: transparent;
-  color: #646cff;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.token-action-button:hover {
-  background: rgba(100, 108, 255, 0.1);
-}
-
+/* ===== ADD TOKEN FORM ===== */
 .add-token {
   display: flex;
   gap: 1rem;
@@ -203,31 +184,24 @@ h1 {
 .add-token input {
   flex: 1;
   padding: 0.8rem;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   border: 1px solid #eceffa;
   background: #f7f8fd;
-  color: #2d2c34;
+  color: var(--text-dark);
   font-size: 1rem;
 }
 
 .add-token button {
   padding: 0.8rem;
-  border-radius: 12px;
-  border: 1px solid #646cff;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--primary-color);
   background: transparent;
-  color: #646cff;
+  color: var(--primary-color);
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .add-token button:hover {
-  background: rgba(0, 123, 255, 0.1);
-}
-
-.tokens-title {
-  color: white;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  text-align: left;
+  background: rgba(100, 108, 255, 0.1);
 }

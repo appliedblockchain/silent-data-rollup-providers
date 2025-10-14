@@ -1,29 +1,28 @@
-import {} from '@appliedblockchain/silentdatarollup-core'
 import {
   SilentDataRollupProvider,
-  SilentDataRollupProviderConfig,
+  type SilentDataRollupProviderConfig,
 } from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { custom, CustomTransport } from 'viem'
+import { custom, type CustomTransport } from 'viem'
 
-export const sdTransport = (
-  config: SilentDataRollupProviderConfig,
-): CustomTransport => {
-  const providerConfig: SilentDataRollupProviderConfig = config
-  const ethersProvider = new SilentDataRollupProvider(providerConfig)
-  const transport = custom({
+export function sdTransport(
+  providerConfig: SilentDataRollupProviderConfig,
+): CustomTransport {
+  const provider = new SilentDataRollupProvider(providerConfig)
+  return custom({
     request: async ({ method, params }) => {
-      // Don't fetch transaction details. For security reasons the RPC fails if we do.
       if (
-        method === 'eth_getBlockByNumber' &&
+        method === 'eth_sendTransaction' &&
         Array.isArray(params) &&
-        params.length > 1
+        params.length > 0
       ) {
-        params[1] = false
+        const tx = params[0]
+        let gasLimit = tx.gasLimit
+        if (!gasLimit) {
+          gasLimit = await provider.estimateGas(tx)
+        }
+        return await provider.signer.sendTransaction({ ...tx, gasLimit })
       }
-
-      return await ethersProvider.send(method, params || [])
+      return await provider.send(method, params || [])
     },
   })
-
-  return transport
 }

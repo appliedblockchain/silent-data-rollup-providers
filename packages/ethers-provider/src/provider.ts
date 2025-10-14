@@ -1,11 +1,14 @@
+import debug from 'debug'
 import {
   calculateEventTypeHash,
   ChainId,
+  DEBUG_NAMESPACE,
   HEADER_DELEGATE,
   HEADER_DELEGATE_SIGNATURE,
   HEADER_EIP712_DELEGATE_SIGNATURE,
   HEADER_EIP712_SIGNATURE,
   HEADER_SIGNATURE,
+  HEADER_SIGNER_SWC,
   HEADER_TIMESTAMP,
   isSignableContractCall,
   NetworkName,
@@ -30,7 +33,10 @@ import {
   Signer,
   Wallet,
 } from 'ethers'
+import { SilentDataRollupSigner } from './signer'
 import { PrivateEventsFilter, SilentDataRollupProviderConfig } from './types'
+
+const log = debug(DEBUG_NAMESPACE)
 
 function isPromise<T = any>(value: any): value is Promise<T> {
   return value && typeof value.then === 'function'
@@ -99,8 +105,8 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
         // try to connect the signer to the provider
         this.signer = config.signer.connect(this)
       } catch {
-        // if connecting signer to provider fails, fallback to using the signer from the config
-        this.signer = config.signer
+        // if connecting signer to provider fails, fallback to using SilentDataRollupSigner wrapper
+        this.signer = new SilentDataRollupSigner(this, config.signer)
       }
     } else {
       const wallet = new Wallet(config.privateKey!)
@@ -115,6 +121,15 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
     // TODO: Implement support for batch requests in the future
     if (Array.isArray(payload)) {
       throw new Error('Batch requests are not currently supported')
+    }
+
+    // Don't fetch transaction details. For security reasons the RPC fails if we do
+    if (
+      ['eth_getBlockByNumber', 'eth_getBlockByHash'].includes(payload.method) &&
+      Array.isArray(payload.params) &&
+      payload.params.length > 1
+    ) {
+      payload.params[1] = false
     }
 
     // Set the from on eth_calls
@@ -177,6 +192,12 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
             xEip712DelegateSignature,
           )
         }
+      }
+
+      // Add smart wallet header if smartWalletAddress is configured
+      if (this.config.smartWalletAddress) {
+        log('Setting smart wallet header:', this.config.smartWalletAddress)
+        request.setHeader(HEADER_SIGNER_SWC, this.config.smartWalletAddress)
       }
 
       const {

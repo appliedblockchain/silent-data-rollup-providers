@@ -1,6 +1,14 @@
+import util from 'node:util'
+import { createPublicClient, createWalletClient, defineChain } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
 import { SilentDataRollupContract } from '@appliedblockchain/silentdatarollup-core'
 import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
+import { sdTransport } from '@appliedblockchain/silentdatarollup-viem'
 import { CHAIN_ID, PRIVATE_KEY, RPC_URL } from './constants'
+
+export const stringifyObject = (txObj: unknown): string => {
+  return util.inspect(txObj, { depth: null })
+}
 
 export const getProvider = (privateKey?: string): SilentDataRollupProvider => {
   const provider = new SilentDataRollupProvider({
@@ -56,3 +64,37 @@ export const getPrivateEventsContract = async (
   })
   return contract
 }
+
+export const account = privateKeyToAccount(PRIVATE_KEY)
+
+const silentDataChain = defineChain({
+  id: Number(CHAIN_ID),
+  name: 'Silent Data',
+  nativeCurrency: {
+    name: 'Ether',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: {
+      http: [RPC_URL],
+    },
+  },
+})
+
+const silentDataTransport = sdTransport({
+  chainId: Number(CHAIN_ID),
+  privateKey: PRIVATE_KEY,
+  rpcUrl: RPC_URL,
+})
+
+export const publicClient = createPublicClient({
+  chain: silentDataChain,
+  transport: silentDataTransport,
+})
+
+export const walletClient = createWalletClient({
+  chain: silentDataChain,
+  transport: silentDataTransport,
+  account,
+})

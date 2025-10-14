@@ -1,5 +1,12 @@
 # @appliedblockchain/silentdatarollup-core
 
+## 1.0.8
+
+### Patch Changes
+
+- Fix viem package
+- Add swc header to the ethers provider
+
 ## 1.0.7
 
 ### Patch Changes

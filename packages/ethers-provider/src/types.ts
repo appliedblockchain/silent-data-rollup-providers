@@ -11,6 +11,7 @@ export interface SilentDataRollupProviderConfig extends BaseConfig {
   privateKey?: string
   signer?: Signer
   options?: JsonRpcApiProviderOptions
+  smartWalletAddress?: string
 }
 
 /**

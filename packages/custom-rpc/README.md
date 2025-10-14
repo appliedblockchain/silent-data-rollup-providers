@@ -1,4 +1,4 @@
-# Silent Data [Rollup] Providers - Custom RPC Package
+# Silent Data Providers - Custom RPC Package
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@
 
 ## Introduction
 
-Custom RPC provider for Silent Data [Rollup], providing a local development environment with Silent Data [Rollup] integration.
+Custom RPC provider for Silent Data, providing a local development environment with Silent Data integration.
 
 ## Prerequisites
 
@@ -35,13 +35,13 @@ npm install @appliedblockchain/silentdatarollup-custom-rpc
 
 #### Custom RPC Integration Example
 
-The Custom RPC package provides a local development environment that integrates Silent Data [Rollup] with a local Hardhat node. To start the development environment:
+The Custom RPC package provides a local development environment that integrates Silent Data with a local Hardhat node. To start the development environment:
 
 ```bash
 npm run dev
 ```
 
-This command will start both a Hardhat node and the Custom RPC server concurrently. The Custom RPC server will proxy requests to the Hardhat node while adding Silent Data [Rollup] functionality.
+This command will start both a Hardhat node and the Custom RPC server concurrently. The Custom RPC server will proxy requests to the Hardhat node while adding Silent Data functionality.
 
 You can configure the Custom RPC server by creating a `.env` file in your project root:
 
@@ -65,6 +65,6 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Additional Resources
 
-- [Silent Data [Rollup] Documentation](https://docs.silentdata.com)
+- [Silent Data Documentation](https://docs.silentdata.com)
 - [Hardhat Documentation](https://hardhat.org/docs)
 - [Ethers.js Documentation](https://docs.ethers.org/v6/)

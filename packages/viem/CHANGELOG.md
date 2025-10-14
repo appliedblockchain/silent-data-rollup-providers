@@ -1,5 +1,14 @@
 # @appliedblockchain/silentdatarollup-viem
 
+## 1.0.8
+
+### Patch Changes
+
+- Fix viem package
+- Add swc header to the ethers provider
+- Updated dependencies
+  - @appliedblockchain/silentdatarollup-ethers-provider@1.0.8
+
 ## 1.0.7
 
 ### Patch Changes

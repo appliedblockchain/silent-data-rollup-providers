@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   audit_build_lint_test:
     docker:
-      - image: cimg/node:22.19.0
+      - image: cimg/node:22.20.0
     steps:
       - checkout
       - run:

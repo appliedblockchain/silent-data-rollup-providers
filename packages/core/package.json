@@ -1,7 +1,7 @@
 {
   "name": "@appliedblockchain/silentdatarollup-core",
-  "version": "1.0.7",
-  "description": "Core library for Silent Data [Rollup]",
+  "version": "1.0.8",
+  "description": "Core library for Silent Data",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
   "keywords": [
