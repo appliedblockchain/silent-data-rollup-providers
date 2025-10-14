@@ -1,4 +1,4 @@
-# Silent Data [Rollup] Providers - Viem Transport Package
+# Silent Data Providers - Viem Transport Package
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@
 
 ## Introduction
 
-Viem custom transport for Silent Data [Rollup].
+Viem custom transport for Silent Data.
 
 ## Prerequisites
 
@@ -30,49 +30,28 @@ Viem custom transport for Silent Data [Rollup].
 #### Installing Basic Usage Dependencies
 
 ```bash
-npm install @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-viem
+npm install @appliedblockchain/silentdatarollup-viem
 ```
 
 #### Basic Usage Example
 
 ```typescript
-import {
-  type Chain,
-  defineChain,
-  createPublicClient,
-  createWalletClient,
-  formatEther,
-  type CallParameters,
-  publicActions,
-} from 'viem'
-import { transport } from '@appliedblockchain/silentdatarollup-viem'
+import { defineChain, createPublicClient, createWalletClient } from 'viem'
+import { privateKeyToAccount } from 'viem/accounts'
+import { sdTransport } from '@appliedblockchain/silentdatarollup-viem'
 
-// For transaction signing and sending, create an account from the private key
-const account = privateKeyToAccount(providerConfig.privateKey as `0x${string}`)
-const walletClient = createWalletClient({
-  chain: silentDataChain,
-  transport,
-  account,
-})
-
-const transport = sdTransport({
+const providerConfig = {
   rpcUrl: 'SILENT_DATA_ROLLUP_RPC_URL',
-  chainId: SILENT_DATA_CHAIN_ID,
+  chainId: 'SILENT_DATA_CHAIN_ID',
   privateKey: 'YOUR_PRIVATE_KEY',
-})
+}
 
-const client = createPublicClient({
-  transport,
-})
+const account = privateKeyToAccount(providerConfig.privateKey)
 
-const balance = await publicClient.getBalance({ address })
-console.log('Balance:', balance)
-
-const transactionCount = await publicClient.getTransactionCount({ address })
-console.log('Transaction count:', transactionCount)
+const transport = sdTransport(providerConfig)
 
 const sdChain = defineChain({
-  id: SILENT_DATA_CHAIN_ID,
+  id: providerConfig.chainId,
   name: 'SILENT_DATA_CHAIN_NAME',
   nativeCurrency: {
     name: 'Ether',
@@ -81,16 +60,29 @@ const sdChain = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['SILENT_DATA_ROLLUP_RPC_URL'],
+      http: [providerConfig.rpcUrl],
     },
   },
 })
 
+const publicClient = createPublicClient({
+  chain: sdChain,
+  transport,
+})
+
 const walletClient = createWalletClient({
-  chain: silentDataChain,
+  chain: sdChain,
   transport,
   account,
 })
+
+const balance = await publicClient.getBalance({ address: account.address })
+console.log('Balance:', balance)
+
+const transactionCount = await publicClient.getTransactionCount({
+  address: account.address,
+})
+console.log('Transaction count:', transactionCount)
 
 const recipientAddress = 'RECIPIENT_ADDRESS'
 const amountInWei = BigInt('1')
@@ -99,7 +91,6 @@ const transactionHash = await walletClient.sendTransaction({
   to: recipientAddress,
   value: amountInWei,
 })
-
 console.log('Transaction Hash:', transactionHash)
 ```
 
@@ -117,5 +108,5 @@ If you encounter any issues, please check the following:
 
 ## Additional Resources
 
-- [Silent Data [Rollup] Documentation](https://docs.silentdata.com)
+- [Silent Data Documentation](https://docs.silentdata.com)
 - [Viem Documentation](https://viem.sh/docs/)

@@ -1,4 +1,4 @@
-# Silent Data [Rollup] Providers - Hardhat Plugin Fireblocks Package
+# Silent Data Providers - Hardhat Plugin Fireblocks Package
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@
 
 ## Introduction
 
-Custom providers for integrating Silent Data [Rollup] with Hardhat and Fireblocks.
+Custom providers for integrating Silent Data with Hardhat and Fireblocks.
 
 ## Prerequisites
 
@@ -35,7 +35,7 @@ npm install @appliedblockchain/silentdatarollup-core @appliedblockchain/silentda
 
 #### Hardhat Integration Example
 
-To integrate the Silent Data [Rollup] Provider with Hardhat, you need to configure your Silent Data network in the `hardhat.config.ts` file. Below is an example of how to set it up, and note that a `silentdata` property is needed on the network config to enable it. This property can be an empty object to apply defaults, or you can specify the configurations.
+To integrate the Silent Data Provider with Hardhat, you need to configure your Silent Data network in the `hardhat.config.ts` file. Below is an example of how to set it up, and note that a `silentdata` property is needed on the network config to enable it. This property can be an empty object to apply defaults, or you can specify the configurations.
 
 ```typescript
 import {
@@ -99,7 +99,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Additional Resources
 
-- [Silent Data [Rollup] Documentation](https://docs.silentdata.com)
+- [Silent Data Documentation](https://docs.silentdata.com)
 - [Fireblocks Hardhat Plugin](https://developers.fireblocks.com/reference/hardhat-plugin)
 - [Fireblocks Developer Documentation](https://developers.fireblocks.com/api)
 - [Fireblocks Web3 Provider](https://developers.fireblocks.com/reference/evm-web3-provider)

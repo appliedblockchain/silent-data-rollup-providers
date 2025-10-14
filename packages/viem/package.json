@@ -1,7 +1,7 @@
 {
   "name": "@appliedblockchain/silentdatarollup-viem",
-  "version": "1.0.7",
-  "description": "Viem package for Silent Data [Rollup]",
+  "version": "1.0.8",
+  "description": "Viem package for Silent Data",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
   "keywords": [
@@ -33,8 +33,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "1.0.7",
-    "@appliedblockchain/silentdatarollup-ethers-provider": "1.0.7",
+    "@appliedblockchain/silentdatarollup-ethers-provider": "1.0.8",
     "viem": "2.31.4"
   },
   "devDependencies": {

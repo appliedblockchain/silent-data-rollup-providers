@@ -1,4 +1,4 @@
-# Silent Data [Rollup] Hardhat Plugin Fireblocks Example
+# Silent Data Hardhat Plugin Fireblocks Example
 
 This repository demonstrates how to use the `@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks` with a Hardhat project. The example includes a basic smart contract deployment setup using Hardhat Ignition.
 
@@ -6,7 +6,7 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 
 - Node.js (version 18 or higher)
 - npm
-- Access to a Silent Data [Rollup] RPC endpoint
+- Access to a Silent Data RPC endpoint
 
 ## Getting Started
 
@@ -33,7 +33,7 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 
 ## Configuration
 
-The project is configured in `hardhat.config.ts` to use the Silent Data [Rollup] network:
+The project is configured in `hardhat.config.ts` to use the Silent Data network:
 
 ## Smart Contract
 
@@ -55,7 +55,7 @@ npm run deploy
 This will:
 
 1. Compile the contract
-2. Deploy it to the Silent Data [Rollup] network
+2. Deploy it to the Silent Data network
 
 ## Development
 
@@ -67,13 +67,13 @@ This will:
 
 Main dependencies include:
 
-- `@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks`: Enables Silent Data [Rollup] integration with Fireblocks
+- `@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks`: Enables Silent Data integration with Fireblocks
 - `@nomicfoundation/hardhat-ignition-ethers`: Provides deployment management
 - `hardhat`: The core development environment
 
 ## Additional Resources
 
-- [Silent Data [Rollup] Documentation](https://docs.silentdata.com)
+- [Silent Data Documentation](https://docs.silentdata.com)
 - [Fireblocks Hardhat Plugin](https://developers.fireblocks.com/reference/hardhat-plugin)
 - [Fireblocks Developer Documentation](https://developers.fireblocks.com/api)
 - [Fireblocks Web3 Provider](https://developers.fireblocks.com/reference/evm-web3-provider)

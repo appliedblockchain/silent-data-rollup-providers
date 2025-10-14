@@ -14,5 +14,5 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },
-  globalIgnores(['packages/**/dist/*', '.legacy/*']),
+  globalIgnores(['packages/**/dist/*']),
 ]

@@ -1,8 +1,8 @@
 import assert from 'node:assert'
 import { formatUnits, parseUnits, Wallet } from 'ethers'
-import { getProvider, getPrivateTokenContract } from './utils'
+import { getProvider, getPrivateTokenContract, stringifyObject } from './utils'
 
-export async function main() {
+async function main() {
   const provider = getProvider()
   const contract = await getPrivateTokenContract(provider)
 
@@ -39,7 +39,7 @@ export async function main() {
   await tx.wait()
 
   const txn = await provider.getTransaction(tx.hash)
-  console.log(`Transaction: ${JSON.stringify(txn?.toJSON(), null, 2)}`)
+  console.log(`Transaction: ${stringifyObject(txn?.toJSON())}`)
 
   console.log(
     `Sent ${formatUnits(

@@ -1,4 +1,4 @@
-# Silent Data [Rollup] Providers - Core Package
+# Silent Data Providers - Core Package
 
 This package contains the core functionality for the other packages.
 

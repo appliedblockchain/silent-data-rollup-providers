@@ -1,6 +1,6 @@
-# Silent Data [Rollup] Custom RCP Example
+# Silent Data Custom RCP Example
 
-For development purposes, this repository exposes a Silent Data [Rollup] Custom RPC using hardhat.
+For development purposes, this repository exposes a Silent Data Custom RPC using hardhat.
 
 ## Prerequisites
 

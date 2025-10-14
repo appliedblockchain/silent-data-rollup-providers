@@ -1,4 +1,4 @@
-# Silent Data [Rollup] Providers - Ethers Provider Package
+# Silent Data Providers - Ethers Provider Package
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@
 
 ## Introduction
 
-Custom providers for Silent Data [Rollup], compatible with ethers.js.
+Custom providers for Silent Data, compatible with ethers.js.
 
 ## Prerequisites
 
@@ -230,5 +230,5 @@ If you encounter any issues, please check the following:
 
 ## Additional Resources
 
-- [Silent Data [Rollup] Documentation](https://docs.silentdata.com)
+- [Silent Data Documentation](https://docs.silentdata.com)
 - [Ethers.js Documentation](https://docs.ethers.org/v6/)

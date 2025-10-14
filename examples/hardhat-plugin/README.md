@@ -1,4 +1,4 @@
-# Silent Data [Rollup] Hardhat Plugin Example
+# Silent Data Hardhat Plugin Example
 
 This repository demonstrates how to use the `@appliedblockchain/silentdatarollup-hardhat-plugin` with a Hardhat project. The example includes a basic smart contract deployment setup using Hardhat Ignition.
 
@@ -6,7 +6,7 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 
 - Node.js (version 18 or higher)
 - npm
-- Access to a Silent Data [Rollup] RPC endpoint
+- Access to a Silent Data RPC endpoint
 
 ## Getting Started
 
@@ -69,7 +69,7 @@ npm run deploy:private-token
 This will:
 
 1. Compile the PrivateToken contract
-2. Deploy it to the Silent Data [Rollup] network
+2. Deploy it to the Silent Data network
 
 ## Deployment - PrivateEvents
 
@@ -84,7 +84,7 @@ npm run deploy:private-events
 This will:
 
 1. Compile the PrivateEvents contract
-2. Deploy it to the Silent Data [Rollup] network
+2. Deploy it to the Silent Data network
 
 ## Deployment - SimpleContract
 
@@ -99,7 +99,7 @@ npm run deploy:simple-contract
 This will:
 
 1. Compile the SimpleContract contract
-2. Deploy it to the Silent Data [Rollup] network
+2. Deploy it to the Silent Data network
 
 ## Development
 
@@ -114,12 +114,12 @@ This will:
 
 Main dependencies include:
 
-- `@appliedblockchain/silentdatarollup-hardhat-plugin`: Enables Silent Data [Rollup] integration
+- `@appliedblockchain/silentdatarollup-hardhat-plugin`: Enables Silent Data integration
 - `@nomicfoundation/hardhat-ignition-ethers`: Provides deployment management
 - `hardhat`: The core development environment
 
 ## Additional Resources
 
-- [Silent Data [Rollup] Documentation](https://docs.silentdata.com)
+- [Silent Data Documentation](https://docs.silentdata.com)
 - [Hardhat Documentation](https://hardhat.org/docs)
 - [Hardhat Ignition Guide](https://hardhat.org/ignition/docs/getting-started)

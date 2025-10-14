@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import { SilentDataRollupContract } from '@appliedblockchain/silentdatarollup-core'
 import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { formatEther, Wallet } from 'ethers'
+import { ContractRunner, formatEther, Wallet } from 'ethers'
 import { ERC20_ABI } from './constants/erc20Abi'
 
 const REQUIRED_ENV_VARS = [
@@ -31,7 +31,7 @@ const provider = new SilentDataRollupProvider({
 const tokenContract = new SilentDataRollupContract({
   address: TOKEN_ADDRESS,
   abi: ERC20_ABI,
-  runner: provider.signer,
+  runner: provider.signer as unknown as ContractRunner,
   contractMethodsToSign: ['balanceOf'],
 })
 
