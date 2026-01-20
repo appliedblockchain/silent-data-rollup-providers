@@ -10,8 +10,10 @@ import {
   HEADER_DELEGATE_SIGNATURE,
   HEADER_EIP712_DELEGATE_SIGNATURE,
   HEADER_EIP712_SIGNATURE,
+  HEADER_FROM_BLOCK,
   HEADER_SIGNATURE,
   HEADER_TIMESTAMP,
+  HEADER_SIGNATURE_TYPE,
 } from './constants'
 
 export enum ChainId {
@@ -66,6 +68,17 @@ export type BaseConfig = {
         expires?: number
       }
   authSignatureType?: SignatureType
+  /**
+   * Smart wallet contract address.
+   * When provided, signing will be done on the hashed message for EIP-1271 verification.
+   */
+  smartWalletAddress?: string
+  /**
+   * The block range to look back when fetching user operation receipts.
+   * This value is used to calculate the fromBlock parameter when querying for receipts.
+   * If not provided, defaults to DEFAULT_USER_OPERATION_RECEIPT_LOOKUP_RANGE (1024 blocks).
+   */
+  userOperationReceiptLookupRange?: number
 }
 
 export type DelegateSignerMessage = {
@@ -86,6 +99,8 @@ export type AuthHeaders = {
   [HEADER_TIMESTAMP]: string
   [HEADER_SIGNATURE]?: string
   [HEADER_EIP712_SIGNATURE]?: string
+  [HEADER_SIGNATURE_TYPE]?: string
+  [HEADER_FROM_BLOCK]?: string
 }
 
 export type DelegateHeaders = {

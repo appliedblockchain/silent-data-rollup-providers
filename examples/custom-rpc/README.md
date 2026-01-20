@@ -5,7 +5,7 @@ For development purposes, this repository exposes a Silent Data Custom RPC using
 ## Prerequisites
 
 - Node.js (v18 or higher)
-- npm
+- pnpm
 
 ## Installation
 
@@ -19,7 +19,7 @@ For development purposes, this repository exposes a Silent Data Custom RPC using
 2. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
@@ -36,11 +36,11 @@ For development purposes, this repository exposes a Silent Data Custom RPC using
 Run start:
 
 ```bash
-npm run start
+pnpm start
 ```
 
 Run the example:
 
 ```bash
-npm run contract-interaction
+pnpm contract-interaction
 ```

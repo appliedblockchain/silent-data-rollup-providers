@@ -5,7 +5,7 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 ## Prerequisites
 
 - Node.js (version 18 or higher)
-- npm
+- pnpm
 - Access to a Silent Data RPC endpoint
 
 ## Getting Started
@@ -20,7 +20,7 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 2. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
@@ -37,9 +37,9 @@ The project is configured in `hardhat.config.ts` to use the Silent Data network:
 
 ## Smart Contract
 
-The example includes a simple `PrivateToken.sol` contract that implements a privacy-focused ERC20 token with the following features:
+The example includes a simple `PrivateToken.sol` contract that implements a privacy-focused ERC-20 token with the following features:
 
-- Implements the ERC20 standard interface
+- Implements the ERC-20 standard interface
 - Only allows token holders to view their own balance through the `balanceOf` method
 
 ## Deployment
@@ -49,7 +49,7 @@ The project uses Hardhat Ignition for deployments. The deployment module is conf
 To deploy the contract:
 
 ```bash
-npm run deploy
+pnpm deploy
 ```
 
 This will:
@@ -61,7 +61,7 @@ This will:
 
 ### Available Scripts
 
-- `npm run deploy` - Deploy the PrivateToken contract using Hardhat Ignition
+- `pnpm deploy` - Deploy the PrivateToken contract using Hardhat Ignition
 
 ### Project Dependencies
 

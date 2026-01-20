@@ -1,13 +1,17 @@
 {
   "name": "example-ethers-provider-nodejs",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@10.23.0",
   "scripts": {
     "contract-interaction": "ts-node src/contract-interaction.ts",
     "get-balance": "ts-node src/get-balance.ts",
     "transfer-balance": "ts-node src/transfer-balance.ts"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "*",
-    "@appliedblockchain/silentdatarollup-ethers-provider": "*",
+    "@appliedblockchain/silentdatarollup-core": "workspace:*",
+    "@appliedblockchain/silentdatarollup-ethers-provider": "workspace:*",
+    "ethers": "6.13.2",
     "dotenv": "16.4.5"
   },
   "devDependencies": {

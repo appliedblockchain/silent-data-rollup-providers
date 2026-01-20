@@ -3,30 +3,36 @@ version: 2.1
 jobs:
   audit_build_lint_test:
     docker:
-      - image: cimg/node:22.20.0
+      - image: cimg/node:24.11.1
     steps:
       - checkout
       - run:
+          name: Install PNPM 10.23.0
+          command: |
+            sudo npm install --global corepack@latest
+            corepack enable
+            corepack use pnpm@10.23.0
+      - run:
           name: Install dependencies
-          command: npm install
+          command: pnpm install
       - run:
           name: Security audit
-          command: npm audit
+          command: pnpm audit --audit-level=moderate
       - run:
           name: Check format
-          command: npm run check-format
+          command: pnpm check-format
       - run:
           name: Build packages
-          command: npm run build
+          command: pnpm build
       - run:
           name: Check exports
-          command: npm run check-exports
+          command: pnpm check-exports
       - run:
           name: Check lint
-          command: npm run lint
+          command: pnpm lint
       - run:
           name: Test packages
-          command: npm run test
+          command: pnpm test
 
 workflows:
   audit_build_lint_test:

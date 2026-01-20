@@ -20,7 +20,7 @@ Custom providers for integrating Silent Data with Hardhat and Fireblocks.
 
 - Node.js (version 18 or higher)
 - Hardhat v2
-- npm
+- pnpm
 - Basic knowledge of Ethereum and smart contracts
 
 ## Integration
@@ -30,7 +30,7 @@ Custom providers for integrating Silent Data with Hardhat and Fireblocks.
 #### Installing Hardhat Integration Dependencies
 
 ```bash
-npm install @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks @nomicfoundation/hardhat-ignition-ethers@0.15.7
+pnpm add @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks @nomicfoundation/hardhat-ignition-ethers@0.15.9
 ```
 
 #### Hardhat Integration Example

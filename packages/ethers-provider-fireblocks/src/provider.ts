@@ -1,6 +1,5 @@
 import { FireblocksWeb3Provider } from '@fireblocks/fireblocks-web3-provider'
 import {
-  BaseConfig,
   DEBUG_NAMESPACE,
   HEADER_DELEGATE,
   HEADER_DELEGATE_SIGNATURE,
@@ -21,6 +20,7 @@ import {
 } from 'ethers'
 import { TransactionOperation } from 'fireblocks-sdk'
 import { SilentDataRollupFireblocksBase } from './Base'
+import { FireblocksProviderConfig } from './types'
 
 const log = debug(DEBUG_NAMESPACE)
 
@@ -29,7 +29,7 @@ export class SilentDataRollupFireblocksProvider extends BrowserProvider {
   private ethereum: FireblocksWeb3Provider
   private network: Networkish | undefined
   private _options: BrowserProviderOptions | undefined
-  private config: BaseConfig
+  private config: FireblocksProviderConfig
   private baseProvider: SilentDataRollupFireblocksBase
 
   constructor({
@@ -41,7 +41,7 @@ export class SilentDataRollupFireblocksProvider extends BrowserProvider {
     ethereum: Eip1193Provider
     network?: Networkish
     options?: BrowserProviderOptions
-    config?: BaseConfig
+    config?: FireblocksProviderConfig
   }) {
     super(ethereum, network, options)
     log('Initializing SilentDataRollupFireblocksProvider')
@@ -182,7 +182,8 @@ export class SilentDataRollupFireblocksProvider extends BrowserProvider {
 
         const requiresAuthHeaders =
           SIGN_RPC_METHODS.includes(payload.method) ||
-          isSignableContractCall(payload, this.baseProvider.contracts)
+          isSignableContractCall(payload, this.baseProvider.contracts) ||
+          (this.config.alwaysSignEthCalls && payload.method === 'eth_call')
 
         const delegateHeaders = []
         if (requiresAuthHeaders) {

@@ -1,8 +1,12 @@
+import { keccak256, toUtf8Bytes } from 'ethers'
+
 export const SIGN_RPC_METHODS = [
   'eth_estimateGas',
   'eth_getProof',
   'eth_getTransactionByHash',
   'eth_getTransactionReceipt',
+  'eth_getUserOperationReceipt',
+  'eth_getUserOperationByHash',
 ]
 
 export const eip721Domain = {
@@ -22,11 +26,46 @@ export const DEBUG_NAMESPACE_SILENTDATA_INTERCEPTOR = 'silentdata:interceptor'
 
 export const HEADER_SIGNATURE = 'x-signature'
 export const HEADER_TIMESTAMP = 'x-timestamp'
+export const HEADER_SIGNATURE_TYPE = 'x-signature-type'
 export const HEADER_EIP712_SIGNATURE = 'x-eip712-signature'
 export const HEADER_DELEGATE = 'x-delegate'
 export const HEADER_DELEGATE_SIGNATURE = 'x-delegate-signature'
 export const HEADER_EIP712_DELEGATE_SIGNATURE = 'x-eip712-delegate-signature'
 export const HEADER_SIGNER_SWC = 'x-signer-swc'
+/**
+ * Header used when signing a user operation receipt call to the bundler (eth_getUserOperationReceipt)
+ */
+export const HEADER_FROM_BLOCK = 'x-from-block'
+
+/**
+ * Entrypoint address used when building eth_getLogs payload for signing eth_getUserOperationReceipt calls.
+ * This is hardcoded for now as we are just starting and will have support for only one version anyway.
+ * We are not worrying about different versions for now.
+ * In the future, if we do support other versions, this should be made a config while initializing the provider.
+ */
+export const ENTRYPOINT_ADDRESS = '0x34F5Bda45f2Ce00B646BD6B19D0F9817b5D8D398'
+
+/**
+ * Default number of blocks to look back when fetching user operation receipts.
+ * This is used to calculate the fromBlock parameter in eth_getUserOperationReceipt requests.
+ */
+export const DEFAULT_USER_OPERATION_RECEIPT_LOOKUP_RANGE = 1024
+
+/**
+ * The signature for the UserOperationEvent from ERC-4337
+ * This is the event emitted by the EntryPoint contract and wrapped in PrivateEvent
+ */
+export const USER_OPERATION_EVENT_SIGNATURE =
+  'UserOperationEvent(bytes32,address,address,uint256,bool,uint256,uint256)'
+
+/**
+ * The keccak256 hash of the UserOperationEvent signature
+ * Used as the eventType filter when querying for user operation receipts via eth_getLogs
+ * Value: 0x49628fd1471006c1482da88028e9ce4dbb080b815c9b0344d39e5a8e6ec1419f
+ */
+export const USER_OPERATION_EVENT_HASH = keccak256(
+  toUtf8Bytes(USER_OPERATION_EVENT_SIGNATURE),
+)
 
 export const DEFAULT_DELEGATE_EXPIRES = 10 * 60 * 60 // 10 hours
 
@@ -50,19 +89,15 @@ export const WHITELISTED_METHODS = [
   'eth_getCode',
   'eth_getFilterChanges',
   'eth_getFilterLogs',
-  'eth_getHashrate',
   'eth_getHeaderByHash',
   'eth_getLogs',
   'eth_getProof',
   'eth_getTransactionByHash',
   'eth_getTransactionCount',
   'eth_getTransactionReceipt',
-  'eth_hashrate',
   'eth_maxPriorityFeePerGas',
-  'eth_mining',
   'eth_newBlockFilter',
   'eth_sendRawTransaction',
-  'eth_submitTransaction',
   'eth_syncing',
   'eth_newFilter',
   'eth_newPendingTransactionFilter',
@@ -71,16 +106,4 @@ export const WHITELISTED_METHODS = [
   'net_peerCount',
   'web3_clientVersion',
   'web3_sha3',
-  'zkevm_batchNumber',
-  'zkevm_batchNumberByBlockNumber',
-  'zkevm_consolidatedBlockNumber',
-  'zkevm_estimateGasPrice',
-  'zkevm_getBatchByNumber',
-  'zkevm_getFullBlockByHash',
-  'zkevm_getFullBlockByNumber',
-  'zkevm_getLatestGlobalExitRoot',
-  'zkevm_isBlockConsolidated',
-  'zkevm_isBlockVirtualized',
-  'zkevm_verifiedBatchNumber',
-  'zkevm_virtualBatchNumber',
 ]

@@ -7,7 +7,9 @@ import {
   HEADER_DELEGATE_SIGNATURE,
   HEADER_EIP712_DELEGATE_SIGNATURE,
   HEADER_EIP712_SIGNATURE,
+  HEADER_FROM_BLOCK,
   HEADER_SIGNATURE,
+  HEADER_SIGNATURE_TYPE,
   HEADER_SIGNER_SWC,
   HEADER_TIMESTAMP,
   isSignableContractCall,
@@ -94,7 +96,10 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
       config,
     )
 
-    this.baseProvider = new SilentDataRollupBase(config)
+    this.baseProvider = new SilentDataRollupBase({
+      ...config,
+      smartWalletAddress: config.smartWalletAddress,
+    })
 
     this.config = config
     this.config.authSignatureType =
@@ -172,7 +177,8 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
     const requiresAuthHeaders =
       isPrivateLogsRequest ||
       SIGN_RPC_METHODS.includes(payload.method) ||
-      isSignableContractCall(payload, this.baseProvider.contracts)
+      isSignableContractCall(payload, this.baseProvider.contracts) ||
+      (this.config.alwaysSignEthCalls && payload.method === 'eth_call')
 
     if (requiresAuthHeaders) {
       if (this.config.delegate) {
@@ -204,6 +210,7 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
         [HEADER_TIMESTAMP]: xTimestamp,
         [HEADER_SIGNATURE]: xSignature,
         [HEADER_EIP712_SIGNATURE]: xEip712Signature,
+        [HEADER_FROM_BLOCK]: xFromBlock,
       } = await this.baseProvider.getAuthHeaders(this, payload)
       request.setHeader(HEADER_TIMESTAMP, xTimestamp)
       if (xSignature) {
@@ -211,6 +218,14 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
       }
       if (xEip712Signature) {
         request.setHeader(HEADER_EIP712_SIGNATURE, xEip712Signature)
+      }
+      if (xFromBlock) {
+        request.setHeader(HEADER_FROM_BLOCK, xFromBlock)
+      }
+      const signatureType =
+        this.config.authSignatureType ?? SignatureType.EIP191
+      if (signatureType) {
+        request.setHeader(HEADER_SIGNATURE_TYPE, signatureType)
       }
     }
 

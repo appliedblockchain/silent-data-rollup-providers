@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-custom-rpc",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Custom RPC for Silent Data",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
@@ -22,10 +22,10 @@
     "build": "tsc --noEmit && tsup src/index.ts --format cjs --clean",
     "check-exports": "attw --pack . --profile node16",
     "dev": "concurrently --kill-others-on-fail -s all -p '[{name}]' -n 'HARDHAT,CUSTOM RPC' -c 'bgGreen.bold,bgBlue.bold' 'hardhat node' 'nodemon'",
-    "prepack": "npm run build"
+    "prepack": "pnpm build"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "1.0.8",
+    "@appliedblockchain/silentdatarollup-core": "workspace:*",
     "body-parser": "1.20.3",
     "dotenv": "16.4.7",
     "ethers": "6.13.2",
@@ -34,7 +34,8 @@
   },
   "devDependencies": {
     "@types/express": "4.17.21",
-    "@types/node": "22.5.4",
+    "@types/body-parser": "1.19.6",
+    "@types/node": "24.10.1",
     "concurrently": "9.1.2",
     "hardhat": "^0.0.7",
     "nodemon": "3.0.1",

@@ -1,36 +1,40 @@
 {
   "name": "tests",
   "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@10.23.0",
   "scripts": {
     "build": "tsc",
-    "compile": "hardhat compile",
-    "deploy:private-token": "hardhat compile && hardhat ignition deploy ignition/modules/PrivateToken.ts",
-    "deploy:private-events": "hardhat compile && hardhat ignition deploy ignition/modules/PrivateEvents.ts",
-    "check-transfer-balance": "ts-node src/check-transfer-balance.ts",
+    "check-private-events-public": "ts-node src/check-private-events-public.ts",
+    "check-private-events": "ts-node src/check-private-events.ts",
+    "check-private-token-public": "ts-node src/check-private-token-public.ts",
     "check-private-token": "ts-node src/check-private-token.ts",
-    "check-private-events": "ts-node src/check-private-events.ts"
+    "check-transfer-balance-public": "ts-node src/check-transfer-balance-public.ts",
+    "check-transfer-balance": "ts-node src/check-transfer-balance.ts",
+    "compile": "hardhat compile",
+    "deploy:private-events": "hardhat compile && hardhat ignition deploy ignition/modules/PrivateEvents.ts",
+    "deploy:private-token": "hardhat compile && hardhat ignition deploy ignition/modules/PrivateToken.ts"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "file:../packages/core",
-    "@appliedblockchain/silentdatarollup-custom-rpc": "file:../packages/custom-rpc",
-    "@appliedblockchain/silentdatarollup-ethers-provider-fireblocks": "file:../packages/ethers-provider-fireblocks",
-    "@appliedblockchain/silentdatarollup-ethers-provider": "file:../packages/ethers-provider",
-    "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks": "file:../packages/hardhat-plugin-fireblocks",
-    "@appliedblockchain/silentdatarollup-hardhat-plugin": "file:../packages/hardhat-plugin",
-    "@appliedblockchain/silentdatarollup-viem": "file:../packages/viem",
+    "@appliedblockchain/silentdatarollup-core": "workspace:*",
+    "@appliedblockchain/silentdatarollup-custom-rpc": "workspace:*",
+    "@appliedblockchain/silentdatarollup-ethers-provider-fireblocks": "workspace:*",
+    "@appliedblockchain/silentdatarollup-ethers-provider": "workspace:*",
+    "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks": "workspace:*",
+    "@appliedblockchain/silentdatarollup-hardhat-plugin": "workspace:*",
+    "@appliedblockchain/silentdatarollup-viem": "workspace:*",
     "@nomicfoundation/hardhat-ignition-ethers": "0.15.9",
+    "@nomicfoundation/hardhat-ignition": "0.15.9",
     "@nomicfoundation/hardhat-toolbox": "5.0.0",
     "@openzeppelin/contracts": "5.1.0",
     "dotenv": "16.4.5",
-    "hardhat": "^2.18.0"
+    "ethers": "6.13.2",
+    "hardhat": "^2.18.0",
+    "viem": "2.31.4"
   },
   "devDependencies": {
-    "@types/node": "22.13.14",
+    "@types/node": "24.10.1",
     "ts-node": "10.9.2",
-    "typescript": "5.8.3"
-  },
-  "overrides": {
-    "cookie": "0.7.0",
-    "tmp": "0.2.4"
+    "typescript": "5.6.2"
   }
 }

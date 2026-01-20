@@ -37,7 +37,7 @@ These features make it easier for developers to integrate Silent Data into their
 ## Prerequisites
 
 - Node.js (version 18 or higher)
-- npm
+- pnpm
 - Basic knowledge of Ethereum and smart contracts
 
 ## Packages and Integration Options

@@ -59,10 +59,12 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     return signature
   }
 
-  public async signRawDelegateHeader(
+  public async signDelegateHeader(
     provider: any,
     message: string,
+    isSWC?: boolean,
   ): Promise<string> {
+    void isSWC
     log('Signing raw delegate header. Message:', message)
     const hashedMessage = hashMessage(message).slice(2)
     return this.createPersonalSignature(
@@ -77,7 +79,9 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     provider: any,
     chainId: string,
     message: DelegateSignerMessage,
+    isSWC?: boolean,
   ) {
+    void isSWC
     log('Signing typed delegate header. Message:', message)
 
     const content = {
@@ -99,14 +103,16 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     )
   }
 
-  public async signAuthHeaderRawMessage(
+  public async signAuthHeader(
     provider: any,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
     chainId: string,
+    isSWC?: boolean,
   ): Promise<string> {
+    void isSWC
     log('Preparing raw message for signing')
-    const message = this.prepareSignatureMessage(chainId, payload, timestamp)
+    const message = this.prepareMessage(chainId, payload, timestamp)
     log('Raw message:', message)
     let signature: string
     if (this.config.delegate) {
@@ -129,14 +135,16 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     return signature
   }
 
-  public async signAuthHeaderTypedData(
+  public async signTypedAuthHeader(
     provider: any,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
     chainId: string,
+    isSWC?: boolean,
   ): Promise<string> {
+    void isSWC
     const types = getAuthEIP721Types(payload)
-    const message = this.prepareSignatureTypedData(payload, timestamp)
+    const message = this.prepareTypedData(payload, timestamp)
     const content = {
       types: {
         EIP712Domain,

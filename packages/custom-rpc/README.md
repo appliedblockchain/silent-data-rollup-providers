@@ -19,7 +19,7 @@ Custom RPC provider for Silent Data, providing a local development environment w
 ## Prerequisites
 
 - Node.js (version 18 or higher)
-- npm
+- pnpm
 - Basic knowledge of Ethereum and smart contracts
 - Hardhat (for local development)
 
@@ -30,7 +30,7 @@ Custom RPC provider for Silent Data, providing a local development environment w
 #### Installing Custom RPC Dependencies
 
 ```bash
-npm install @appliedblockchain/silentdatarollup-custom-rpc
+pnpm add @appliedblockchain/silentdatarollup-custom-rpc
 ```
 
 #### Custom RPC Integration Example
@@ -38,7 +38,7 @@ npm install @appliedblockchain/silentdatarollup-custom-rpc
 The Custom RPC package provides a local development environment that integrates Silent Data with a local Hardhat node. To start the development environment:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 This command will start both a Hardhat node and the Custom RPC server concurrently. The Custom RPC server will proxy requests to the Hardhat node while adding Silent Data functionality.

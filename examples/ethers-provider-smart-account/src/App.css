@@ -1,0 +1,239 @@
+/* ===== CSS VARIABLES ===== */
+:root {
+  --primary-color: #646cff;
+  --primary-hover: #535bf2;
+  --secondary-color: #2a2a3c;
+  --accent-color: #4caf50;
+  --text-primary: white;
+  --text-secondary: #8888a5;
+  --text-dark: #2d2c34;
+
+  --bg-gradient: linear-gradient(135deg, #1e1e2f 0%, #2d2b42 100%);
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-bg-light: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+
+  --border-radius: 12px;
+  --border-radius-large: 20px;
+  --transition: all 0.3s ease;
+}
+
+/* ===== LAYOUT COMPONENTS ===== */
+.smart-account-info {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.smart-account-info h3 {
+  margin: 0 0 12px 0;
+  color: #495057;
+  font-size: 16px;
+}
+
+.smart-account-info p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.smart-account-info p strong {
+  color: #495057;
+}
+
+.info-text {
+  font-style: italic;
+  background: #e3f2fd;
+  padding: 8px;
+  border-radius: 4px;
+  border-left: 3px solid #2196f3;
+}
+
+.wallet-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-gradient);
+}
+
+.wallet-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--border-radius-large);
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: var(--glass-shadow);
+  border: 1px solid var(--glass-border);
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1 {
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+.tokens-title {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+/* ===== BUTTONS ===== */
+.connect-button {
+  width: 100%;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  border: none;
+  background: var(--primary-color);
+  color: var(--text-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.connect-button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.connect-button.connected {
+  background: var(--secondary-color);
+}
+
+.refresh-button,
+.token-action-button {
+  padding: 0.8rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.refresh-button {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.refresh-button:hover,
+.token-action-button:hover {
+  background: rgba(100, 108, 255, 0.1);
+}
+
+/* ===== STATUS INDICATORS ===== */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-color);
+  border-radius: 50%;
+}
+
+/* ===== BALANCE SECTION ===== */
+.balance-section {
+  margin-top: 2rem;
+}
+
+.balance-card {
+  background: var(--glass-bg-light);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.balance-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.balance-amount {
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.balance-currency {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+/* ===== TOKEN COMPONENTS ===== */
+.token-card {
+  background: var(--glass-bg-light);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.token-name {
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.token-address,
+.token-symbol,
+.token-balance {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.token-symbol {
+  margin-left: 0.25rem;
+}
+
+.token-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* ===== ADD TOKEN FORM ===== */
+.add-token {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.add-token input {
+  flex: 1;
+  padding: 0.8rem;
+  border-radius: var(--border-radius);
+  border: 1px solid #eceffa;
+  background: #f7f8fd;
+  color: var(--text-dark);
+  font-size: 1rem;
+}
+
+.add-token button {
+  padding: 0.8rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--primary-color);
+  background: transparent;
+  color: var(--primary-color);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.add-token button:hover {
+  background: rgba(100, 108, 255, 0.1);
+}

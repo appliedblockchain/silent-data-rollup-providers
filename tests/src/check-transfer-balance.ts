@@ -3,10 +3,10 @@ import { formatEther, parseEther, Wallet } from 'ethers'
 import { type Address } from 'viem'
 import {
   account,
-  getProvider,
-  publicClient,
+  getProviderWithPrivateRpcUrl as getProvider,
+  publicClientWithPrivateRpcUrl as publicClient,
   stringifyObject,
-  walletClient,
+  walletClientWithPrivateRpcUrl as walletClient,
 } from './utils'
 
 const amount = parseEther('1')

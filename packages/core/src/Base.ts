@@ -1,24 +1,33 @@
 import debug from 'debug'
 import {
   Contract,
+  getBytes,
   JsonRpcPayload,
+  keccak256,
   Signer,
+  toUtf8Bytes,
   TypedDataDomain,
+  TypedDataEncoder,
   TypedDataField,
 } from 'ethers'
 import {
   DEBUG_NAMESPACE,
   DEFAULT_DELEGATE_EXPIRES,
+  DEFAULT_USER_OPERATION_RECEIPT_LOOKUP_RANGE,
   DELEGATE_EXPIRATION_THRESHOLD_BUFFER,
   delegateEIP721Types,
   eip721Domain,
+  ENTRYPOINT_ADDRESS,
   HEADER_DELEGATE,
   HEADER_DELEGATE_SIGNATURE,
   HEADER_EIP712_DELEGATE_SIGNATURE,
   HEADER_EIP712_SIGNATURE,
+  HEADER_FROM_BLOCK,
   HEADER_SIGNATURE,
   HEADER_TIMESTAMP,
+  USER_OPERATION_EVENT_HASH,
 } from './constants'
+import { PRIVATE_EVENT_SIGNATURE_HASH } from './privateEvents'
 import {
   AuthHeaders,
   AuthSignatureMessage,
@@ -51,7 +60,7 @@ export class SilentDataRollupBase {
   constructor(config: BaseConfig) {
     this.config = {
       ...config,
-      authSignatureType: config.authSignatureType ?? SignatureType.Raw,
+      authSignatureType: config.authSignatureType ?? SignatureType.EIP191,
     }
 
     this.delegateConfig = this.resolveDelegateConfig(config)
@@ -150,19 +159,36 @@ export class SilentDataRollupBase {
   /**
    * Signs a raw delegate header message.
    * This method can be overridden by extending classes to customize the signing process.
+   * The signer implementation decides whether to add EIP-191 prefix or not.
    * @param provider - The provider used for signing
    * @param message - The delegate signer message to be signed
+   * @param isSWC - Whether signing for smart wallet contract (EIP-1271)
    * @returns A promise that resolves to the signature string
    */
-  protected async signRawDelegateHeader(
+  protected async signDelegateHeader(
     provider: any,
     message: string,
+    isSWC?: boolean,
   ): Promise<string> {
-    log('signRawDelegateHeader: Signing raw delegate header', message)
+    log('signDelegateHeader: Signing delegate header', message)
 
-    const signature = await provider.signer.signMessage(message)
+    let bytesToSign: Uint8Array
 
-    log('signRawDelegateHeader: Raw signature generated:', signature)
+    // For SWC, sign the hash bytes
+    if (isSWC) {
+      const messageHash = keccak256(toUtf8Bytes(message))
+      bytesToSign = getBytes(messageHash)
+      log('Signing hash bytes for SWC', messageHash)
+    } else {
+      // For EOA, sign the message bytes
+      bytesToSign = toUtf8Bytes(message)
+      log('Signing message bytes for EOA', message)
+    }
+
+    // Always pass bytes to signMessage
+    // The signer implementation decides whether to add EIP-191 or not
+    const signature = await provider.signer.signMessage(bytesToSign)
+    log('signDelegateHeader: Signature generated:', signature)
     return signature
   }
 
@@ -170,13 +196,16 @@ export class SilentDataRollupBase {
    * Signs a typed delegate header message.
    * This method can be overridden by extending classes to customize the signing process.
    * @param provider - The provider used for signing
+   * @param chainId - The chain ID
    * @param message - The delegate signer message to be signed
+   * @param isSWC - Whether signing for smart wallet contract (EIP-1271)
    * @returns A promise that resolves to the signature string
    */
   protected async signTypedDelegateHeader(
     provider: any,
     chainId: string,
     message: DelegateSignerMessage,
+    isSWC?: boolean,
   ): Promise<string> {
     log('signTypedDelegateHeader: Signing typed delegate header')
     log(
@@ -184,8 +213,24 @@ export class SilentDataRollupBase {
       JSON.stringify(message, null, 2),
     )
 
+    const domain = { ...eip721Domain, chainId }
+
+    // For SWC, hash the typed data and sign the hash
+    if (isSWC) {
+      const messageHash = TypedDataEncoder.hash(
+        domain,
+        delegateEIP721Types,
+        message,
+      )
+      const hashBytes = getBytes(messageHash)
+      const signature = await provider.signer.signMessage(hashBytes)
+      log('signTypedDelegateHeader: Typed SWC signature generated:', signature)
+      return signature
+    }
+
+    // For EOA, sign typed data normally
     const signature = await provider.signer.signTypedData(
-      { ...eip721Domain, chainId },
+      domain,
       delegateEIP721Types,
       message,
     )
@@ -194,6 +239,11 @@ export class SilentDataRollupBase {
     return signature
   }
 
+  /**
+   * IMPORTANT: Return the cached promise (currentPromise), not the resolved value.
+   * This ensures multiple concurrent callers share the same in-flight request,
+   * preventing redundant API calls.
+   */
   public async getDelegateHeaders(provider: any): Promise<DelegateHeaders> {
     log('Getting delegate headers')
 
@@ -203,7 +253,9 @@ export class SilentDataRollupBase {
 
     const currentPromise = this.delegateHeadersPromise
     try {
-      return await currentPromise
+      const delegateHeaders = await currentPromise
+      log('Delegate headers:', JSON.stringify(delegateHeaders, null, 2))
+      return currentPromise
     } catch (error) {
       log('Error getting delegate headers:', error)
       throw new Error('Failed to get delegate headers')
@@ -245,15 +297,18 @@ export class SilentDataRollupBase {
       }
 
       const chainId = (await this.getCachedNetwork(provider)).chainId.toString()
+      const isSWC = !!this.config.smartWalletAddress
 
       switch (signatureType) {
+        case SignatureType.EIP191:
         case SignatureType.Raw: {
-          log('Generating delegate raw signature')
+          log('Generating delegate signature')
           const delegateMessageToSign =
             chainId + JSON.stringify(delegateSignerMessage)
-          headers[HEADER_DELEGATE_SIGNATURE] = await this.signRawDelegateHeader(
+          headers[HEADER_DELEGATE_SIGNATURE] = await this.signDelegateHeader(
             provider,
             delegateMessageToSign,
+            isSWC,
           )
           break
         }
@@ -264,6 +319,7 @@ export class SilentDataRollupBase {
               provider,
               chainId,
               delegateSignerMessage,
+              isSWC,
             )
           break
         default:
@@ -291,26 +347,69 @@ export class SilentDataRollupBase {
       [HEADER_TIMESTAMP]: xTimestamp,
     }
     const chainId = (await this.getCachedNetwork(provider)).chainId.toString()
+    const signatureType = this.config.authSignatureType ?? SignatureType.EIP191
+    const isSWC = !!this.config.smartWalletAddress
 
-    const signatureType = this.config.authSignatureType
+    // Special handling for eth_getUserOperationReceipt: sign with custom eth_getLogs payload
+    // Note: We don't handle batched requests (arrays) as the custom providers never do batch requests
+    let payloadToSign = payload
+    const isGetUserOperationReceipt =
+      !Array.isArray(payload) &&
+      payload.method === 'eth_getUserOperationReceipt'
+
+    if (isGetUserOperationReceipt) {
+      log(
+        'Detected eth_getUserOperationReceipt, building custom eth_getLogs payload for signing',
+      )
+
+      // Get the current block number and calculate fromBlock
+      // This value is mandatory and must be within the valid range
+      // or the bundler will reject the request
+      let fromBlock: bigint
+      try {
+        fromBlock = await this.getFromBlockForUserOperationReceipt(provider)
+        headers[HEADER_FROM_BLOCK] = fromBlock.toString()
+        log(`Added ${HEADER_FROM_BLOCK} header:`, fromBlock.toString())
+      } catch (error) {
+        log(
+          'Error calculating fromBlock for eth_getUserOperationReceipt:',
+          error,
+        )
+        throw new Error(
+          'Failed to calculate fromBlock for eth_getUserOperationReceipt',
+        )
+      }
+
+      payloadToSign = this.buildGetUserOperationReceiptSigningPayload(
+        payload,
+        fromBlock,
+      )
+      log(
+        'Using custom eth_getLogs payload for signing:',
+        JSON.stringify(payloadToSign, null, 2),
+      )
+    }
 
     switch (signatureType) {
+      case SignatureType.EIP191:
       case SignatureType.Raw:
-        log('Generating auth header raw signature')
-        headers[HEADER_SIGNATURE] = await this.signAuthHeaderRawMessage(
+        log('Generating auth header signature')
+        headers[HEADER_SIGNATURE] = await this.signAuthHeader(
           provider,
-          payload,
+          payloadToSign,
           xTimestamp,
           chainId,
+          isSWC,
         )
         break
       case SignatureType.EIP712:
-        log('Generating auth headerEIP712 signature')
-        headers[HEADER_EIP712_SIGNATURE] = await this.signAuthHeaderTypedData(
+        log('Generating auth header typed signature')
+        headers[HEADER_EIP712_SIGNATURE] = await this.signTypedAuthHeader(
           provider,
-          payload,
+          payloadToSign,
           xTimestamp,
           chainId,
+          isSWC,
         )
         break
       default:
@@ -321,38 +420,78 @@ export class SilentDataRollupBase {
     return headers
   }
 
-  public async signAuthHeaderRawMessage(
+  /**
+   * Signs auth header.
+   */
+  public async signAuthHeader(
     provider: any,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
     chainId: string,
+    isSWC?: boolean,
   ): Promise<string> {
-    const xMessage = this.prepareSignatureMessage(chainId, payload, timestamp)
+    const xMessage = this.prepareMessage(chainId, payload, timestamp)
     const delegateSigner = await this.getDelegateSigner(this)
     const signer = delegateSigner ?? provider.signer
-    const signature = await this.signMessage(signer, xMessage)
-    log('Message signed. Signature:', signature)
+    const usingDelegate = !!delegateSigner
+
+    let bytesToSign: Uint8Array
+
+    // For SWC, sign the hash bytes
+    if (isSWC && !usingDelegate) {
+      const messageHash = keccak256(toUtf8Bytes(xMessage))
+      bytesToSign = getBytes(messageHash)
+      log('Signing hash bytes for SWC')
+    } else {
+      // For EOA, sign the message bytes
+      bytesToSign = toUtf8Bytes(xMessage)
+      log('Signing message bytes for EOA')
+    }
+
+    // Always pass bytes to signMessage
+    // The signer implementation decides whether to add EIP-191 or not
+    const signature = await signer.signMessage(bytesToSign)
+    log('Message signed raw. Signature:', signature)
     return signature
   }
 
-  public async signAuthHeaderTypedData(
+  /**
+   * Signs auth header using typed data signature.
+   */
+  public async signTypedAuthHeader(
     provider: any,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
     chainId: string,
+    isSWC?: boolean,
   ): Promise<string> {
-    const message = this.prepareSignatureTypedData(payload, timestamp)
+    const message = this.prepareTypedData(payload, timestamp)
     const types = getAuthEIP721Types(payload)
     const delegateSigner = await this.getDelegateSigner(this)
     const signer = delegateSigner ?? provider.signer
+    const usingDelegate = !!delegateSigner
     const domain = { ...eip721Domain, chainId }
+
+    // For SWC without delegate, hash the typed data and sign the hash
+    if (isSWC && !usingDelegate) {
+      const messageHash = TypedDataEncoder.hash(domain, types, message)
+      log('EIP-712 hash (SWC without delegate):', messageHash)
+      const hashBytes = getBytes(messageHash)
+      const signature = await signer.signMessage(hashBytes)
+      log('Message signed with EIP-712 for SWC. Signature:', signature)
+      return signature
+    }
+
+    // For EOA, sign typed data normally
     log(
       'Signing typed data',
       JSON.stringify({ message, types, domain }, null, 2),
     )
+    // Log the EIP-712 hash right before signing (signTypedData hashes internally)
+    const messageHash = TypedDataEncoder.hash(domain, types, message)
+    log('EIP-712 hash (EOA):', messageHash)
     const signature = await this.signTypedData(signer, domain, types, message)
-
-    log('Message signed. Signature:', signature)
+    log('Message signed with EIP-712. Signature:', signature)
     return signature
   }
 
@@ -394,9 +533,99 @@ export class SilentDataRollupBase {
   }
 
   /**
+   * Calculates the fromBlock value for eth_getUserOperationReceipt requests.
+   * Gets the current block number and subtracts the configured userOperationReceiptLookupRange.
+   *
+   * IMPORTANT: The bundler strictly validates this value and will reject the request if:
+   * - The header is missing
+   * - The value is < 0
+   * - The value is > current block number
+   * - The value is too far back (< currentBlock - userOperationReceiptLookupRange)
+   *
+   * This method ensures the returned value is always within the valid range:
+   * max(0, currentBlock - userOperationReceiptLookupRange) <= fromBlock <= currentBlock
+   *
+   * @param provider - The provider to use for fetching the current block number
+   * @returns A promise that resolves to the fromBlock value as a bigint
+   * @throws Error if unable to fetch the current block number
+   */
+  protected async getFromBlockForUserOperationReceipt(
+    provider: any,
+  ): Promise<bigint> {
+    // Get the user operation receipt lookup range from config, or use default
+    const lookupRange = BigInt(
+      this.config.userOperationReceiptLookupRange ??
+        DEFAULT_USER_OPERATION_RECEIPT_LOOKUP_RANGE,
+    )
+    log('User operation receipt lookup range:', lookupRange.toString())
+
+    // Get current block number
+    let currentBlockNumber: bigint
+    if (typeof provider.getBlockNumber === 'function') {
+      // Use the provider's getBlockNumber method if available (ethers-style)
+      currentBlockNumber = BigInt(await provider.getBlockNumber())
+    } else if (typeof provider.request === 'function') {
+      // Fall back to direct RPC request
+      const blockNumberHex = await provider.request({
+        method: 'eth_blockNumber',
+        params: [],
+      })
+      currentBlockNumber = BigInt(blockNumberHex)
+    } else {
+      throw new Error(
+        'Provider does not support getBlockNumber or request method',
+      )
+    }
+
+    log('Current block number:', currentBlockNumber.toString())
+
+    // Calculate fromBlock = max(0, currentBlock - lookupRange)
+    // This ensures we're always within the valid range that the bundler expects
+    const fromBlock =
+      currentBlockNumber > lookupRange ? currentBlockNumber - lookupRange : 0n
+
+    log('Calculated fromBlock:', fromBlock.toString())
+
+    return fromBlock
+  }
+
+  /**
+   * Builds a custom eth_getLogs payload for signing when the original request is eth_getUserOperationReceipt.
+   * This method can be overridden to customize the payload construction.
+   *
+   * IMPORTANT: The bundler must reconstruct this exact payload to verify the signature.
+   * The bundler should use the same `id` from the original eth_getUserOperationReceipt request
+   * when constructing the eth_getLogs request to send to the RPC node.
+   *
+   * @param payload - The original eth_getUserOperationReceipt payload
+   * @param fromBlock - The fromBlock value to use in the eth_getLogs filter
+   * @returns A JsonRpcPayload with method 'eth_getLogs' to be used for signing
+   */
+  protected buildGetUserOperationReceiptSigningPayload(
+    payload: JsonRpcPayload,
+    fromBlock: bigint,
+  ): JsonRpcPayload {
+    return {
+      jsonrpc: payload.jsonrpc,
+      method: 'eth_getLogs',
+      params: [
+        {
+          address: ENTRYPOINT_ADDRESS,
+          fromBlock: `0x${fromBlock.toString(16)}`,
+          topics: [
+            PRIVATE_EVENT_SIGNATURE_HASH,
+            USER_OPERATION_EVENT_HASH, // eventType
+          ],
+        },
+      ],
+      id: payload.id ?? 1,
+    }
+  }
+
+  /**
    * Prepares the message to be signed for the x-signature header.
    */
-  public prepareSignatureMessage(
+  public prepareMessage(
     chainId: string,
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
@@ -414,7 +643,7 @@ export class SilentDataRollupBase {
   /**
    * Prepares the message to be signed for the x-eip712-signature header.
    */
-  public prepareSignatureTypedData(
+  public prepareTypedData(
     payload: JsonRpcPayload | JsonRpcPayload[],
     timestamp: string,
   ): AuthSignatureMessage {
