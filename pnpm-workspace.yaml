@@ -1,0 +1,27 @@
+packages:
+  - 'examples/*'
+  - 'packages/*'
+  - 'tests'
+
+minimumReleaseAge: 2880 # 2 days in minutes
+
+minimumReleaseAgeExclude:
+  - '@appliedblockchain/silentdatarollup-core'
+  - '@appliedblockchain/silentdatarollup-custom-rpc'
+  - '@appliedblockchain/silentdatarollup-ethers-provider'
+  - '@appliedblockchain/silentdatarollup-ethers-provider-fireblocks'
+  - '@appliedblockchain/silentdatarollup-hardhat-plugin'
+  - '@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks'
+  - '@appliedblockchain/silentdatarollup-viem'
+
+overrides:
+  cookie: 0.7.0
+  diff: 8.0.3
+  glob: 10.5.0
+  h3: 1.15.5
+  hono: 4.11.4
+  jws: 3.2.3
+  preact: 10.27.3
+  qs: 6.14.1
+  tmp: 0.2.4
+  undici: 6.23.0

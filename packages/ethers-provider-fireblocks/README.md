@@ -19,7 +19,7 @@ Custom providers for Silent Data, compatible with ethers.js for Fireblocks integ
 ## Prerequisites
 
 - Node.js (version 18 or higher)
-- npm
+- pnpm
 - Basic knowledge of Ethereum and smart contracts
 - Ethers.js v6
 
@@ -30,7 +30,7 @@ Custom providers for Silent Data, compatible with ethers.js for Fireblocks integ
 #### Installing Fireblocks Integration Dependencies
 
 ```bash
-npm install @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-ethers-provider-fireblocks ethers@6 @fireblocks/fireblocks-web3-provider
+pnpm add @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-ethers-provider-fireblocks ethers@6 @fireblocks/fireblocks-web3-provider
 ```
 
 #### Fireblocks Integration Example

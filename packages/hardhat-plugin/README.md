@@ -20,7 +20,7 @@ Custom providers for integrating Silent Data with Hardhat.
 
 - Node.js (version 18 or higher)
 - Hardhat v2
-- npm
+- pnpm
 - Basic knowledge of Ethereum and smart contracts
 
 ## Integration
@@ -30,7 +30,7 @@ Custom providers for integrating Silent Data with Hardhat.
 #### Installing Hardhat Integration Dependencies
 
 ```bash
-npm install @appliedblockchain/silentdatarollup-hardhat-plugin @nomicfoundation/hardhat-ignition-ethers@0.15.7
+pnpm add @appliedblockchain/silentdatarollup-hardhat-plugin @nomicfoundation/hardhat-ignition-ethers@0.15.9
 ```
 
 #### Hardhat Integration Example

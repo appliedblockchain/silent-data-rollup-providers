@@ -1,5 +1,16 @@
 # @appliedblockchain/silentdatarollup-core
 
+## 1.0.9
+
+### Patch Changes
+
+- NPM to PNPM
+- Standard and custom bridge ERC 20 examples
+- Always sign eth_call calls
+- UserOp RPC methods
+- Signed eth_getUserOperationByHash and eth_getUserOperationReceipt calls
+- Other fixes and improvements
+
 ## 1.0.8
 
 ### Patch Changes

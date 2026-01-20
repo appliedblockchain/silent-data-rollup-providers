@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-hardhat-plugin",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Hardhat plugin for Silent Data",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
@@ -28,17 +28,17 @@
   "scripts": {
     "build": "tsc --noEmit && tsup src/index.ts --format cjs,esm --dts --clean",
     "check-exports": "attw --pack . --profile node16",
-    "prepack": "npm run build"
+    "prepack": "pnpm build"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "1.0.8",
+    "@appliedblockchain/silentdatarollup-core": "workspace:*",
     "@nomicfoundation/hardhat-ethers": "3.0.8",
     "debug": "4.3.7",
     "ethers": "6.13.2"
   },
   "devDependencies": {
     "@types/debug": "4.1.12",
-    "@types/node": "22.5.4",
+    "@types/node": "24.10.1",
     "hardhat": "2.22.10",
     "ts-node": "10.9.2",
     "typescript": "5.6.2"

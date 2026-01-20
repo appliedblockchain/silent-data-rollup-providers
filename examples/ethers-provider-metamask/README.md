@@ -12,7 +12,7 @@ This repository demonstrates how to interact with the Silent Data using MetaMask
 ## Prerequisites
 
 - Node.js (v18 or higher)
-- npm
+- pnpm
 - Access to a Silent Data RPC endpoint
 
 ## Installation
@@ -27,7 +27,7 @@ This repository demonstrates how to interact with the Silent Data using MetaMask
 2. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
@@ -42,5 +42,5 @@ This repository demonstrates how to interact with the Silent Data using MetaMask
 To run the example, use the following command:
 
 ```bash
-npm run dev
+pnpm dev
 ```

@@ -1,11 +1,14 @@
 {
   "name": "example-viem-nodejs",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@10.23.0",
   "scripts": {
     "get-balance": "ts-node src/get-balance.ts",
     "transfer-balance": "ts-node src/transfer-balance.ts"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-viem": "*",
+    "@appliedblockchain/silentdatarollup-viem": "workspace:*",
     "dotenv": "16.4.5",
     "viem": "2.31.4"
   },

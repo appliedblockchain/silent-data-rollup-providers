@@ -206,7 +206,7 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
     switch (signatureType) {
       case SignatureType.Raw:
         // eslint-disable-next-line no-case-declarations
-        const preparedMessage = this.baseProvider.prepareSignatureMessage(
+        const preparedMessage = this.baseProvider.prepareMessage(
           chainId.toString(),
           rpcRequest,
           xTimestamp,
@@ -217,10 +217,7 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
         // eslint-disable-next-line no-case-declarations
         const types = getAuthEIP721Types(payload)
         // eslint-disable-next-line no-case-declarations
-        const message = this.baseProvider.prepareSignatureTypedData(
-          payload,
-          xTimestamp,
-        )
+        const message = this.baseProvider.prepareTypedData(payload, xTimestamp)
         content = {
           types: {
             EIP712Domain: [

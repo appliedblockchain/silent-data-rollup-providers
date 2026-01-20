@@ -1,24 +1,23 @@
 {
   "name": "example-custom-rpc",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@10.23.0",
   "scripts": {
     "contract-interaction": "ts-node src/contract-interaction.ts",
     "custom-rpc": "silentdatarollup-custom-rpc",
     "hardhat": "hardhat node",
-    "start": "npm run custom-rpc & npm run hardhat"
+    "start": "pnpm custom-rpc & pnpm hardhat"
   },
   "dependencies": {
-    "@appliedblockchain/silentdatarollup-core": "*",
-    "@appliedblockchain/silentdatarollup-custom-rpc": "*",
-    "@appliedblockchain/silentdatarollup-ethers-provider": "*",
+    "@appliedblockchain/silentdatarollup-core": "workspace:*",
+    "@appliedblockchain/silentdatarollup-custom-rpc": "workspace:*",
+    "@appliedblockchain/silentdatarollup-ethers-provider": "workspace:*",
     "dotenv": "16.4.5",
     "hardhat": "2.22.19"
   },
   "devDependencies": {
     "ts-node": "10.9.2",
     "typescript": "5.8.2"
-  },
-  "overrides": {
-    "cookie": "0.7.0",
-    "tmp": "0.2.4"
   }
 }

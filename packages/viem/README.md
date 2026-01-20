@@ -19,7 +19,7 @@ Viem custom transport for Silent Data.
 ## Prerequisites
 
 - Node.js (version 18 or higher)
-- npm
+- pnpm
 - Basic knowledge of Ethereum and smart contracts
 - Viem
 
@@ -30,7 +30,7 @@ Viem custom transport for Silent Data.
 #### Installing Basic Usage Dependencies
 
 ```bash
-npm install @appliedblockchain/silentdatarollup-viem
+pnpm add @appliedblockchain/silentdatarollup-viem
 ```
 
 #### Basic Usage Example

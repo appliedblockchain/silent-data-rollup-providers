@@ -20,7 +20,11 @@ export function sdTransport(
         if (!gasLimit) {
           gasLimit = await provider.estimateGas(tx)
         }
-        return await provider.signer.sendTransaction({ ...tx, gasLimit })
+        const txResponse = await provider.signer.sendTransaction({
+          ...tx,
+          gasLimit,
+        })
+        return txResponse.hash
       }
       return await provider.send(method, params || [])
     },

@@ -1,8 +1,11 @@
 import assert from 'node:assert'
 import { toQuantity, Wallet } from 'ethers'
-import { getProvider, getPrivateEventsContract, stringifyObject } from './utils'
+import {
+  getProviderWithPrivateRpcUrl as getProvider,
+  getPrivateEventsContract,
+} from './utils'
 
-async function main() {
+export async function main() {
   const providerAllowedViewerA = getProvider()
   const contract = await getPrivateEventsContract(providerAllowedViewerA)
   const allowedViewerAddressA = await providerAllowedViewerA.signer.getAddress()
@@ -29,7 +32,7 @@ async function main() {
   await tx.wait()
 
   const txn = await providerAllowedViewerA.getTransaction(tx.hash)
-  console.log(`Transaction: ${stringifyObject(txn?.toJSON())}`)
+  console.log(`Transaction: ${JSON.stringify(txn?.toJSON(), null, 2)}`)
 
   assert(txn, 'Transaction is not defined')
   assert(txn?.blockNumber, 'Block number is not defined')

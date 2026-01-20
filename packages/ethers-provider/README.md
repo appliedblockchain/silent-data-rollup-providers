@@ -15,6 +15,9 @@
     - [Overview](#overview)
     - [Using the SDInterface](#using-the-sdinterface)
     - [Private Events Example](#private-events-example)
+  - [Smart Account Support](#smart-account-support)
+    - [Smart Account Overview](#smart-account-overview)
+    - [Smart Account Example](#smart-account-example)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
 - [Additional Resources](#additional-resources)
@@ -26,7 +29,7 @@ Custom providers for Silent Data, compatible with ethers.js.
 ## Prerequisites
 
 - Node.js (version 18 or higher)
-- npm
+- pnpm
 - Basic knowledge of Ethereum and smart contracts
 - Ethers.js v6
 
@@ -37,7 +40,7 @@ Custom providers for Silent Data, compatible with ethers.js.
 #### Installing Basic Usage Dependencies
 
 ```bash
-npm install @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-ethers-provider ethers@6
+pnpm add @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-ethers-provider ethers@6
 ```
 
 #### Basic Usage Example
@@ -67,7 +70,7 @@ console.log(balance)
 #### Installing Usage with a Contract Dependencies
 
 ```bash
-npm install @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-ethers-provider ethers@6
+pnpm add @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-ethers-provider ethers@6
 ```
 
 #### Usage with a Contract Example
@@ -215,6 +218,66 @@ for (const log of privateEvents) {
   }
 }
 ```
+
+### Smart Account Support
+
+#### Smart Account Overview
+
+Silent Data Rollup supports smart accounts (smart wallet contracts) that implement [EIP-1271](https://eips.ethereum.org/EIPS/eip-1271) for signature verification. When using a smart account, you provide the `smartWalletAddress` in the provider configuration, and the provider automatically handles signature verification through the smart contract.
+
+**Key features:**
+
+- **EIP-1271 Compatibility**: Your smart account contract must implement the `isValidSignature(bytes32 hash, bytes signature)` function
+- **Automatic Hash Signing**: When `smartWalletAddress` is provided, the provider signs the hash of messages for proper EIP-1271 verification
+- **Flexible Signer Support**: Works with any signer implementation, including passkey signers, browser wallets, and more
+
+#### Smart Account Example
+
+This example shows how to use the provider with a passkey signer and smart account. For a complete passkey implementation, see the [Giano repository](https://github.com/appliedblockchain/giano).
+
+```typescript
+import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
+import { NetworkName } from '@appliedblockchain/silentdatarollup-core'
+// Example: Using Giano passkey signer
+// See https://github.com/appliedblockchain/giano for full implementation
+import { GianoSigner } from '@appliedblockchain/giano-client'
+
+// Initialize your Giano passkey signer
+const gianoSigner = await GianoSigner.create({
+  // Passkey configuration
+})
+
+// Configure provider with smart account
+const providerConfig = {
+  rpcUrl: 'SILENT_DATA_ROLLUP_RPC_URL',
+  network: NetworkName.TESTNET,
+  signer: gianoSigner,
+  // Provide your EIP-1271 compatible smart account address
+  smartWalletAddress: '0xYOUR_SMART_ACCOUNT_ADDRESS',
+}
+
+const provider = new SilentDataRollupProvider(providerConfig)
+
+// Use the provider as normal
+// All signatures will be verified via your smart account's EIP-1271 implementation
+const balance = await provider.getBalance('YOUR_ADDRESS')
+console.log(balance)
+
+// Works with contracts too
+const contractConfig = {
+  contractAddress: 'YOUR_CONTRACT_ADDRESS',
+  abi: [
+    /* Your contract ABI */
+  ],
+  runner: provider,
+  methodsToSign: ['privateMethod'],
+}
+
+const contract = new SilentDataRollupContract(contractConfig)
+const result = await contract.privateMethod('param')
+```
+
+**Note**: Your smart account contract must implement EIP-1271's `isValidSignature` function to verify signatures. The provider will automatically sign message hashes when `smartWalletAddress` is configured, ensuring compatibility with the EIP-1271 standard.
 
 ## License
 

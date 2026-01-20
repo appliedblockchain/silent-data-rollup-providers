@@ -13,7 +13,7 @@ This repository demonstrates how to interact with the Silent Data using Node.js 
 ## Prerequisites
 
 - Node.js (v18 or higher)
-- npm
+- pnpm
 - Access to a Silent Data RPC endpoint
 
 ## Installation
@@ -28,7 +28,7 @@ This repository demonstrates how to interact with the Silent Data using Node.js 
 2. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
@@ -47,11 +47,11 @@ This repository demonstrates how to interact with the Silent Data using Node.js 
 To run the example, use the following command:
 
 ```bash
-npm run get-balance
+pnpm get-balance
 ```
 
 or
 
 ```bash
-npm run transfer-balance
+pnpm transfer-balance
 ```
