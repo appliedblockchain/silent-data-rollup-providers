@@ -59,5 +59,11 @@ pnpm get-balance
 or
 
 ```bash
+pnpm get-transactions-by-address
+```
+
+or
+
+```bash
 pnpm transfer-balance
 ```

@@ -4,3 +4,4 @@ node_modules
 wip
 .env
 tsconfig.tsbuildinfo
+**/*.key

@@ -7,7 +7,8 @@
     { "path": "packages/ethers-provider-fireblocks" },
     { "path": "packages/hardhat-plugin" },
     { "path": "packages/hardhat-plugin-fireblocks" },
-    { "path": "packages/viem" }
+    { "path": "packages/viem" },
+    { "path": "packages/viem-fireblocks" }
   ],
   "exclude": ["**/dist/**", "**/node_modules/**"],
   "compilerOptions": {
@@ -29,7 +30,10 @@
       "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks": [
         "packages/hardhat-plugin-fireblocks/src"
       ],
-      "@appliedblockchain/silentdatarollup-viem": ["packages/viem/src"]
+      "@appliedblockchain/silentdatarollup-viem": ["packages/viem/src"],
+      "@appliedblockchain/silentdatarollup-viem-fireblocks": [
+        "packages/viem-fireblocks/src"
+      ]
     }
   }
 }

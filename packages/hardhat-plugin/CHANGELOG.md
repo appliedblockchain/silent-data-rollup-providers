@@ -1,5 +1,18 @@
 # @appliedblockchain/silentdatarollup-hardhat-plugin
 
+## 1.0.10
+
+### Patch Changes
+
+- Package viem-fireblocks added
+- SD methods added
+- Validate TDX attestation added
+- Deploy using hardhat-plugin-fireblocks package fixed
+- Fixed vulnerabilities
+- Examples added
+- Updated dependencies
+  - @appliedblockchain/silentdatarollup-core@1.0.10
+
 ## 1.0.9
 
 ### Patch Changes

@@ -57,7 +57,6 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
     const payload = {
       jsonrpc: '2.0',
       ...args,
-      id: Math.floor(Math.random() * 10000000000),
     }
 
     if (args.method === 'eth_sendTransaction') {
@@ -90,7 +89,9 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
     callback: (error: any, result?: any) => void,
   ): void {
     log('Provider .sendAsync() method called:', payload.method)
-    this.request(payload).then(callback).catch(callback)
+    this.request(payload)
+      .then((result) => callback(null, result))
+      .catch((error) => callback(error))
   }
 
   private setupInterceptor(provider: EIP1193Provider): void {
@@ -102,8 +103,6 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
       callback: (error: any, response: any) => void,
     ) => {
       ;(async () => {
-        const requiresAuthHeaders = SIGN_RPC_METHODS.includes(payload.method)
-
         if (payload.method === 'eth_sendTransaction') {
           try {
             const result = await this.sendTransaction(payload)
@@ -114,15 +113,23 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
           return
         }
 
-        log('Intercepted send method:', JSON.stringify(payload, null, 2))
+        // Ensure request id consistent between signature and request
+        const requestId = payload.id ?? Math.floor(Math.random() * 10000000000)
+        const modifiedPayload = { ...payload, id: requestId }
 
+        log(
+          'Intercepted send method:',
+          JSON.stringify(modifiedPayload, null, 2),
+        )
+
+        const requiresAuthHeaders = SIGN_RPC_METHODS.includes(payload.method)
         if (requiresAuthHeaders) {
           log('Request requires auth headers')
           const clonedEthereum = new FireblocksWeb3Provider(
             (provider as any).config,
           )
 
-          const authHeaders = await this.getAuthHeaders(payload)
+          const authHeaders = await this.getAuthHeaders(modifiedPayload)
           const allHeaders = []
           for (const [key, value] of Object.entries(authHeaders)) {
             allHeaders.push({ name: key, value: value })
@@ -131,11 +138,14 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
           ;(clonedEthereum as any).headers = allHeaders
           log('Auth headers set for cloned FireblocksWeb3Provider provider')
 
-          return originalSend.call(clonedEthereum, payload, callback)
+          return originalSend.call(clonedEthereum, modifiedPayload, callback)
         }
 
-        const result = await originalSend.call(provider, payload, callback)
-        return result
+        const wrappedCallback = (error: any, response: any) => {
+          callback(error, response)
+        }
+
+        return originalSend.call(provider, modifiedPayload, wrappedCallback)
       })()
     }
   }
@@ -183,13 +193,6 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
     [HEADER_EIP712_SIGNATURE]?: string
   }> {
     log('Getting auth headers for method:', JSON.stringify(payload, null, 2))
-    const requestId = (this._wrappedProvider as any)._provider._wrappedProvider
-      ._wrappedProvider._wrappedProvider._nextRequestId
-    const rpcRequest = {
-      jsonrpc: '2.0',
-      ...payload,
-      id: requestId,
-    }
     const xTimestamp = new Date().toISOString()
     const headers: {
       [HEADER_TIMESTAMP]: string
@@ -208,7 +211,7 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
         // eslint-disable-next-line no-case-declarations
         const preparedMessage = this.baseProvider.prepareMessage(
           chainId.toString(),
-          rpcRequest,
+          payload,
           xTimestamp,
         )
         content = hashMessage(preparedMessage).slice(2)
@@ -360,21 +363,28 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
   }
 
   private async estimateGasLimit(txParams: any): Promise<number> {
-    const gasLimitHex = (await this._wrappedProvider.request({
-      method: 'eth_estimateGas',
-      params: [txParams],
-    })) as string
+    // send method used because this call needs auth headers
+    const gasLimitHex = (await this.send('eth_estimateGas', [
+      txParams,
+    ])) as string
     return parseInt(gasLimitHex, 16)
+  }
+
+  private async getTransactionReceipt(
+    txHash: string,
+  ): Promise<TransactionReceipt | null> {
+    // send method used because this call needs auth headers
+    const receipt = (await this.send('eth_getTransactionReceipt', [
+      txHash,
+    ])) as TransactionReceipt | null
+    return receipt
   }
 
   private async waitForTransaction(
     txHash: string,
   ): Promise<TransactionReceipt> {
     for (let i = 0; i < this.maxRetries; i++) {
-      const receipt = (await this._wrappedProvider.request({
-        method: 'eth_getTransactionReceipt',
-        params: [txHash],
-      })) as TransactionReceipt | null
+      const receipt = await this.getTransactionReceipt(txHash)
 
       if (receipt) {
         log('Transaction mined, receipt:', JSON.stringify(receipt, null, 2))

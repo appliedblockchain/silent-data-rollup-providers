@@ -72,7 +72,7 @@ const main = async () => {
     await tokenContract.balanceOf(randomWallet.address)
   } catch {
     console.error(
-      "❌ Ups... I can't get the random wallet token balance. The balanceOf method is protected, only for the owner of the address can query it.",
+      "❌ Ups... I can't get the random wallet token balance. The balanceOf method is protected, only the owner of the address can query it.",
     )
   }
 

@@ -5,12 +5,14 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
+  '@isaacs/brace-expansion': 5.0.1
   cookie: 0.7.0
   diff: 8.0.3
   glob: 10.5.0
   h3: 1.15.5
-  hono: 4.11.4
+  hono: 4.11.7
   jws: 3.2.3
+  lodash: 4.17.23
   preact: 10.27.3
   qs: 6.14.1
   tmp: 0.2.4
@@ -87,6 +89,31 @@ importers:
       typescript:
         specifier: 5.8.2
         version: 5.8.2
+
+  examples/ethers-provider-fireblocks-nodejs:
+    dependencies:
+      '@appliedblockchain/silentdatarollup-core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@appliedblockchain/silentdatarollup-ethers-provider-fireblocks':
+        specifier: workspace:*
+        version: link:../../packages/ethers-provider-fireblocks
+      '@fireblocks/fireblocks-web3-provider':
+        specifier: 1.3.8
+        version: 1.3.8(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      dotenv:
+        specifier: 16.4.5
+        version: 16.4.5
+      ethers:
+        specifier: 6.13.2
+        version: 6.13.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+    devDependencies:
+      ts-node:
+        specifier: 10.9.2
+        version: 10.9.2(@types/node@24.10.1)(typescript@5.7.3)
+      typescript:
+        specifier: 5.7.3
+        version: 5.7.3
 
   examples/ethers-provider-metamask:
     dependencies:
@@ -247,9 +274,15 @@ importers:
 
   examples/hardhat-plugin-fireblocks:
     dependencies:
+      '@appliedblockchain/silentdatarollup-core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks':
         specifier: workspace:*
         version: link:../../packages/hardhat-plugin-fireblocks
+      '@fireblocks/fireblocks-web3-provider':
+        specifier: 1.3.8
+        version: 1.3.8(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@nomicfoundation/hardhat-ignition':
         specifier: 0.15.9
         version: 0.15.9(@nomicfoundation/hardhat-verify@2.1.3(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.6.3))(typescript@5.6.3)(utf-8-validate@5.0.10)))(bufferutil@4.0.9)(hardhat@2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.6.3))(typescript@5.6.3)(utf-8-validate@5.0.10))(utf-8-validate@5.0.10)
@@ -275,6 +308,37 @@ importers:
       typescript:
         specifier: 5.6.3
         version: 5.6.3
+
+  examples/viem-fireblocks-nodejs:
+    dependencies:
+      '@appliedblockchain/silentdatarollup-core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@appliedblockchain/silentdatarollup-ethers-provider-fireblocks':
+        specifier: workspace:*
+        version: link:../../packages/ethers-provider-fireblocks
+      '@appliedblockchain/silentdatarollup-viem-fireblocks':
+        specifier: workspace:*
+        version: link:../../packages/viem-fireblocks
+      '@fireblocks/fireblocks-web3-provider':
+        specifier: 1.3.8
+        version: 1.3.8(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      dotenv:
+        specifier: 16.4.5
+        version: 16.4.5
+      ethers:
+        specifier: 6.13.2
+        version: 6.13.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      viem:
+        specifier: 2.31.4
+        version: 2.31.4(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+    devDependencies:
+      ts-node:
+        specifier: 10.9.2
+        version: 10.9.2(@types/node@24.10.1)(typescript@5.6.2)
+      typescript:
+        specifier: 5.6.2
+        version: 5.6.2
 
   examples/viem-metamask:
     dependencies:
@@ -339,6 +403,12 @@ importers:
 
   examples/viem-nodejs:
     dependencies:
+      '@appliedblockchain/silentdatarollup-core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@appliedblockchain/silentdatarollup-ethers-provider':
+        specifier: workspace:*
+        version: link:../../packages/ethers-provider
       '@appliedblockchain/silentdatarollup-viem':
         specifier: workspace:*
         version: link:../../packages/viem
@@ -347,17 +417,23 @@ importers:
         version: 16.4.5
       viem:
         specifier: 2.31.4
-        version: 2.31.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+        version: 2.31.4(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)
     devDependencies:
       ts-node:
         specifier: 10.9.2
-        version: 10.9.2(@types/node@24.10.1)(typescript@5.7.3)
+        version: 10.9.2(@types/node@24.10.1)(typescript@5.6.2)
       typescript:
-        specifier: 5.7.3
-        version: 5.7.3
+        specifier: 5.6.2
+        version: 5.6.2
 
   packages/core:
     dependencies:
+      '@peculiar/x509':
+        specifier: 1.14.2
+        version: 1.14.2
+      asn1js:
+        specifier: 3.0.7
+        version: 3.0.7
       debug:
         specifier: 4.3.7
         version: 4.3.7(supports-color@8.1.1)
@@ -413,7 +489,7 @@ importers:
         version: 9.1.2
       hardhat:
         specifier: ^0.0.7
-        version: 0.0.7(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.21)
+        version: 0.0.7(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.23)
       nodemon:
         specifier: 3.0.1
         version: 3.0.1
@@ -556,6 +632,28 @@ importers:
       '@appliedblockchain/silentdatarollup-ethers-provider':
         specifier: workspace:*
         version: link:../ethers-provider
+      viem:
+        specifier: 2.31.4
+        version: 2.31.4(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+    devDependencies:
+      '@types/node':
+        specifier: 24.10.1
+        version: 24.10.1
+      ts-node:
+        specifier: 10.9.2
+        version: 10.9.2(@types/node@24.10.1)(typescript@5.6.2)
+      typescript:
+        specifier: 5.6.2
+        version: 5.6.2
+
+  packages/viem-fireblocks:
+    dependencies:
+      '@appliedblockchain/silentdatarollup-ethers-provider-fireblocks':
+        specifier: workspace:*
+        version: link:../ethers-provider-fireblocks
+      '@fireblocks/fireblocks-web3-provider':
+        specifier: 1.3.8
+        version: 1.3.8(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       viem:
         specifier: 2.31.4
         version: 2.31.4(bufferutil@4.0.9)(typescript@5.6.2)(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -1260,8 +1358,8 @@ packages:
     resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
     engines: {node: 20 || >=22}
 
-  '@isaacs/brace-expansion@5.0.0':
-    resolution: {integrity: sha512-ZT55BDLV0yv0RBm2czMiZ+SqCGO7AvmOM3G/w2xhVPH+te0aKgFjmBvGlL1dH+ql2tgGO3MVrbb3jCKyvpgnxA==}
+  '@isaacs/brace-expansion@5.0.1':
+    resolution: {integrity: sha512-WMz71T1JS624nWj2n2fnYAuPovhv7EUhk69R6i9dsVyzxt5eM3bjwvgk9L+APE1TRscGysAVMANkB0jh0LQZrQ==}
     engines: {node: 20 || >=22}
 
   '@isaacs/cliui@8.0.2':
@@ -1738,6 +1836,40 @@ packages:
     resolution: {integrity: sha512-IHnV6A+zxU7XwmKFinmYjUcwlyK9+xkG3/s9KcQhI9BjQKycrJ1JRO+FbNYPwZiPKW3je/DR0k7w8/gLa5eaxQ==}
     deprecated: 'The package is now available as "qr": npm install qr'
 
+  '@peculiar/asn1-cms@2.6.0':
+    resolution: {integrity: sha512-2uZqP+ggSncESeUF/9Su8rWqGclEfEiz1SyU02WX5fUONFfkjzS2Z/F1Li0ofSmf4JqYXIOdCAZqIXAIBAT1OA==}
+
+  '@peculiar/asn1-csr@2.6.0':
+    resolution: {integrity: sha512-BeWIu5VpTIhfRysfEp73SGbwjjoLL/JWXhJ/9mo4vXnz3tRGm+NGm3KNcRzQ9VMVqwYS2RHlolz21svzRXIHPQ==}
+
+  '@peculiar/asn1-ecc@2.6.0':
+    resolution: {integrity: sha512-FF3LMGq6SfAOwUG2sKpPXblibn6XnEIKa+SryvUl5Pik+WR9rmRA3OCiwz8R3lVXnYnyRkSZsSLdml8H3UiOcw==}
+
+  '@peculiar/asn1-pfx@2.6.0':
+    resolution: {integrity: sha512-rtUvtf+tyKGgokHHmZzeUojRZJYPxoD/jaN1+VAB4kKR7tXrnDCA/RAWXAIhMJJC+7W27IIRGe9djvxKgsldCQ==}
+
+  '@peculiar/asn1-pkcs8@2.6.0':
+    resolution: {integrity: sha512-KyQ4D8G/NrS7Fw3XCJrngxmjwO/3htnA0lL9gDICvEQ+GJ+EPFqldcJQTwPIdvx98Tua+WjkdKHSC0/Km7T+lA==}
+
+  '@peculiar/asn1-pkcs9@2.6.0':
+    resolution: {integrity: sha512-b78OQ6OciW0aqZxdzliXGYHASeCvvw5caqidbpQRYW2mBtXIX2WhofNXTEe7NyxTb0P6J62kAAWLwn0HuMF1Fw==}
+
+  '@peculiar/asn1-rsa@2.6.0':
+    resolution: {integrity: sha512-Nu4C19tsrTsCp9fDrH+sdcOKoVfdfoQQ7S3VqjJU6vedR7tY3RLkQ5oguOIB3zFW33USDUuYZnPEQYySlgha4w==}
+
+  '@peculiar/asn1-schema@2.6.0':
+    resolution: {integrity: sha512-xNLYLBFTBKkCzEZIw842BxytQQATQv+lDTCEMZ8C196iJcJJMBUZxrhSTxLaohMyKK8QlzRNTRkUmanucnDSqg==}
+
+  '@peculiar/asn1-x509-attr@2.6.0':
+    resolution: {integrity: sha512-MuIAXFX3/dc8gmoZBkwJWxUWOSvG4MMDntXhrOZpJVMkYX+MYc/rUAU2uJOved9iJEoiUx7//3D8oG83a78UJA==}
+
+  '@peculiar/asn1-x509@2.6.0':
+    resolution: {integrity: sha512-uzYbPEpoQiBoTq0/+jZtpM6Gq6zADBx+JNFP3yqRgziWBxQ/Dt/HcuvRfm9zJTPdRcBqPNdaRHTVwpyiq6iNMA==}
+
+  '@peculiar/x509@1.14.2':
+    resolution: {integrity: sha512-r2w1Hg6pODDs0zfAKHkSS5HLkOLSeburtcgwvlLLWWCixw+MmW3U6kD5ddyvc2Y2YdbGuVwCF2S2ASoU1cFAag==}
+    engines: {node: '>=22.0.0'}
+
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -1808,67 +1940,56 @@ packages:
     resolution: {integrity: sha512-k9oD15soC/Ln6d2Wv/JOFPzZXIAIFLp6B+i14KhxAfnq76ajt0EhYc5YPeX6W1xJkAdItcVT+JhKl1QZh44/qw==}
     cpu: [arm]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-arm-musleabihf@4.53.3':
     resolution: {integrity: sha512-vTNlKq+N6CK/8UktsrFuc+/7NlEYVxgaEgRXVUVK258Z5ymho29skzW1sutgYjqNnquGwVUObAaxae8rZ6YMhg==}
     cpu: [arm]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-arm64-gnu@4.53.3':
     resolution: {integrity: sha512-RGrFLWgMhSxRs/EWJMIFM1O5Mzuz3Xy3/mnxJp/5cVhZ2XoCAxJnmNsEyeMJtpK+wu0FJFWz+QF4mjCA7AUQ3w==}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-arm64-musl@4.53.3':
     resolution: {integrity: sha512-kASyvfBEWYPEwe0Qv4nfu6pNkITLTb32p4yTgzFCocHnJLAHs+9LjUu9ONIhvfT/5lv4YS5muBHyuV84epBo/A==}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-loong64-gnu@4.53.3':
     resolution: {integrity: sha512-JiuKcp2teLJwQ7vkJ95EwESWkNRFJD7TQgYmCnrPtlu50b4XvT5MOmurWNrCj3IFdyjBQ5p9vnrX4JM6I8OE7g==}
     cpu: [loong64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-ppc64-gnu@4.53.3':
     resolution: {integrity: sha512-EoGSa8nd6d3T7zLuqdojxC20oBfNT8nexBbB/rkxgKj5T5vhpAQKKnD+h3UkoMuTyXkP5jTjK/ccNRmQrPNDuw==}
     cpu: [ppc64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-gnu@4.53.3':
     resolution: {integrity: sha512-4s+Wped2IHXHPnAEbIB0YWBv7SDohqxobiiPA1FIWZpX+w9o2i4LezzH/NkFUl8LRci/8udci6cLq+jJQlh+0g==}
     cpu: [riscv64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-musl@4.53.3':
     resolution: {integrity: sha512-68k2g7+0vs2u9CxDt5ktXTngsxOQkSEV/xBbwlqYcUrAVh6P9EgMZvFsnHy4SEiUl46Xf0IObWVbMvPrr2gw8A==}
     cpu: [riscv64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-linux-s390x-gnu@4.53.3':
     resolution: {integrity: sha512-VYsFMpULAz87ZW6BVYw3I6sWesGpsP9OPcyKe8ofdg9LHxSbRMd7zrVrr5xi/3kMZtpWL/wC+UIJWJYVX5uTKg==}
     cpu: [s390x]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-x64-gnu@4.53.3':
     resolution: {integrity: sha512-3EhFi1FU6YL8HTUJZ51imGJWEX//ajQPfqWLI3BQq4TlvHy4X0MOr5q3D2Zof/ka0d5FNdPwZXm3Yyib/UEd+w==}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@rollup/rollup-linux-x64-musl@4.53.3':
     resolution: {integrity: sha512-eoROhjcc6HbZCJr+tvVT8X4fW3/5g/WkGvvmwz/88sDtSJzO7r/blvoBDgISDiCjDRZmHpwud7h+6Q9JxFwq1Q==}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@rollup/rollup-openharmony-arm64@4.53.3':
     resolution: {integrity: sha512-OueLAWgrNSPGAdUdIjSWXw+u/02BRTcnfw9PN41D2vq/JSEPnJnVuBgw18VkN8wcd4fjUs+jFHVM4t9+kBSNLw==}
@@ -2882,6 +3003,10 @@ packages:
   asap@2.0.6:
     resolution: {integrity: sha512-BSHWgDSAiKs50o2Re8ppvp3seVHXSRM44cdSsT9FfNEUUZLOGWVCsiWaRPWM1Znn+mqZ1OfVZ3z3DWEzSp7hRA==}
 
+  asn1js@3.0.7:
+    resolution: {integrity: sha512-uLvq6KJu04qoQM6gvBfKFjlh6Gl0vOKQuR5cJMDHQkmwfMOQeN3F3SHCv9SNYSL+CRoHvOGFfllDlVz03GQjvQ==}
+    engines: {node: '>=12.0.0'}
+
   assertion-error@1.1.0:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
 
@@ -3331,7 +3456,7 @@ packages:
       just: ^0.1.8
       liquid-node: ^3.0.1
       liquor: ^0.0.5
-      lodash: ^4.17.20
+      lodash: 4.17.23
       marko: ^3.14.4
       mote: ^0.2.0
       mustache: ^3.0.0
@@ -4376,8 +4501,8 @@ packages:
   hmac-drbg@1.0.1:
     resolution: {integrity: sha512-Tti3gMqLdZfhOQY1Mzf/AanLiqh1WTiJgEj26ZuYQ9fbkLomzGchCws4FyrSd4VkpBfiNhaE1On+lOz894jvXg==}
 
-  hono@4.11.4:
-    resolution: {integrity: sha512-U7tt8JsyrxSRKspfhtLET79pU8K+tInj5QZXs1jSugO1Vq5dFj3kmZsRldo29mTBfcjDRVRXrEZ6LS63Cog9ZA==}
+  hono@4.11.7:
+    resolution: {integrity: sha512-l7qMiNee7t82bH3SeyUCt9UF15EVmaBvsppY2zQtrbIhl/yzBTny+YUxsVjSjQ6gaqaeVtZmGocom8TzBlA4Yw==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@2.0.2:
@@ -4937,8 +5062,8 @@ packages:
   lodash.truncate@4.4.2:
     resolution: {integrity: sha512-jttmRe7bRse52OsWIMDLaXxWqRAmtIUccAQ3garviCqJjafXOfNMO0yMfNpdD6zbGaTU0P5Nz7e7gAT6cKmJRw==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-symbols@4.1.0:
     resolution: {integrity: sha512-8XPvpAA8uyhfteu8pIvQxpJZ7SYYdpUivZpGy6sFsBuKRY/7rQGavedeB8aK+Zkyq6upMFVL/9AW6vOYzfRyLg==}
@@ -5586,6 +5711,13 @@ packages:
   pure-rand@6.1.0:
     resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
 
+  pvtsutils@1.3.6:
+    resolution: {integrity: sha512-PLgQXQ6H2FWCaeRak8vvk1GW462lMxB5s3Jm673N82zI4vqtVUPuZdffdZbPDFRoU8kAhItWFtPCWiPpp4/EDg==}
+
+  pvutils@1.1.5:
+    resolution: {integrity: sha512-KTqnxsgGiQ6ZAzZCVlJH5eOjSnvlyEgx1m8bkRJfOhmGRqfo5KLvmAlACQkrjEtOQ4B7wF9TdSLIs9O90MX9xA==}
+    engines: {node: '>=16.0.0'}
+
   qrcode@1.5.3:
     resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
     engines: {node: '>=10.13.0'}
@@ -5672,6 +5804,9 @@ packages:
   reduce-flatten@2.0.0:
     resolution: {integrity: sha512-EJ4UNY/U1t2P/2k6oqotuX2Cc3T6nxJwsM0N0asT7dhrtH1ltUxDn4NalSYmPE2rCkVpcf/X6R0wDwcFpzhd4w==}
     engines: {node: '>=6'}
+
+  reflect-metadata@0.2.2:
+    resolution: {integrity: sha512-urBwgfrvVP/eAyXx4hluJivBKzuEbSQs9rKWCrCkbSxNv8mxPcUZKeuoF3Uy4mJl3Lwprp6yy5/39VWigZ4K6Q==}
 
   req-cwd@2.0.0:
     resolution: {integrity: sha512-ueoIoLo1OfB6b05COxAA9UpeoscNpYyM+BqYlA7H6LVF4hKGPXQQSSaD2YmvDVJMkk4UDpAHIeU1zG53IqjvlQ==}
@@ -6244,6 +6379,10 @@ packages:
         optional: true
       typescript:
         optional: true
+
+  tsyringe@4.10.0:
+    resolution: {integrity: sha512-axr3IdNuVIxnaK5XGEUFTu3YmAQ6lllgrvqfEoR16g/HGnYY/6We4oWENtAnzK6/LpJ2ur9PAb80RBt7/U4ugw==}
+    engines: {node: '>= 6.0.0'}
 
   tweetnacl-util@0.15.1:
     resolution: {integrity: sha512-RKJBIj8lySrShN4w6i/BonWp2Z/uxwC3h4y7xsRrpP59ZboCd0GpEVsOnMDYLMmKBpYhb5TgHzZXy7wTfYFBRw==}
@@ -7812,7 +7951,7 @@ snapshots:
 
   '@isaacs/balanced-match@4.0.1': {}
 
-  '@isaacs/brace-expansion@5.0.0':
+  '@isaacs/brace-expansion@5.0.1':
     dependencies:
       '@isaacs/balanced-match': 4.0.1
 
@@ -8195,7 +8334,7 @@ snapshots:
       '@types/debug': 4.1.12
       '@types/lodash': 4.17.21
       debug: 4.3.7(supports-color@8.1.1)
-      lodash: 4.17.21
+      lodash: 4.17.23
       pony-cause: 2.1.11
       semver: 7.7.3
       uuid: 9.0.1
@@ -8558,7 +8697,7 @@ snapshots:
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       fs-extra: 10.1.0
       immer: 10.0.2
-      lodash: 4.17.21
+      lodash: 4.17.23
       ndjson: 2.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -8611,7 +8750,7 @@ snapshots:
       debug: 4.3.7(supports-color@8.1.1)
       did-jwt: 7.4.7
       dotenv: 16.4.7
-      lodash: 4.17.21
+      lodash: 4.17.23
       multibase: 4.0.6
       multicodec: 3.2.1
       node-fetch: 3.3.2
@@ -8623,6 +8762,96 @@ snapshots:
   '@openzeppelin/contracts@5.1.0': {}
 
   '@paulmillr/qr@0.2.1': {}
+
+  '@peculiar/asn1-cms@2.6.0':
+    dependencies:
+      '@peculiar/asn1-schema': 2.6.0
+      '@peculiar/asn1-x509': 2.6.0
+      '@peculiar/asn1-x509-attr': 2.6.0
+      asn1js: 3.0.7
+      tslib: 2.8.1
+
+  '@peculiar/asn1-csr@2.6.0':
+    dependencies:
+      '@peculiar/asn1-schema': 2.6.0
+      '@peculiar/asn1-x509': 2.6.0
+      asn1js: 3.0.7
+      tslib: 2.8.1
+
+  '@peculiar/asn1-ecc@2.6.0':
+    dependencies:
+      '@peculiar/asn1-schema': 2.6.0
+      '@peculiar/asn1-x509': 2.6.0
+      asn1js: 3.0.7
+      tslib: 2.8.1
+
+  '@peculiar/asn1-pfx@2.6.0':
+    dependencies:
+      '@peculiar/asn1-cms': 2.6.0
+      '@peculiar/asn1-pkcs8': 2.6.0
+      '@peculiar/asn1-rsa': 2.6.0
+      '@peculiar/asn1-schema': 2.6.0
+      asn1js: 3.0.7
+      tslib: 2.8.1
+
+  '@peculiar/asn1-pkcs8@2.6.0':
+    dependencies:
+      '@peculiar/asn1-schema': 2.6.0
+      '@peculiar/asn1-x509': 2.6.0
+      asn1js: 3.0.7
+      tslib: 2.8.1
+
+  '@peculiar/asn1-pkcs9@2.6.0':
+    dependencies:
+      '@peculiar/asn1-cms': 2.6.0
+      '@peculiar/asn1-pfx': 2.6.0
+      '@peculiar/asn1-pkcs8': 2.6.0
+      '@peculiar/asn1-schema': 2.6.0
+      '@peculiar/asn1-x509': 2.6.0
+      '@peculiar/asn1-x509-attr': 2.6.0
+      asn1js: 3.0.7
+      tslib: 2.8.1
+
+  '@peculiar/asn1-rsa@2.6.0':
+    dependencies:
+      '@peculiar/asn1-schema': 2.6.0
+      '@peculiar/asn1-x509': 2.6.0
+      asn1js: 3.0.7
+      tslib: 2.8.1
+
+  '@peculiar/asn1-schema@2.6.0':
+    dependencies:
+      asn1js: 3.0.7
+      pvtsutils: 1.3.6
+      tslib: 2.8.1
+
+  '@peculiar/asn1-x509-attr@2.6.0':
+    dependencies:
+      '@peculiar/asn1-schema': 2.6.0
+      '@peculiar/asn1-x509': 2.6.0
+      asn1js: 3.0.7
+      tslib: 2.8.1
+
+  '@peculiar/asn1-x509@2.6.0':
+    dependencies:
+      '@peculiar/asn1-schema': 2.6.0
+      asn1js: 3.0.7
+      pvtsutils: 1.3.6
+      tslib: 2.8.1
+
+  '@peculiar/x509@1.14.2':
+    dependencies:
+      '@peculiar/asn1-cms': 2.6.0
+      '@peculiar/asn1-csr': 2.6.0
+      '@peculiar/asn1-ecc': 2.6.0
+      '@peculiar/asn1-pkcs9': 2.6.0
+      '@peculiar/asn1-rsa': 2.6.0
+      '@peculiar/asn1-schema': 2.6.0
+      '@peculiar/asn1-x509': 2.6.0
+      pvtsutils: 1.3.6
+      reflect-metadata: 0.2.2
+      tslib: 2.8.1
+      tsyringe: 4.10.0
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -9002,7 +9231,7 @@ snapshots:
 
   '@scure/bip32@1.7.0':
     dependencies:
-      '@noble/curves': 1.9.2
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
 
@@ -9560,7 +9789,7 @@ snapshots:
   '@typechain/ethers-v6@0.5.1(ethers@6.13.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))(typechain@8.3.2(typescript@5.6.2))(typescript@5.6.2)':
     dependencies:
       ethers: 6.13.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      lodash: 4.17.21
+      lodash: 4.17.23
       ts-essentials: 7.0.3(typescript@5.6.2)
       typechain: 8.3.2(typescript@5.6.2)
       typescript: 5.6.2
@@ -9568,7 +9797,7 @@ snapshots:
   '@typechain/ethers-v6@0.5.1(ethers@6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(typechain@8.3.2(typescript@5.6.3))(typescript@5.6.3)':
     dependencies:
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      lodash: 4.17.21
+      lodash: 4.17.23
       ts-essentials: 7.0.3(typescript@5.6.3)
       typechain: 8.3.2(typescript@5.6.3)
       typescript: 5.6.3
@@ -10572,11 +10801,6 @@ snapshots:
       typescript: 5.6.2
       zod: 3.25.76
 
-  abitype@1.0.8(typescript@5.7.3)(zod@3.25.76):
-    optionalDependencies:
-      typescript: 5.7.3
-      zod: 3.25.76
-
   abitype@1.0.8(typescript@5.8.3)(zod@4.1.12):
     optionalDependencies:
       typescript: 5.8.3
@@ -10596,6 +10820,21 @@ snapshots:
     optionalDependencies:
       typescript: 5.8.3
       zod: 4.1.12
+
+  abitype@1.2.0(typescript@5.6.2)(zod@3.25.76):
+    optionalDependencies:
+      typescript: 5.6.2
+      zod: 3.25.76
+
+  abitype@1.2.0(typescript@5.8.3)(zod@3.22.4):
+    optionalDependencies:
+      typescript: 5.8.3
+      zod: 3.22.4
+
+  abitype@1.2.0(typescript@5.8.3)(zod@3.25.76):
+    optionalDependencies:
+      typescript: 5.8.3
+      zod: 3.25.76
 
   abitype@1.2.0(typescript@5.8.3)(zod@4.1.12):
     optionalDependencies:
@@ -10721,6 +10960,12 @@ snapshots:
   array-uniq@1.0.3: {}
 
   asap@2.0.6: {}
+
+  asn1js@3.0.7:
+    dependencies:
+      pvtsutils: 1.3.6
+      pvutils: 1.1.5
+      tslib: 2.8.1
 
   assertion-error@1.1.0: {}
 
@@ -11203,7 +11448,7 @@ snapshots:
   concurrently@9.1.2:
     dependencies:
       chalk: 4.1.2
-      lodash: 4.17.21
+      lodash: 4.17.23
       rxjs: 7.8.2
       shell-quote: 1.8.3
       supports-color: 8.1.1
@@ -11212,11 +11457,11 @@ snapshots:
 
   consola@3.4.2: {}
 
-  consolidate@0.3.1(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.21):
+  consolidate@0.3.1(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.23):
     optionalDependencies:
       ejs: 3.1.10
       handlebars: 4.7.8
-      lodash: 4.17.21
+      lodash: 4.17.23
 
   content-disposition@0.5.4:
     dependencies:
@@ -11714,7 +11959,7 @@ snapshots:
       ethereum-cryptography: 1.2.0
       ethers: 5.8.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       fs-readdir-recursive: 1.1.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       markdown-table: 1.1.3
       mocha: 10.8.2
       req-cwd: 2.0.0
@@ -12304,10 +12549,10 @@ snapshots:
       - debug
       - utf-8-validate
 
-  hardhat@0.0.7(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.21):
+  hardhat@0.0.7(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.23):
     dependencies:
       async: 0.1.22
-      consolidate: 0.3.1(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.21)
+      consolidate: 0.3.1(ejs@3.1.10)(handlebars@4.7.8)(lodash@4.17.23)
       dive: 0.2.0
       fs-extra: 0.1.3
       mkdirp: 0.3.5
@@ -12397,7 +12642,7 @@ snapshots:
       immutable: 4.3.7
       io-ts: 1.10.4
       keccak: 3.0.4
-      lodash: 4.17.21
+      lodash: 4.17.23
       mnemonist: 0.38.5
       mocha: 10.8.2
       p-map: 4.0.0
@@ -12450,7 +12695,7 @@ snapshots:
       io-ts: 1.10.4
       json-stream-stringify: 3.1.6
       keccak: 3.0.4
-      lodash: 4.17.21
+      lodash: 4.17.23
       mnemonist: 0.38.5
       mocha: 10.8.2
       p-map: 4.0.0
@@ -12505,7 +12750,7 @@ snapshots:
       io-ts: 1.10.4
       json-stream-stringify: 3.1.6
       keccak: 3.0.4
-      lodash: 4.17.21
+      lodash: 4.17.23
       mnemonist: 0.38.5
       mocha: 10.8.2
       p-map: 4.0.0
@@ -12560,7 +12805,7 @@ snapshots:
       io-ts: 1.10.4
       json-stream-stringify: 3.1.6
       keccak: 3.0.4
-      lodash: 4.17.21
+      lodash: 4.17.23
       mnemonist: 0.38.5
       mocha: 10.8.2
       p-map: 4.0.0
@@ -12629,7 +12874,7 @@ snapshots:
       minimalistic-assert: 1.0.1
       minimalistic-crypto-utils: 1.0.1
 
-  hono@4.11.4: {}
+  hono@4.11.7: {}
 
   html-escaper@2.0.2: {}
 
@@ -13270,7 +13515,7 @@ snapshots:
   jsonwebtoken@9.0.0:
     dependencies:
       jws: 3.2.3
-      lodash: 4.17.21
+      lodash: 4.17.23
       ms: 2.1.3
       semver: 7.7.3
 
@@ -13366,7 +13611,7 @@ snapshots:
 
   lodash.truncate@4.4.2: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.23: {}
 
   log-symbols@4.1.0:
     dependencies:
@@ -13459,7 +13704,7 @@ snapshots:
 
   minimatch@10.1.1:
     dependencies:
-      '@isaacs/brace-expansion': 5.0.0
+      '@isaacs/brace-expansion': 5.0.1
 
   minimatch@3.1.2:
     dependencies:
@@ -13567,7 +13812,7 @@ snapshots:
 
   node-emoji@1.11.0:
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.17.23
 
   node-emoji@2.2.0:
     dependencies:
@@ -13693,7 +13938,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.8.3)(zod@4.1.12)
+      abitype: 1.2.0(typescript@5.8.3)(zod@4.1.12)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3
@@ -13718,29 +13963,14 @@ snapshots:
     dependencies:
       '@adraffy/ens-normalize': 1.11.1
       '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.2
+      '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.6.2)(zod@3.25.76)
+      abitype: 1.2.0(typescript@5.6.2)(zod@3.25.76)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.6.2
-    transitivePeerDependencies:
-      - zod
-
-  ox@0.8.1(typescript@5.7.3)(zod@3.25.76):
-    dependencies:
-      '@adraffy/ens-normalize': 1.11.1
-      '@noble/ciphers': 1.3.0
-      '@noble/curves': 1.9.2
-      '@noble/hashes': 1.8.0
-      '@scure/bip32': 1.7.0
-      '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.7.3)(zod@3.25.76)
-      eventemitter3: 5.0.1
-    optionalDependencies:
-      typescript: 5.7.3
     transitivePeerDependencies:
       - zod
 
@@ -13767,7 +13997,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.1.0(typescript@5.8.3)(zod@3.22.4)
+      abitype: 1.2.0(typescript@5.8.3)(zod@3.22.4)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3
@@ -13782,7 +14012,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.1.0(typescript@5.8.3)(zod@3.25.76)
+      abitype: 1.2.0(typescript@5.8.3)(zod@3.25.76)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3
@@ -13797,7 +14027,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.1.0(typescript@5.8.3)(zod@4.1.12)
+      abitype: 1.2.0(typescript@5.8.3)(zod@4.1.12)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3
@@ -13947,7 +14177,7 @@ snapshots:
   porto@0.2.35(@tanstack/react-query@5.90.2(react@19.1.1))(@types/react@19.1.9)(@wagmi/core@2.22.1(@tanstack/query-core@5.90.2)(@types/react@19.1.9)(immer@10.0.2)(react@19.1.1)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.1.1))(viem@2.38.6(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.1.12)))(immer@10.0.2)(react@19.1.1)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.1.1))(viem@2.38.6(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.1.12))(wagmi@2.19.2(@tanstack/query-core@5.90.2)(@tanstack/react-query@5.90.2(react@19.1.1))(@types/react@19.1.9)(bufferutil@4.0.9)(fastestsmallesttextencoderdecoder@1.0.22)(immer@10.0.2)(react@19.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.38.6(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.1.12))(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@4.1.12)):
     dependencies:
       '@wagmi/core': 2.22.1(@tanstack/query-core@5.90.2)(@types/react@19.1.9)(immer@10.0.2)(react@19.1.1)(typescript@5.8.3)(use-sync-external-store@1.4.0(react@19.1.1))(viem@2.38.6(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.1.12))
-      hono: 4.11.4
+      hono: 4.11.7
       idb-keyval: 6.2.2
       mipd: 0.0.7(typescript@5.8.3)
       ox: 0.9.14(typescript@5.8.3)(zod@4.1.12)
@@ -14026,6 +14256,12 @@ snapshots:
   punycode@2.3.1: {}
 
   pure-rand@6.1.0: {}
+
+  pvtsutils@1.3.6:
+    dependencies:
+      tslib: 2.8.1
+
+  pvutils@1.1.5: {}
 
   qrcode@1.5.3:
     dependencies:
@@ -14117,6 +14353,8 @@ snapshots:
       minimatch: 3.1.2
 
   reduce-flatten@2.0.0: {}
+
+  reflect-metadata@0.2.2: {}
 
   req-cwd@2.0.0:
     dependencies:
@@ -14431,7 +14669,7 @@ snapshots:
       globby: 10.0.2
       hardhat: 2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.6.2))(typescript@5.6.2)(utf-8-validate@5.0.10)
       jsonschema: 1.5.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       mocha: 10.8.2
       node-emoji: 1.11.0
       pify: 4.0.1
@@ -14454,7 +14692,7 @@ snapshots:
       globby: 10.0.2
       hardhat: 2.22.19(bufferutil@4.0.9)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.6.3))(typescript@5.6.3)(utf-8-validate@5.0.10)
       jsonschema: 1.5.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       mocha: 10.8.2
       node-emoji: 1.11.0
       pify: 4.0.1
@@ -14871,6 +15109,10 @@ snapshots:
       - tsx
       - yaml
 
+  tsyringe@4.10.0:
+    dependencies:
+      tslib: 1.14.1
+
   tweetnacl-util@0.15.1: {}
 
   tweetnacl@1.0.3: {}
@@ -14905,7 +15147,7 @@ snapshots:
       fs-extra: 7.0.1
       glob: 10.5.0
       js-sha3: 0.8.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       mkdirp: 1.0.4
       prettier: 2.8.8
       ts-command-line-args: 2.5.1
@@ -14921,7 +15163,7 @@ snapshots:
       fs-extra: 7.0.1
       glob: 10.5.0
       js-sha3: 0.8.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       mkdirp: 1.0.4
       prettier: 2.8.8
       ts-command-line-args: 2.5.1
@@ -15113,23 +15355,6 @@ snapshots:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
       typescript: 5.6.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-      - zod
-
-  viem@2.31.4(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)(zod@3.25.76):
-    dependencies:
-      '@noble/curves': 1.9.2
-      '@noble/hashes': 1.8.0
-      '@scure/bip32': 1.7.0
-      '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.7.3)(zod@3.25.76)
-      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
-      ox: 0.8.1(typescript@5.7.3)(zod@3.25.76)
-      ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-    optionalDependencies:
-      typescript: 5.7.3
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate

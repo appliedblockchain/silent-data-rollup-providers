@@ -6,6 +6,7 @@
   "scripts": {
     "contract-interaction": "ts-node src/contract-interaction.ts",
     "get-balance": "ts-node src/get-balance.ts",
+    "get-transactions-by-address": "ts-node src/get-transactions-by-address.ts",
     "transfer-balance": "ts-node src/transfer-balance.ts"
   },
   "dependencies": {

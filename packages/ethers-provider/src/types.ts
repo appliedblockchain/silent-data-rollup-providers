@@ -6,6 +6,8 @@ import { Filter, JsonRpcApiProviderOptions, Signer } from 'ethers'
 
 export interface SilentDataRollupProviderConfig extends BaseConfig {
   rpcUrl: string
+  l1RpcUrl?: string
+  registryContract?: string
   network?: NetworkName
   chainId?: number
   privateKey?: string

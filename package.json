@@ -21,11 +21,11 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "pnpm --color=always --filter @appliedblockchain/silentdatarollup-core --filter @appliedblockchain/silentdatarollup-ethers-provider --filter @appliedblockchain/silentdatarollup-hardhat-plugin --filter @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks --filter @appliedblockchain/silentdatarollup-viem build",
+    "build": "pnpm --color=always --filter \"./packages/*\" build",
     "changeset:publish": "changeset publish",
     "changeset:version": "changeset version",
     "changeset": "changeset",
-    "check-exports": "pnpm --filter @appliedblockchain/silentdatarollup-core --filter @appliedblockchain/silentdatarollup-custom-rpc --filter @appliedblockchain/silentdatarollup-ethers-provider --filter @appliedblockchain/silentdatarollup-ethers-provider-fireblocks --filter @appliedblockchain/silentdatarollup-hardhat-plugin --filter @appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks --filter @appliedblockchain/silentdatarollup-viem check-exports",
+    "check-exports": "pnpm --filter \"./packages/*\" check-exports",
     "check-format": "prettier --check .",
     "format": "prettier --write .",
     "lint": "eslint .",

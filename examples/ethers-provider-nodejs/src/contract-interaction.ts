@@ -1,7 +1,13 @@
 import 'dotenv/config'
 import { SilentDataRollupContract } from '@appliedblockchain/silentdatarollup-core'
 import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { ContractRunner, formatEther, Wallet } from 'ethers'
+import {
+  ContractRunner,
+  formatEther,
+  formatUnits,
+  parseUnits,
+  Wallet,
+} from 'ethers'
 import { ERC20_ABI } from './constants/erc20Abi'
 
 const REQUIRED_ENV_VARS = [
@@ -53,15 +59,23 @@ const main = async () => {
   )
   console.log('✅ My token balance:', formatEther(balanceBefore), symbol)
 
-  // Generate random wallet
   const randomWallet = Wallet.createRandom()
 
+  const amountToTransfer = parseUnits('10', decimals)
+
   try {
-    // Transfer tokens
-    const tx = await tokenContract.transfer(randomWallet.address, 1000)
+    console.log(
+      `\nTransferring ${formatUnits(amountToTransfer, decimals)} tokens to ${randomWallet.address}...`,
+    )
+    const tx = await tokenContract.transfer(
+      randomWallet.address,
+      amountToTransfer,
+    )
     await tx.wait()
 
-    console.log('Sent 100 tokens to ', randomWallet.address)
+    console.log(
+      `Sent ${formatUnits(amountToTransfer, decimals)} tokens to ${randomWallet.address}`,
+    )
   } catch (error) {
     console.error('Failed to transfer tokens:', error)
     return
@@ -72,7 +86,7 @@ const main = async () => {
     await tokenContract.balanceOf(randomWallet.address)
   } catch {
     console.error(
-      "❌ Ups... I can't get the random wallet token balance. The balanceOf method is protected, only for the owner of the address can query it.",
+      "❌ Ups... I can't get the random wallet token balance. The balanceOf method is protected, only the owner of the address can query it.",
     )
   }
 

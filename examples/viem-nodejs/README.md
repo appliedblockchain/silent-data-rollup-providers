@@ -47,6 +47,12 @@ This repository demonstrates how to interact with the Silent Data using Node.js 
 To run the example, use the following command:
 
 ```bash
+pnpm contract-interaction
+```
+
+or
+
+```bash
 pnpm get-balance
 ```
 

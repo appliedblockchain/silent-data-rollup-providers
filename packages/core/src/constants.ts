@@ -1,6 +1,7 @@
 import { keccak256, toUtf8Bytes } from 'ethers'
 
 export const SIGN_RPC_METHODS = [
+  'sd_getTransactionsByAddress',
   'eth_estimateGas',
   'eth_getProof',
   'eth_getTransactionByHash',
@@ -77,6 +78,8 @@ export const DEFAULT_DELEGATE_EXPIRES = 10 * 60 * 60 // 10 hours
 export const DELEGATE_EXPIRATION_THRESHOLD_BUFFER = 5 // 5 seconds
 
 export const WHITELISTED_METHODS = [
+  'sd_getTransactionsByAddress',
+  'sd_getVersion',
   'eth_blockNumber',
   'eth_call',
   'eth_chainId',
