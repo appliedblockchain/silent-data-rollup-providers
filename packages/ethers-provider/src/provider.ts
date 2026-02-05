@@ -37,6 +37,7 @@ import {
 } from 'ethers'
 import { SilentDataRollupSigner } from './signer'
 import { PrivateEventsFilter, SilentDataRollupProviderConfig } from './types'
+import { validateTdxAttestation } from '@appliedblockchain/silentdatarollup-core'
 
 const log = debug(DEBUG_NAMESPACE)
 
@@ -170,62 +171,113 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
       }
     }
 
-    const request = this._getConnection()
-    request.body = JSON.stringify(payload)
-    request.setHeader('content-type', 'application/json')
+    if (!this._isNodeRuntime() || !this._isRegistryContractSet()) {
+      return await this._sendWithoutAttestation(payload, isPrivateLogsRequest)
+    }
+    return await this._sendWithPinnedTlsAndAttest(payload, isPrivateLogsRequest)
+  }
 
+  private _isRegistryContractSet(): boolean {
+    return (
+      Boolean(this.config.l1RpcUrl) && Boolean(this.config.registryContract)
+    )
+  }
+
+  private _isNodeRuntime(): boolean {
+    return (
+      typeof process !== 'undefined' &&
+      typeof process.versions === 'object' &&
+      typeof process.versions.node === 'string'
+    )
+  }
+
+  /**
+   * Get authentication headers if required for the given payload.
+   * Returns null if no auth headers are needed.
+   */
+  private async _getAuthHeaders(
+    payload: JsonRpcPayload,
+    isPrivateLogsRequest: boolean,
+  ): Promise<Record<string, string> | null> {
     const requiresAuthHeaders =
       isPrivateLogsRequest ||
       SIGN_RPC_METHODS.includes(payload.method) ||
       isSignableContractCall(payload, this.baseProvider.contracts) ||
       (this.config.alwaysSignEthCalls && payload.method === 'eth_call')
 
-    if (requiresAuthHeaders) {
-      if (this.config.delegate) {
-        const {
-          [HEADER_DELEGATE]: xDelegate,
-          [HEADER_DELEGATE_SIGNATURE]: xDelegateSignature,
-          [HEADER_EIP712_DELEGATE_SIGNATURE]: xEip712DelegateSignature,
-        } = await this.baseProvider.getDelegateHeaders(this)
+    if (!requiresAuthHeaders) {
+      return null
+    }
 
-        request.setHeader(HEADER_DELEGATE, xDelegate)
-        if (xDelegateSignature) {
-          request.setHeader(HEADER_DELEGATE_SIGNATURE, xDelegateSignature)
-        }
-        if (xEip712DelegateSignature) {
-          request.setHeader(
-            HEADER_EIP712_DELEGATE_SIGNATURE,
-            xEip712DelegateSignature,
-          )
-        }
-      }
+    const headers: Record<string, string> = {}
 
-      // Add smart wallet header if smartWalletAddress is configured
-      if (this.config.smartWalletAddress) {
-        log('Setting smart wallet header:', this.config.smartWalletAddress)
-        request.setHeader(HEADER_SIGNER_SWC, this.config.smartWalletAddress)
-      }
-
+    // Add delegate headers if configured
+    if (this.config.delegate) {
       const {
-        [HEADER_TIMESTAMP]: xTimestamp,
-        [HEADER_SIGNATURE]: xSignature,
-        [HEADER_EIP712_SIGNATURE]: xEip712Signature,
-        [HEADER_FROM_BLOCK]: xFromBlock,
-      } = await this.baseProvider.getAuthHeaders(this, payload)
-      request.setHeader(HEADER_TIMESTAMP, xTimestamp)
-      if (xSignature) {
-        request.setHeader(HEADER_SIGNATURE, xSignature)
+        [HEADER_DELEGATE]: xDelegate,
+        [HEADER_DELEGATE_SIGNATURE]: xDelegateSignature,
+        [HEADER_EIP712_DELEGATE_SIGNATURE]: xEip712DelegateSignature,
+      } = await this.baseProvider.getDelegateHeaders(this)
+
+      headers[HEADER_DELEGATE] = xDelegate
+      if (xDelegateSignature) {
+        headers[HEADER_DELEGATE_SIGNATURE] = xDelegateSignature
       }
-      if (xEip712Signature) {
-        request.setHeader(HEADER_EIP712_SIGNATURE, xEip712Signature)
+      if (xEip712DelegateSignature) {
+        headers[HEADER_EIP712_DELEGATE_SIGNATURE] = xEip712DelegateSignature
       }
-      if (xFromBlock) {
-        request.setHeader(HEADER_FROM_BLOCK, xFromBlock)
-      }
-      const signatureType =
-        this.config.authSignatureType ?? SignatureType.EIP191
-      if (signatureType) {
-        request.setHeader(HEADER_SIGNATURE_TYPE, signatureType)
+    }
+
+    // Add smart wallet header if configured
+    if (this.config.smartWalletAddress) {
+      log('Setting smart wallet header:', this.config.smartWalletAddress)
+      headers[HEADER_SIGNER_SWC] = this.config.smartWalletAddress
+    }
+
+    // Get auth headers (signature, timestamp, etc.)
+    const {
+      [HEADER_TIMESTAMP]: xTimestamp,
+      [HEADER_SIGNATURE]: xSignature,
+      [HEADER_EIP712_SIGNATURE]: xEip712Signature,
+      [HEADER_FROM_BLOCK]: xFromBlock,
+    } = await this.baseProvider.getAuthHeaders(this, payload)
+
+    headers[HEADER_TIMESTAMP] = xTimestamp
+    if (xSignature) {
+      headers[HEADER_SIGNATURE] = xSignature
+    }
+    if (xEip712Signature) {
+      headers[HEADER_EIP712_SIGNATURE] = xEip712Signature
+    }
+    if (xFromBlock) {
+      headers[HEADER_FROM_BLOCK] = xFromBlock
+    }
+
+    // Add signature type header
+    const signatureType = this.config.authSignatureType ?? SignatureType.EIP191
+    if (signatureType) {
+      headers[HEADER_SIGNATURE_TYPE] = signatureType
+    }
+
+    return headers
+  }
+
+  private async _sendWithoutAttestation(
+    payload: JsonRpcPayload,
+    isPrivateLogsRequest: boolean,
+  ): Promise<Array<JsonRpcResult>> {
+    const request = this._getConnection()
+
+    request.body = JSON.stringify(payload)
+    request.setHeader('content-type', 'application/json')
+
+    const authHeaders = await this._getAuthHeaders(
+      payload,
+      isPrivateLogsRequest,
+    )
+    if (authHeaders) {
+      for (const [key, value] of Object.entries(authHeaders)) {
+        request.setHeader(key, value)
       }
     }
 
@@ -238,6 +290,118 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
     }
 
     return resp
+  }
+
+  private async _sendWithPinnedTlsAndAttest(
+    payload: JsonRpcPayload,
+    isPrivateLogsRequest: boolean,
+  ): Promise<Array<JsonRpcResult>> {
+    const https = await import(/* webpackIgnore: true */ 'node:https')
+    type TLSSocket = import('node:tls').TLSSocket
+    const { URL } = await import(/* webpackIgnore: true */ 'node:url')
+
+    const conn = this._getConnection()
+    const rpcUrlStr = conn.url
+
+    if (!rpcUrlStr) {
+      throw new Error('Unable to determine rpcUrl for pinned TLS transport')
+    }
+
+    const rpcUrl = new URL(rpcUrlStr)
+
+    let exporterKey: Buffer | null = null
+
+    const doRequest = (
+      method: 'GET' | 'POST',
+      path: string,
+      body?: Buffer,
+      headers: Record<string, string> = {},
+      forcedSocket?: TLSSocket,
+    ): Promise<{ statusCode: number; body: Buffer; socket: TLSSocket }> =>
+      new Promise((resolve, reject) => {
+        const req = https.request(
+          {
+            protocol: rpcUrl.protocol,
+            hostname: rpcUrl.hostname,
+            port: rpcUrl.port ? Number(rpcUrl.port) : 443,
+            path,
+            method,
+            headers,
+            agent: false,
+            createConnection: forcedSocket ? () => forcedSocket : undefined,
+          },
+          (res) => {
+            const socket = res.socket as TLSSocket
+
+            const DomainSeparator = 'CUSTOM-RPC ATTEST:'
+            const DOMAIN_SEPARATOR = Buffer.from(DomainSeparator, 'utf8')
+
+            exporterKey = (socket as any).exportKeyingMaterial(
+              32,
+              'tdx-attestation',
+              DOMAIN_SEPARATOR,
+            )
+
+            const chunks: Buffer[] = []
+            res.on('data', (d) =>
+              chunks.push(Buffer.isBuffer(d) ? d : Buffer.from(d)),
+            )
+            res.on('end', () =>
+              resolve({
+                statusCode: res.statusCode ?? 0,
+                body: Buffer.concat(chunks),
+                socket,
+              }),
+            )
+          },
+        )
+
+        req.on('error', reject)
+        if (body) {
+          req.write(body)
+        }
+        req.end()
+      })
+
+    const attest = await doRequest('GET', '/tdx/attest', undefined, {
+      connection: 'keep-alive',
+    })
+    if (attest.statusCode < 200 || attest.statusCode >= 300) {
+      throw new Error(`/tdx/attest failed: HTTP ${attest.statusCode}`)
+    }
+
+    const isValid = await validateTdxAttestation(
+      attest.body,
+      exporterKey!,
+      this.config.l1RpcUrl!,
+      this.config.registryContract!,
+    )
+    if (!isValid) {
+      throw new Error('TDX attestation validation failed')
+    }
+
+    const headers: Record<string, string> = {
+      'content-type': 'application/json',
+    }
+    const authHeaders = await this._getAuthHeaders(
+      payload,
+      isPrivateLogsRequest,
+    )
+    if (authHeaders) {
+      Object.assign(headers, authHeaders)
+    }
+
+    const rpcBody = Buffer.from(JSON.stringify(payload))
+    const rpc = await doRequest('POST', '/', rpcBody, headers, attest.socket)
+    if (rpc.statusCode < 200 || rpc.statusCode >= 300) {
+      throw new Error(`RPC POST / failed: HTTP ${rpc.statusCode}`)
+    }
+
+    let parsed: any = JSON.parse(rpc.body.toString('utf8'))
+    if (!Array.isArray(parsed)) {
+      parsed = [parsed]
+    }
+    return parsed as Array<JsonRpcResult>
   }
 
   static getRequest({ rpcUrl }: { rpcUrl: string }): FetchRequest {

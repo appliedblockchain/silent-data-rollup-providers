@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-viem",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Viem package for Silent Data",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",

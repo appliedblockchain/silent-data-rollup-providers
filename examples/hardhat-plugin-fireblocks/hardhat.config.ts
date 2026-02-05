@@ -1,17 +1,15 @@
 import 'dotenv/config'
-
 import { SignatureType } from '@appliedblockchain/silentdatarollup-core'
 import { ApiBaseUrl, ChainId } from '@fireblocks/fireblocks-web3-provider'
 import '@nomicfoundation/hardhat-ignition-ethers'
-import { HardhatUserConfig } from 'hardhat/config'
-
+import { type HardhatUserConfig } from 'hardhat/config'
 import '@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks'
 
 const REQUIRED_ENV_VARS = [
-  'RPC_URL',
   'FIREBLOCKS_API_KEY',
+  'FIREBLOCKS_PRIVATE_KEY_PATH',
   'FIREBLOCKS_VAULT_ACCOUNT_ID',
-  'ASSET_ID',
+  'RPC_URL',
 ] as const
 
 REQUIRED_ENV_VARS.forEach((envVar) => {
@@ -20,18 +18,19 @@ REQUIRED_ENV_VARS.forEach((envVar) => {
   }
 })
 
-const RPC_URL = process.env.RPC_URL
-const FIREBLOCKS_API_KEY = process.env.FIREBLOCKS_API_KEY
-const FIREBLOCKS_VAULT_ACCOUNT_ID = process.env.FIREBLOCKS_VAULT_ACCOUNT_ID
-const ASSET_ID = process.env.ASSET_ID
+const FIREBLOCKS_API_KEY = process.env.FIREBLOCKS_API_KEY as string
+const FIREBLOCKS_PRIVATE_KEY_PATH = process.env
+  .FIREBLOCKS_PRIVATE_KEY_PATH as string
+const FIREBLOCKS_VAULT_ACCOUNT_ID = process.env
+  .FIREBLOCKS_VAULT_ACCOUNT_ID as string
+const RPC_URL = process.env.RPC_URL as string
 
 const fireblocksConfig = {
-  privateKey: 'FIREBLOCKS_PATH_TO_PRIVATE_KEY',
+  privateKey: FIREBLOCKS_PRIVATE_KEY_PATH,
   apiKey: FIREBLOCKS_API_KEY,
-  assetId: ASSET_ID,
   vaultAccountIds: FIREBLOCKS_VAULT_ACCOUNT_ID, // Note: Currently, only one vault account can be passed to the configuration.
   chainId: ChainId.SEPOLIA,
-  apiBaseUrl: ApiBaseUrl.Sandbox,
+  apiBaseUrl: ApiBaseUrl.Sandbox, // Change to ApiBaseUrl.Production for production
   rpcUrl: RPC_URL,
 }
 
@@ -40,7 +39,7 @@ const config: HardhatUserConfig = {
   defaultNetwork: 'sdr',
   networks: {
     sdr: {
-      url: RPC_URL,
+      url: fireblocksConfig.rpcUrl,
       fireblocks: fireblocksConfig,
       silentdata: {
         authSignatureType: SignatureType.Raw,

@@ -14,10 +14,18 @@ const CHAIN_ID = process.env.CHAIN_ID as string
 const PRIVATE_KEY = process.env.PRIVATE_KEY as string
 const RPC_URL = process.env.RPC_URL as string
 
+// if not set, runs without registry check
+const REGISTRY_CONTRACT_ADDRESS = process.env.REGISTRY_CONTRACT_ADDRESS as
+  | string
+  | undefined
+const L1_RPC_URL = process.env.L1_RPC_URL as string | undefined
+
 const provider = new SilentDataRollupProvider({
   rpcUrl: RPC_URL,
   chainId: Number(CHAIN_ID),
   privateKey: PRIVATE_KEY,
+  l1RpcUrl: L1_RPC_URL,
+  registryContract: REGISTRY_CONTRACT_ADDRESS,
 })
 
 const main = async () => {

@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Hardhat plugin for Silent Data with Fireblocks integration",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",

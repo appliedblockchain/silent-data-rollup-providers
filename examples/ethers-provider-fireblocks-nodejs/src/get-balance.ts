@@ -1,0 +1,55 @@
+import 'dotenv/config'
+import {
+  ApiBaseUrl,
+  ChainId,
+  FireblocksWeb3Provider,
+} from '@fireblocks/fireblocks-web3-provider'
+import { SilentDataRollupFireblocksProvider } from '@appliedblockchain/silentdatarollup-ethers-provider-fireblocks'
+import { formatEther } from 'ethers'
+
+const REQUIRED_ENV_VARS = [
+  'FIREBLOCKS_API_KEY',
+  'FIREBLOCKS_PRIVATE_KEY_PATH',
+  'FIREBLOCKS_VAULT_ACCOUNT_ID',
+  'RPC_URL',
+] as const
+
+REQUIRED_ENV_VARS.forEach((envVar) => {
+  if (!process.env[envVar]) {
+    throw new Error(`${envVar} environment variable is required`)
+  }
+})
+
+const FIREBLOCKS_API_KEY = process.env.FIREBLOCKS_API_KEY as string
+const FIREBLOCKS_PRIVATE_KEY_PATH = process.env
+  .FIREBLOCKS_PRIVATE_KEY_PATH as string
+const FIREBLOCKS_VAULT_ACCOUNT_ID = process.env
+  .FIREBLOCKS_VAULT_ACCOUNT_ID as string
+const RPC_URL = process.env.RPC_URL as string
+
+const main = async () => {
+  const eip1193Provider = new FireblocksWeb3Provider({
+    privateKey: FIREBLOCKS_PRIVATE_KEY_PATH,
+    apiKey: FIREBLOCKS_API_KEY,
+    vaultAccountIds: FIREBLOCKS_VAULT_ACCOUNT_ID,
+    chainId: ChainId.SEPOLIA,
+    apiBaseUrl: ApiBaseUrl.Sandbox, // Change to ApiBaseUrl.Production for production
+    rpcUrl: RPC_URL,
+  })
+
+  const provider = new SilentDataRollupFireblocksProvider({
+    ethereum: eip1193Provider,
+  })
+
+  const accounts = await provider.listAccounts()
+  if (accounts.length === 0) {
+    throw new Error('No accounts found in Fireblocks vault')
+  }
+
+  const walletAddress = await accounts[0].getAddress()
+
+  const balance = await provider.getBalance(walletAddress)
+  console.log(`Balance of "${walletAddress}" is ${formatEther(balance)} ETH`)
+}
+
+main().catch(console.error)

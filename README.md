@@ -49,6 +49,7 @@ These features make it easier for developers to integrate Silent Data into their
 - [Hardhat Plugin](./packages/hardhat-plugin/README.md)
 - [Fireblocks Hardhat Plugin](./packages/hardhat-plugin-fireblocks/README.md)
 - [Viem](./packages/viem/README.md)
+- [Fireblocks Viem](./packages/viem-fireblocks/README.md)
 
 ## Troubleshooting
 
