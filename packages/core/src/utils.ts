@@ -2,7 +2,7 @@ import debug from 'debug'
 import { JsonRpcPayload, Signer, Wallet } from 'ethers'
 import {
   DEBUG_NAMESPACE,
-  eip721Domain,
+  eip712Domain,
   HEADER_EIP712_SIGNATURE,
   HEADER_SIGNATURE,
   HEADER_TIMESTAMP,
@@ -16,7 +16,7 @@ import {
 
 const log = debug(DEBUG_NAMESPACE)
 
-export function getAuthEIP721Types(payload: JsonRpcPayload | JsonRpcPayload[]) {
+export function getAuthEIP712Types(payload: JsonRpcPayload | JsonRpcPayload[]) {
   return {
     Call: [
       {
@@ -55,8 +55,8 @@ async function signAuthHeaderTypedData(
     timestamp,
   }
 
-  const types = getAuthEIP721Types(payload)
-  const domain = { ...eip721Domain, chainId }
+  const types = getAuthEIP712Types(payload)
+  const domain = { ...eip712Domain, chainId }
 
   log('Signing typed data', JSON.stringify({ domain, types, message }, null, 2))
   const signature = await signer.signTypedData(domain, types, message)

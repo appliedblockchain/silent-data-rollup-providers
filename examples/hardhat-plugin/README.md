@@ -2,6 +2,8 @@
 
 This repository demonstrates how to use the `@appliedblockchain/silentdatarollup-hardhat-plugin` with a Hardhat project. The example includes a basic smart contract deployment setup using Hardhat Ignition.
 
+> **Note:** This example is for Hardhat 2. For Hardhat 3, see the `examples/hardhat3-plugin` directory.
+
 ## Prerequisites
 
 - Node.js (version 18 or higher)
@@ -13,8 +15,8 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
-   cd examples/hardhat-plugin
+   git clone <repo-folder>
+   cd <repo-folder>
    ```
 
 2. Install dependencies:
@@ -23,7 +25,20 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
    pnpm install
    ```
 
-3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
+3. Build packages:
+
+   ```bash
+   pnpm build
+   ```
+
+4. Navigate to the example directory and install dependencies:
+
+   ```bash
+   cd examples/hardhat-plugin
+   pnpm install
+   ```
+
+5. Create a `.env` file by copying the provided `.env.example` file and updating your environment variables:
 
    ```plaintext
    PRIVATE_KEY=<your_private_key>
@@ -200,5 +215,5 @@ Main dependencies include:
 ## Additional Resources
 
 - [Silent Data Documentation](https://docs.silentdata.com)
-- [Hardhat Documentation](https://hardhat.org/docs)
+- [Hardhat Documentation](https://hardhat.org/hardhat2)
 - [Hardhat Ignition Guide](https://hardhat.org/ignition/docs/getting-started)

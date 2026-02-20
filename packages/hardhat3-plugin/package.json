@@ -1,0 +1,52 @@
+{
+  "name": "@appliedblockchain/silentdatarollup-hardhat3-plugin",
+  "version": "1.0.11",
+  "description": "Hardhat 3 plugin for Silent Data",
+  "author": "Applied Blockchain",
+  "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
+  "keywords": [
+    "ethereum",
+    "provider",
+    "silentdata",
+    "rollup",
+    "hardhat"
+  ],
+  "license": "MIT",
+  "repository": "https://github.com/appliedblockchain/silent-data-rollup-providers",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit && tsup src/index.ts --format esm,cjs --dts --clean",
+    "check-exports": "attw --pack . --profile node16",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@appliedblockchain/silentdatarollup-core": "workspace:*",
+    "debug": "4.3.7",
+    "ethers": "6.13.2"
+  },
+  "devDependencies": {
+    "@types/debug": "4.1.12",
+    "@types/node": "24.10.1",
+    "hardhat": "3.1.0",
+    "ts-node": "10.9.2",
+    "typescript": "5.6.2"
+  },
+  "peerDependencies": {
+    "ethers": "^6.0.0",
+    "hardhat": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=22.10.0"
+  }
+}

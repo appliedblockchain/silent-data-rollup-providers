@@ -1,7 +1,7 @@
 import { SignatureType } from '@appliedblockchain/silentdatarollup-core'
 
 export interface SilentdataNetworkConfig {
-  authSignatureType: SignatureType
+  authSignatureType?: SignatureType
   maxRetries?: number
   pollingInterval?: number
 }

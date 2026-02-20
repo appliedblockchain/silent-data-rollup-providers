@@ -1,6 +1,6 @@
 import {
-  eip721Domain,
-  getAuthEIP721Types,
+  eip712Domain,
+  getAuthEIP712Types,
   HEADER_EIP712_SIGNATURE,
   HEADER_SIGNATURE,
   HEADER_TIMESTAMP,
@@ -218,7 +218,7 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
         break
       case SignatureType.EIP712:
         // eslint-disable-next-line no-case-declarations
-        const types = getAuthEIP721Types(payload)
+        const types = getAuthEIP712Types(payload)
         // eslint-disable-next-line no-case-declarations
         const message = this.baseProvider.prepareTypedData(payload, xTimestamp)
         content = {
@@ -231,7 +231,7 @@ export class SilentDataFireblocksSigner extends ProviderWrapper {
             ...types,
           },
           primaryType: 'Call',
-          domain: { ...eip721Domain, chainId },
+          domain: { ...eip712Domain, chainId },
           message: message,
         }
 

@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-ethers-provider",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Ethers.js provider for Silent Data",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",

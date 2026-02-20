@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-viem-fireblocks",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Viem package for Silent Data with Fireblocks integration",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",

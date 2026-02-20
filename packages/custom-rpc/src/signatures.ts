@@ -6,8 +6,8 @@ import {
   HEADER_DELEGATE,
   HEADER_DELEGATE_SIGNATURE,
   HEADER_EIP712_DELEGATE_SIGNATURE,
-  eip721Domain,
-  delegateEIP721Types,
+  eip712Domain,
+  delegateEIP712Types,
 } from '@appliedblockchain/silentdatarollup-core'
 
 const TIMESTAMP_MIN_OFFSET = -12
@@ -76,7 +76,7 @@ export function recoverTypedSigner(
   chainId: bigint,
 ): string | null {
   try {
-    const domain = { ...eip721Domain, chainId }
+    const domain = { ...eip712Domain, chainId }
     const types = {
       Request: [
         { name: 'method', type: 'string' },
@@ -154,8 +154,8 @@ export function recoverSignerWithDelegate(
     }
 
     const delegatorAddress = ethers.verifyTypedData(
-      { ...eip721Domain, chainId },
-      delegateEIP721Types,
+      { ...eip712Domain, chainId },
+      delegateEIP712Types,
       ticketData,
       ticket.signature,
     )

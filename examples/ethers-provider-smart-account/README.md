@@ -20,17 +20,30 @@ This repository demonstrates how to interact with the Silent Data using smart ac
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
-   cd examples/ethers-provider-smart-account
+   git clone <repo-folder>
+   cd <repo-folder>
    ```
 
 2. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
-3. Create a `.env` file in the root directory by copying the provided `.env.example` file and updating your environment variables:
+3. Build packages:
+
+   ```bash
+   pnpm build
+   ```
+
+4. Navigate to the example directory and install dependencies:
+
+   ```bash
+   cd examples/ethers-provider-smart-account
+   pnpm install
+   ```
+
+5. Create a `.env` file by copying the provided `.env.example` file and updating your environment variables:
 
    ```plaintext
    VITE_CHAIN_ID=
@@ -44,5 +57,5 @@ This repository demonstrates how to interact with the Silent Data using smart ac
 To run the example, use the following command:
 
 ```bash
-npm run dev
+pnpm dev
 ```
