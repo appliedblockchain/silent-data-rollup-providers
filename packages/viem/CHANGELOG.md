@@ -1,5 +1,14 @@
 # @appliedblockchain/silentdatarollup-viem
 
+## 1.0.11
+
+### Patch Changes
+
+- Hardhat v3 Package added
+- Other improvements and fixes
+- Updated dependencies
+  - @appliedblockchain/silentdatarollup-ethers-provider@1.0.11
+
 ## 1.0.10
 
 ### Patch Changes

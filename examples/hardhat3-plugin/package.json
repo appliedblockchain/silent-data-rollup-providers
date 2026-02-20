@@ -1,0 +1,28 @@
+{
+  "name": "example-hardhat3-plugin",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.23.0",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy:private-token": "hardhat compile && hardhat ignition deploy ignition/modules/PrivateToken.ts --network sdr",
+    "deploy:private-events": "hardhat compile && hardhat ignition deploy ignition/modules/PrivateEvents.ts --network sdr",
+    "deploy:simple-contract": "hardhat compile && hardhat ignition deploy ignition/modules/SimpleContract.ts --network sdr"
+  },
+  "dependencies": {
+    "@appliedblockchain/silentdatarollup-core": "workspace:*",
+    "@appliedblockchain/silentdatarollup-hardhat3-plugin": "workspace:*",
+    "@nomicfoundation/hardhat-ignition-viem": "3.0.6",
+    "@nomicfoundation/hardhat-ignition": "3.0.6",
+    "@nomicfoundation/hardhat-verify": "3.0.8",
+    "@nomicfoundation/hardhat-viem": "3.0.1",
+    "@openzeppelin/contracts": "5.1.0",
+    "hardhat": "3.1.0",
+    "viem": "2.31.4"
+  },
+  "devDependencies": {
+    "ts-node": "10.9.2",
+    "typescript": "5.6.3"
+  }
+}

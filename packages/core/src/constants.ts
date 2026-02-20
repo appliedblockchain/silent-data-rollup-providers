@@ -10,12 +10,12 @@ export const SIGN_RPC_METHODS = [
   'eth_getUserOperationByHash',
 ]
 
-export const eip721Domain = {
+export const eip712Domain = {
   name: 'Silent Data [Rollup]',
   version: '1',
 }
 
-export const delegateEIP721Types = {
+export const delegateEIP712Types = {
   Ticket: [
     { name: 'expires', type: 'string' },
     { name: 'ephemeralAddress', type: 'string' },

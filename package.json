@@ -29,7 +29,6 @@
     "check-format": "prettier --check .",
     "format": "prettier --write .",
     "lint": "eslint .",
-    "preinstall": "pnpm --color=always audit --audit-level critical",
     "test": "jest --projects packages/*"
   },
   "devDependencies": {

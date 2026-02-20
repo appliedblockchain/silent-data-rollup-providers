@@ -1,9 +1,9 @@
 import {
   DEBUG_NAMESPACE,
-  delegateEIP721Types,
+  delegateEIP712Types,
   DelegateSignerMessage,
-  eip721Domain,
-  getAuthEIP721Types,
+  eip712Domain,
+  getAuthEIP712Types,
   SignatureType,
   SilentDataRollupBase,
 } from '@appliedblockchain/silentdatarollup-core'
@@ -87,10 +87,10 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     const content = {
       types: {
         EIP712Domain,
-        ...delegateEIP721Types,
+        ...delegateEIP712Types,
       },
       primaryType: 'Ticket',
-      domain: { ...eip721Domain, chainId },
+      domain: { ...eip712Domain, chainId },
       message: message,
     }
 
@@ -143,7 +143,7 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     isSWC?: boolean,
   ): Promise<string> {
     void isSWC
-    const types = getAuthEIP721Types(payload)
+    const types = getAuthEIP712Types(payload)
     const message = this.prepareTypedData(payload, timestamp)
     const content = {
       types: {
@@ -151,7 +151,7 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
         ...types,
       },
       primaryType: 'Call',
-      domain: { ...eip721Domain, chainId },
+      domain: { ...eip712Domain, chainId },
       message: message,
     }
 
@@ -159,7 +159,7 @@ export class SilentDataRollupFireblocksBase extends SilentDataRollupBase {
     let signature: string
     if (this.config.delegate) {
       const delegateSigner = await this.getDelegateSigner(this)
-      const domain = { ...eip721Domain, chainId: chainId.toString() }
+      const domain = { ...eip712Domain, chainId: chainId.toString() }
       signature = await (delegateSigner as Signer).signTypedData(
         domain,
         types,

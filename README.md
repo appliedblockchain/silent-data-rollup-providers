@@ -7,6 +7,7 @@
 - [Introduction](#introduction)
 - [Features](#features)
 - [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
 
@@ -39,6 +40,27 @@ These features make it easier for developers to integrate Silent Data into their
 - Node.js (version 18 or higher)
 - pnpm
 - Basic knowledge of Ethereum and smart contracts
+
+## Getting Started
+
+1. Clone the repository:
+
+   ```bash
+   git clone <repo-folder>
+   cd <repo-folder>
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+3. Build all packages:
+
+   ```bash
+   pnpm build
+   ```
 
 ## Packages and Integration Options
 

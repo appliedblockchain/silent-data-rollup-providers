@@ -8,9 +8,9 @@ import {
   HEADER_TIMESTAMP,
   NetworkName,
   SignatureType,
-  eip721Domain,
-  getAuthEIP721Types,
-  delegateEIP721Types,
+  eip712Domain,
+  getAuthEIP712Types,
+  delegateEIP712Types,
   DelegateSignerMessage,
   SIGN_RPC_METHODS,
 } from '@appliedblockchain/silentdatarollup-core'
@@ -135,7 +135,7 @@ describe('SilentDataRollupProvider', () => {
           if (expectedHeadersList.includes(HEADER_EIP712_SIGNATURE)) {
             const timestamp = requestData.headers[HEADER_TIMESTAMP]
             const signature = requestData.headers[HEADER_EIP712_SIGNATURE]
-            const types = getAuthEIP721Types(requestData.requestBody)
+            const types = getAuthEIP712Types(requestData.requestBody)
 
             const preparePayload = (p: JsonRpcPayload) => ({
               ...p,
@@ -152,7 +152,7 @@ describe('SilentDataRollupProvider', () => {
             }
 
             recoveredSignerAddress = verifyTypedData(
-              { ...eip721Domain, chainId },
+              { ...eip712Domain, chainId },
               types,
               message,
               signature as string,
@@ -181,8 +181,8 @@ describe('SilentDataRollupProvider', () => {
                 requestData.headers[HEADER_EIP712_DELEGATE_SIGNATURE]
 
               recoveredDelegateSignerAddress = verifyTypedData(
-                { ...eip721Domain, chainId },
-                delegateEIP721Types,
+                { ...eip712Domain, chainId },
+                delegateEIP712Types,
                 xDelegate,
                 signature as string,
               )

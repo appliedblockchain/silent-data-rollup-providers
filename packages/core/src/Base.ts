@@ -15,8 +15,8 @@ import {
   DEFAULT_DELEGATE_EXPIRES,
   DEFAULT_USER_OPERATION_RECEIPT_LOOKUP_RANGE,
   DELEGATE_EXPIRATION_THRESHOLD_BUFFER,
-  delegateEIP721Types,
-  eip721Domain,
+  delegateEIP712Types,
+  eip712Domain,
   ENTRYPOINT_ADDRESS,
   HEADER_DELEGATE,
   HEADER_DELEGATE_SIGNATURE,
@@ -40,7 +40,7 @@ import {
 } from './types'
 import {
   defaultGetDelegate,
-  getAuthEIP721Types,
+  getAuthEIP712Types,
   prepareTypedDataPayload,
 } from './utils'
 
@@ -213,13 +213,13 @@ export class SilentDataRollupBase {
       JSON.stringify(message, null, 2),
     )
 
-    const domain = { ...eip721Domain, chainId }
+    const domain = { ...eip712Domain, chainId }
 
     // For SWC, hash the typed data and sign the hash
     if (isSWC) {
       const messageHash = TypedDataEncoder.hash(
         domain,
-        delegateEIP721Types,
+        delegateEIP712Types,
         message,
       )
       const hashBytes = getBytes(messageHash)
@@ -231,7 +231,7 @@ export class SilentDataRollupBase {
     // For EOA, sign typed data normally
     const signature = await provider.signer.signTypedData(
       domain,
-      delegateEIP721Types,
+      delegateEIP712Types,
       message,
     )
 
@@ -466,11 +466,11 @@ export class SilentDataRollupBase {
     isSWC?: boolean,
   ): Promise<string> {
     const message = this.prepareTypedData(payload, timestamp)
-    const types = getAuthEIP721Types(payload)
+    const types = getAuthEIP712Types(payload)
     const delegateSigner = await this.getDelegateSigner(this)
     const signer = delegateSigner ?? provider.signer
     const usingDelegate = !!delegateSigner
-    const domain = { ...eip721Domain, chainId }
+    const domain = { ...eip712Domain, chainId }
 
     // For SWC without delegate, hash the typed data and sign the hash
     if (isSWC && !usingDelegate) {

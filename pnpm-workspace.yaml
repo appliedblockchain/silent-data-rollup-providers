@@ -12,19 +12,22 @@ minimumReleaseAgeExclude:
   - '@appliedblockchain/silentdatarollup-ethers-provider'
   - '@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks'
   - '@appliedblockchain/silentdatarollup-hardhat-plugin'
+  - '@appliedblockchain/silentdatarollup-hardhat3-plugin'
   - '@appliedblockchain/silentdatarollup-viem-fireblocks'
   - '@appliedblockchain/silentdatarollup-viem'
 
 overrides:
   '@isaacs/brace-expansion': 5.0.1
+  axios: 1.13.5
   cookie: 0.7.0
   diff: 8.0.3
   glob: 10.5.0
   h3: 1.15.5
-  hono: 4.11.7
+  hono: 4.11.10
   jws: 3.2.3
   lodash: 4.17.23
+  lodash-es: 4.17.23
   preact: 10.27.3
-  qs: 6.14.1
+  qs: 6.14.2
   tmp: 0.2.4
   undici: 6.23.0

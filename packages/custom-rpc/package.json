@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-custom-rpc",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Custom RPC for Silent Data",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",
