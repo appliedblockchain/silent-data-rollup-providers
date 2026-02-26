@@ -259,7 +259,7 @@ for (const log of privateLogs) {
 
 ## UCEF - Confidential ERC-20 Framework
 
-For production-ready confidential tokens, use **UCEF** (Unopinionated Confidential ERC-20 Framework):
+For confidential tokens, use **UCEF** (Unopinionated Confidential ERC-20 Framework):
 
 ```solidity
 import "../extensions/UCEFOwned.sol";
