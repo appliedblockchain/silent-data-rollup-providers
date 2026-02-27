@@ -33,6 +33,7 @@ export const HEADER_DELEGATE = 'x-delegate'
 export const HEADER_DELEGATE_SIGNATURE = 'x-delegate-signature'
 export const HEADER_EIP712_DELEGATE_SIGNATURE = 'x-eip712-delegate-signature'
 export const HEADER_SIGNER_SWC = 'x-signer-swc'
+export const HEADER_SIGNER_SWC_TYPE = 'x-signer-swc-type'
 /**
  * Header used when signing a user operation receipt call to the bundler (eth_getUserOperationReceipt)
  */

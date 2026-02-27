@@ -18,7 +18,7 @@ Viem custom transport for Silent Data.
 
 ## Prerequisites
 
-- Node.js (version 18 or higher)
+- Node.js (version 20 or higher)
 - pnpm
 - Basic knowledge of Ethereum and smart contracts
 - Viem

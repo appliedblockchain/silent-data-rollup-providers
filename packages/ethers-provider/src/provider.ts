@@ -11,6 +11,7 @@ import {
   HEADER_SIGNATURE,
   HEADER_SIGNATURE_TYPE,
   HEADER_SIGNER_SWC,
+  HEADER_SIGNER_SWC_TYPE,
   HEADER_TIMESTAMP,
   isSignableContractCall,
   NetworkName,
@@ -228,10 +229,13 @@ export class SilentDataRollupProvider extends JsonRpcProvider {
       }
     }
 
-    // Add smart wallet header if configured
+    // Add smart wallet headers if configured
     if (this.config.smartWalletAddress) {
       log('Setting smart wallet header:', this.config.smartWalletAddress)
       headers[HEADER_SIGNER_SWC] = this.config.smartWalletAddress
+      if (this.config.smartWalletType) {
+        headers[HEADER_SIGNER_SWC_TYPE] = this.config.smartWalletType
+      }
     }
 
     // Get auth headers (signature, timestamp, etc.)

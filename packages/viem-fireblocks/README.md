@@ -18,7 +18,7 @@ Viem custom transport for Silent Data with Fireblocks integration. This package 
 
 ## Prerequisites
 
-- Node.js (version 18 or higher)
+- Node.js (version 20 or higher)
 - pnpm
 - Basic knowledge of Ethereum and smart contracts
 - Viem
@@ -31,7 +31,7 @@ Viem custom transport for Silent Data with Fireblocks integration. This package 
 #### Installing Dependencies
 
 ```bash
-pnpm add @appliedblockchain/silentdatarollup-viem-fireblocks
+pnpm add @appliedblockchain/silentdatarollup-viem-fireblocks viem @fireblocks/fireblocks-web3-provider
 ```
 
 #### Basic Usage Example

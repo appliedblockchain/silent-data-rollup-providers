@@ -74,6 +74,12 @@ export type BaseConfig = {
    */
   smartWalletAddress?: string
   /**
+   * Smart wallet type for EIP-1271 hash wrapping.
+   * - 'giano': wraps the base hash in Giano's EIP-712 envelope (custom RPC default)
+   * - 'simple': passes the base hash directly to isValidSignature
+   */
+  smartWalletType?: 'giano' | 'simple'
+  /**
    * The block range to look back when fetching user operation receipts.
    * This value is used to calculate the fromBlock parameter when querying for receipts.
    * If not provided, defaults to DEFAULT_USER_OPERATION_RECEIPT_LOOKUP_RANGE (1024 blocks).
