@@ -11,7 +11,7 @@ This repository demonstrates how to interact with the Silent Data using MetaMask
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20 or higher)
 - pnpm
 - Access to a Silent Data RPC endpoint
 

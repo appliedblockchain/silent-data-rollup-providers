@@ -32,7 +32,7 @@ Custom providers for integrating Silent Data with Hardhat 3.
 #### Installing Hardhat Integration Dependencies
 
 ```bash
-pnpm add @appliedblockchain/silentdatarollup-hardhat3-plugin @nomicfoundation/hardhat-ignition-viem
+pnpm add @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatarollup-hardhat3-plugin @nomicfoundation/hardhat-ignition-viem
 ```
 
 #### Hardhat Integration Example

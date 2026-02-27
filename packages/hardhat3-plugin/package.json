@@ -1,6 +1,6 @@
 {
   "name": "@appliedblockchain/silentdatarollup-hardhat3-plugin",
-  "version": "1.0.11",
+  "version": "1.1.0",
   "description": "Hardhat 3 plugin for Silent Data",
   "author": "Applied Blockchain",
   "homepage": "https://github.com/appliedblockchain/silent-data-rollup-providers#readme",

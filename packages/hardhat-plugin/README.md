@@ -18,7 +18,7 @@ Custom providers for integrating Silent Data with Hardhat.
 
 ## Prerequisites
 
-- Node.js (version 18 or higher)
+- Node.js (version 20 or higher)
 - Hardhat v2
 - pnpm
 - Basic knowledge of Ethereum and smart contracts
@@ -38,6 +38,7 @@ pnpm add @appliedblockchain/silentdatarollup-hardhat-plugin @nomicfoundation/har
 To integrate the Silent Data Provider with Hardhat, you need to configure your Silent Data network in the `hardhat.config.ts` file. Below is an example of how to set it up, and note that a `silentdata` property is needed on the network config to enable it. This property can be an empty object to apply defaults, or you can specify the configurations.
 
 ```typescript
+import { SignatureType } from '@appliedblockchain/silentdatarollup-core'
 import '@nomicfoundation/hardhat-ignition-ethers'
 import '@appliedblockchain/silentdatarollup-hardhat-plugin'
 
