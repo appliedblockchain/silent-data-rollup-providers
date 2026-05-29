@@ -5,3 +5,4 @@ wip
 .env
 tsconfig.tsbuildinfo
 **/*.key
+.pnpm-store

@@ -1,5 +1,11 @@
 # @appliedblockchain/silentdatarollup-core
 
+## 1.1.0
+
+### Minor Changes
+
+- Add `smartWalletType` config field and send `x-signer-swc-type` header for EIP-1271 smart wallet schema selection
+
 ## 1.0.11
 
 ### Patch Changes

@@ -14,6 +14,7 @@ export interface SilentDataRollupProviderConfig extends BaseConfig {
   signer?: Signer
   options?: JsonRpcApiProviderOptions
   smartWalletAddress?: string
+  smartWalletType?: 'giano' | 'simple'
   /**
    * When set to true, all eth_call requests will be signed
    * with authentication headers, regardless of whether they match signable contracts

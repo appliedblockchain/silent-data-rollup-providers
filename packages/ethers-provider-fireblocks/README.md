@@ -18,7 +18,7 @@ Custom providers for Silent Data, compatible with ethers.js for Fireblocks integ
 
 ## Prerequisites
 
-- Node.js (version 18 or higher)
+- Node.js (version 20 or higher)
 - pnpm
 - Basic knowledge of Ethereum and smart contracts
 - Ethers.js v6
@@ -38,16 +38,16 @@ pnpm add @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatar
 ```typescript
 import {
   ApiBaseUrl,
+  ASSETS,
   ChainId,
   FireblocksWeb3Provider,
 } from '@fireblocks/fireblocks-web3-provider'
 import {
   BaseConfig,
+  SignatureType,
   SilentDataRollupContract,
 } from '@appliedblockchain/silentdatarollup-core'
 import { SilentDataRollupFireblocksProvider } from '@appliedblockchain/silentdatarollup-ethers-provider-fireblocks'
-
-const RPC_URL = 'SILENT_DATA_ROLLUP_RPC_URL'
 
 const eip1193Provider = new FireblocksWeb3Provider({
   privateKey: 'FIREBLOCKS_PATH_TO_PRIVATE_KEY',
@@ -59,23 +59,25 @@ const eip1193Provider = new FireblocksWeb3Provider({
   rpcUrl: 'SILENT_DATA_ROLLUP_RPC_URL',
 })
 
-const silentdataOptions: BaseConfig = {
+const silentdataConfig: BaseConfig = {
   authSignatureType: SignatureType.EIP712, // Optional, defaults to RAW
   delegate: true, // Optional, defaults to false
 }
 
 const provider = new SilentDataRollupFireblocksProvider({
   ethereum: eip1193Provider,
-  silentdataOptions,
+  config: silentdataConfig,
 })
 const balance = await provider.getBalance('YOUR_ADDRESS')
 console.log(balance)
 
 const contractConfig = {
-  contractAddress: 'YOUR_CONTRACT_ADDRESS'
-  abi: [ /* Your contract ABI */ ],
-  runner: signer,
-  methodsToSign: ['method1', 'method2'] // Contract read calls that require signing
+  address: 'YOUR_CONTRACT_ADDRESS',
+  abi: [
+    /* Your contract ABI */
+  ],
+  runner: provider,
+  contractMethodsToSign: ['method1', 'method2'], // Contract read calls that require signing
 }
 
 const contract = new SilentDataRollupContract(contractConfig)

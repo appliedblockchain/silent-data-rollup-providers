@@ -28,7 +28,7 @@ Custom providers for Silent Data, compatible with ethers.js.
 
 ## Prerequisites
 
-- Node.js (version 18 or higher)
+- Node.js (version 20 or higher)
 - pnpm
 - Basic knowledge of Ethereum and smart contracts
 - Ethers.js v6
@@ -47,11 +47,7 @@ pnpm add @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatar
 
 ```typescript
 import { NetworkName } from '@appliedblockchain/silentdatarollup-core'
-import {
-  NetworkName,
-  SilentDataRollupProvider,
-} from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { Wallet } from 'ethers'
+import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
 
 const providerConfig = {
   rpcUrl: 'SILENT_DATA_ROLLUP_RPC_URL',
@@ -77,11 +73,10 @@ pnpm add @appliedblockchain/silentdatarollup-core @appliedblockchain/silentdatar
 
 ```typescript
 import {
-  ChainId,
+  NetworkName,
   SilentDataRollupContract,
 } from '@appliedblockchain/silentdatarollup-core'
 import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { ethers } from 'ethers'
 
 const providerConfig = {
   rpcUrl: 'SILENT_DATA_ROLLUP_RPC_URL',
@@ -94,10 +89,12 @@ const balance = await provider.getBalance('YOUR_ADDRESS')
 console.log(balance)
 
 const contractConfig = {
-  contractAddress: 'YOUR_CONTRACT_ADDRESS'
-  abi: [ /* Your contract ABI */ ],
+  address: 'YOUR_CONTRACT_ADDRESS',
+  abi: [
+    /* Your contract ABI */
+  ],
   runner: provider,
-  methodsToSign: ['method1', 'method2'] // Contract read calls that require signing
+  contractMethodsToSign: ['method1', 'method2'], // Contract read calls that require signing
 }
 
 const contract = new SilentDataRollupContract(contractConfig)
@@ -143,6 +140,7 @@ To easily decode private events, use the `SDInterface` class which extends ether
 #### Private Events Example
 
 ```typescript
+import { NetworkName } from '@appliedblockchain/silentdatarollup-core'
 import {
   SDInterface,
   SilentDataRollupProvider,
@@ -203,6 +201,7 @@ const privateEvents = await provider.getPrivateLogs({
 // Parse and access private events
 for (const log of privateEvents) {
   const parsedLog = sdInterface.parseLog(log)
+  if (!parsedLog) continue
 
   console.log('Private Event:', parsedLog.name) // Will be 'PrivateEvent'
   console.log('Private Args:', parsedLog.args) // Raw PrivateEvent args
@@ -236,8 +235,11 @@ Silent Data Rollup supports smart accounts (smart wallet contracts) that impleme
 This example shows how to use the provider with a passkey signer and smart account. For a complete passkey implementation, see the [Giano repository](https://github.com/appliedblockchain/giano).
 
 ```typescript
+import {
+  NetworkName,
+  SilentDataRollupContract,
+} from '@appliedblockchain/silentdatarollup-core'
 import { SilentDataRollupProvider } from '@appliedblockchain/silentdatarollup-ethers-provider'
-import { NetworkName } from '@appliedblockchain/silentdatarollup-core'
 // Example: Using Giano passkey signer
 // See https://github.com/appliedblockchain/giano for full implementation
 import { GianoSigner } from '@appliedblockchain/giano-client'
@@ -265,12 +267,12 @@ console.log(balance)
 
 // Works with contracts too
 const contractConfig = {
-  contractAddress: 'YOUR_CONTRACT_ADDRESS',
+  address: 'YOUR_CONTRACT_ADDRESS',
   abi: [
     /* Your contract ABI */
   ],
   runner: provider,
-  methodsToSign: ['privateMethod'],
+  contractMethodsToSign: ['privateMethod'],
 }
 
 const contract = new SilentDataRollupContract(contractConfig)

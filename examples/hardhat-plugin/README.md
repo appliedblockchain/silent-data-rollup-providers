@@ -6,9 +6,10 @@ This repository demonstrates how to use the `@appliedblockchain/silentdatarollup
 
 ## Prerequisites
 
-- Node.js (version 18 or higher)
+- Node.js (version 20 or higher)
 - pnpm
 - Access to a Silent Data RPC endpoint
+- A funded wallet on the target network (for Sepolia deployments, obtain test ETH from a [Sepolia faucet](https://www.alchemy.com/faucets/ethereum-sepolia))
 
 ## Getting Started
 

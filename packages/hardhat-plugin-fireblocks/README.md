@@ -18,9 +18,10 @@ Custom providers for integrating Silent Data with Hardhat and Fireblocks.
 
 ## Prerequisites
 
-- Node.js (version 18 or higher)
+- Node.js (version 20 or higher)
 - Hardhat v2
 - pnpm
+- TypeScript and ts-node (for TypeScript Hardhat configuration)
 - Basic knowledge of Ethereum and smart contracts
 
 ## Integration
@@ -45,7 +46,7 @@ import {
 } from '@fireblocks/fireblocks-web3-provider'
 import '@nomicfoundation/hardhat-ignition-ethers'
 import '@appliedblockchain/silentdatarollup-hardhat-plugin-fireblocks'
-import { SilentDataSignatureTypeRollupProvider } from '@appliedblockchain/silentdatarollup-core'
+import { SignatureType } from '@appliedblockchain/silentdatarollup-core'
 
 const RPC_URL = 'SILENT_DATA_ROLLUP_RPC_URL'
 const FIREBLOCKS_API_KEY = 'FIREBLOCKS_API_KEY'
