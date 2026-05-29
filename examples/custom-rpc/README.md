@@ -4,7 +4,7 @@ For development purposes, this repository exposes a Silent Data Custom RPC using
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20 or higher)
 - pnpm
 
 ## Installation
@@ -41,7 +41,7 @@ For development purposes, this repository exposes a Silent Data Custom RPC using
    CHAIN_ID=<hardhat_chain_id>
    PRIVATE_KEY=<your_private_key>
    RPC_URL=<hardhat_rpc_url>
-   TOKEN_ADDRESS=<custom_rpc_port>
+   TOKEN_ADDRESS=<your_token_address>
    ```
 
 ## Usage

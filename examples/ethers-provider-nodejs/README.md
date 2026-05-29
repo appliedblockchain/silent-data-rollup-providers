@@ -12,7 +12,7 @@ This repository demonstrates how to interact with the Silent Data using Node.js 
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20 or higher)
 - pnpm
 - Access to a Silent Data RPC endpoint
 
@@ -52,7 +52,7 @@ This repository demonstrates how to interact with the Silent Data using Node.js 
    RPC_URL=<your_rpc_url>
    TOKEN_ADDRESS=<your_token_address>
    TRANSFER_VALUE_ETH=<transfer_to_value>
-   TRANSFER_WALLET_ADDRESS=<transfer_to_private_key>
+   TRANSFER_WALLET_ADDRESS=<recipient_wallet_address>
    ```
 
 ## Usage
