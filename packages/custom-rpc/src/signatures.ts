@@ -1,416 +1,717 @@
-import { ethers } from 'ethers'
 import {
-  HEADER_SIGNATURE,
-  HEADER_TIMESTAMP,
-  HEADER_EIP712_SIGNATURE,
+  concat,
+  getBytes,
+  hashMessage,
+  keccak256,
+  recoverAddress,
+  toUtf8Bytes,
+  TypedDataEncoder,
+  Wallet,
+  type JsonRpcProvider,
+} from 'ethers'
+import {
+  delegateEIP712Types,
+  eip712Domain,
+  getAuthEIP712Types,
   HEADER_DELEGATE,
   HEADER_DELEGATE_SIGNATURE,
   HEADER_EIP712_DELEGATE_SIGNATURE,
-  eip712Domain,
-  delegateEIP712Types,
+  HEADER_EIP712_SIGNATURE,
+  HEADER_SIGNATURE,
+  HEADER_SIGNATURE_TYPE,
+  HEADER_SIGNER_SWC,
+  HEADER_SIGNER_SWC_TYPE,
+  HEADER_TIMESTAMP,
+  prepareTypedDataPayload,
+  SignatureType,
 } from '@appliedblockchain/silentdatarollup-core'
-
-const TIMESTAMP_MIN_OFFSET = -12
-const TIMESTAMP_MAX_OFFSET = 4
+import {
+  HEADER_SIGNER_SWC_VERSION,
+  HEX_ZERO,
+  L2_TO_L1_MESSAGE_PASSER,
+  TIMESTAMP_MAX_OFFSET,
+  TIMESTAMP_MIN_OFFSET,
+} from './constants'
+import { verifyERC1271Signature, wrapHashForSmartWallet } from './smartWallets'
 
 /**
- * Validates that a timestamp is in RFC3339 format and within the allowed time window
- * @param timestamp The timestamp to validate
- * @returns True if the timestamp is valid, false otherwise
+ * Signature recovery and signer-based access control.
+ *
+ * The EIP-191 and EIP-712 hash construction here matches the client SDK
+ * (`packages/core`): EIP-712 uses the nested `Call`/`JsonRPCRequest` structure
+ * via `getAuthEIP712Types`, and EIP-191 signs `chainId + body + timestamp`.
  */
-export function validateRFC3339Timestamp(timestamp: string): boolean {
-  // RFC3339 regex pattern
-  const rfc3339Pattern =
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/
 
-  if (!rfc3339Pattern.test(timestamp)) {
-    return false
-  }
-
-  const timestampDate = new Date(timestamp)
-  if (Number.isNaN(timestampDate.getTime())) {
-    return false
-  }
-
-  const now = new Date()
-  const minAllowedTime = new Date(
-    now.getTime() + TIMESTAMP_MIN_OFFSET * 60 * 1000,
-  )
-  const maxAllowedTime = new Date(
-    now.getTime() + TIMESTAMP_MAX_OFFSET * 60 * 1000,
-  )
-
-  return timestampDate >= minAllowedTime && timestampDate <= maxAllowedTime
+export interface RpcRequest {
+  jsonrpc?: string
+  method: string
+  id?: unknown
+  params: unknown[]
 }
 
-/**
- * Recovers the signer's address from an EIP-191 signature
- * @param message The message that was signed
- * @param signature The EIP-191 signature
- * @returns The signer's Ethereum address or null if recovery failed
- */
-export function recoverSerialSigner(
-  message: string,
-  signature: string,
+type Headers = Record<string, string | string[] | undefined>
+
+function header(headers: Headers, name: string): string {
+  const v = headers[name.toLowerCase()]
+  if (Array.isArray(v)) {
+    return v[0] ?? ''
+  }
+  return v ?? ''
+}
+
+// ---------------------------------------------------------------------------
+// Hash construction (must match the client SDK signing in packages/core)
+// ---------------------------------------------------------------------------
+
+function constructRawMessage(
   chainId: bigint,
-): string | null {
-  try {
-    message = chainId.toString() + message
-    const messageHash = ethers.hashMessage(message)
-    const recoveredAddress = ethers.recoverAddress(messageHash, signature)
-    return recoveredAddress
-  } catch {
-    return null
-  }
-}
-
-/**
- * Recovers the signer's address from an EIP-712 typed signature
- * @param data The data that was signed
- * @param signature The EIP-712 signature
- * @returns The signer's Ethereum address or null if recovery failed
- */
-export function recoverTypedSigner(
-  data: any,
-  signature: string,
-  chainId: bigint,
-): string | null {
-  try {
-    const domain = { ...eip712Domain, chainId }
-    const types = {
-      Request: [
-        { name: 'method', type: 'string' },
-        { name: 'params', type: 'string' },
-        { name: 'timestamp', type: 'string' },
-      ],
-    }
-
-    const recoveredAddress = ethers.verifyTypedData(
-      domain,
-      types,
-      data,
-      signature,
-    )
-
-    return recoveredAddress
-  } catch {
-    return null
-  }
-}
-
-/**
- * Validates a delegation ticket and recovers both the delegate and delegator addresses
- * @param delegateTicket The delegation ticket
- * @param delegateSignature The signature of the delegate
- * @param message The message that was signed by the delegate
- * @param isEIP712 Whether the delegate signature is an EIP-712 signature
- * @returns An object containing the delegate and delegator addresses, or null if validation failed
- */
-export function recoverSignerWithDelegate(
-  delegateTicket: string,
-  delegateSignature: string,
-  message: string,
-  isEIP712: boolean,
-  chainId: bigint,
-): { delegate: string; delegator: string } | null {
-  try {
-    // Parse the delegate ticket
-    const ticket = JSON.parse(delegateTicket)
-
-    if (!ticket.expires || !ticket.ephemeralAddress) {
-      return null
-    }
-
-    // Check if the ticket has expired
-    const expiryDate = new Date(ticket.expires)
-    if (Number.isNaN(expiryDate.getTime()) || expiryDate <= new Date()) {
-      return null
-    }
-
-    // Recover the delegate's address
-    let delegateAddress: string | null
-    if (isEIP712) {
-      const data = {
-        method: JSON.parse(message).method,
-        params: JSON.stringify(JSON.parse(message).params),
-        timestamp: ticket.timestamp,
-      }
-      delegateAddress = recoverTypedSigner(data, delegateSignature, chainId)
-    } else {
-      delegateAddress = recoverSerialSigner(message, delegateSignature, chainId)
-    }
-
-    if (
-      !delegateAddress ||
-      delegateAddress.toLowerCase() !== ticket.ephemeralAddress.toLowerCase()
-    ) {
-      return null
-    }
-
-    // Recover the delegator's address from the ticket signature
-    const ticketData = {
-      expires: ticket.expires,
-      ephemeralAddress: ticket.ephemeralAddress,
-    }
-
-    const delegatorAddress = ethers.verifyTypedData(
-      { ...eip712Domain, chainId },
-      delegateEIP712Types,
-      ticketData,
-      ticket.signature,
-    )
-
-    return {
-      delegate: delegateAddress,
-      delegator: delegatorAddress,
-    }
-  } catch {
-    return null
-  }
-}
-
-/**
- * Main function to recover the signer's address from request headers and body
- * @param headers The HTTP headers
- * @param body The request body as a string
- * @returns The signer's Ethereum address or null if validation failed
- */
-export function recoverSigner(
-  headers: Record<string, string>,
   body: string,
+  timestamp: string,
+): string {
+  return `${chainId.toString()}${body}${timestamp}`
+}
+
+/** EIP-191 personal-message hash of `chainId + body + timestamp`. */
+function constructEIP191Hash(
   chainId: bigint,
-): string | null {
-  // Check if required headers are present
-  const timestamp = headers[HEADER_TIMESTAMP]
-  if (!timestamp) {
-    return null
+  body: string,
+  timestamp: string,
+): string {
+  return hashMessage(constructRawMessage(chainId, body, timestamp))
+}
+
+/** Raw keccak256 of `chainId + body + timestamp` (no EIP-191 prefix). */
+function constructRawHashForERC1271(
+  chainId: bigint,
+  body: string,
+  timestamp: string,
+): string {
+  return keccak256(toUtf8Bytes(constructRawMessage(chainId, body, timestamp)))
+}
+
+/** EIP-712 digest over the Silent Data `Call` typed structure. */
+function constructEIP712Hash(
+  chainId: bigint,
+  body: string,
+  timestamp: string,
+): string {
+  const parsed = JSON.parse(body)
+  const preparedPayload = Array.isArray(parsed)
+    ? parsed.map(prepareTypedDataPayload)
+    : prepareTypedDataPayload(parsed)
+  const message = { request: preparedPayload, timestamp }
+  const types = getAuthEIP712Types(parsed)
+  const domain = { ...eip712Domain, chainId }
+  return TypedDataEncoder.hash(domain, types, message)
+}
+
+// ---------------------------------------------------------------------------
+// EOA signature recovery
+// ---------------------------------------------------------------------------
+
+function recoverSerialSigner(
+  chainId: bigint,
+  timestamp: string,
+  signature: string,
+  body: string,
+): string {
+  return recoverAddress(
+    constructEIP191Hash(chainId, body, timestamp),
+    signature,
+  )
+}
+
+function recoverTypedSigner(
+  chainId: bigint,
+  timestamp: string,
+  signature: string,
+  body: string,
+): string {
+  return recoverAddress(
+    constructEIP712Hash(chainId, body, timestamp),
+    signature,
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Timestamp + address helpers
+// ---------------------------------------------------------------------------
+
+const RFC3339_PATTERN =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})$/
+
+/** Validates RFC3339 format and the [-12min, +4min] replay window. */
+export function validateRFC3339Timestamp(timestamp: string): boolean {
+  if (!RFC3339_PATTERN.test(timestamp)) {
+    return false
   }
-
-  // Validate timestamp
-  if (!validateRFC3339Timestamp(timestamp)) {
-    return null
+  const ts = new Date(timestamp)
+  if (Number.isNaN(ts.getTime())) {
+    return false
   }
+  const now = Date.now()
+  const min = now + TIMESTAMP_MIN_OFFSET * 60 * 1000
+  const max = now + TIMESTAMP_MAX_OFFSET * 60 * 1000
+  return ts.getTime() >= min && ts.getTime() <= max
+}
 
-  // Check for delegation
-  const delegateTicket = headers[HEADER_DELEGATE]
-  const delegateSignature = headers[HEADER_DELEGATE_SIGNATURE]
-  const eip712DelegateSignature = headers[HEADER_EIP712_DELEGATE_SIGNATURE]
+function addressesEqual(a: string, b: string): boolean {
+  if (!a || !b) {
+    return false
+  }
+  return a.toLowerCase() === b.toLowerCase()
+}
 
-  // Check for regular signatures
-  const signature = headers[HEADER_SIGNATURE]
-  const eip712Signature = headers[HEADER_EIP712_SIGNATURE]
+function validateAddress(signer: string, validAddress: string): void {
+  if (!validAddress) {
+    throw new Error('no valid address')
+  }
+  if (!addressesEqual(signer, validAddress)) {
+    throw new Error('unauthorised address recovered from x-signature')
+  }
+}
 
-  // Ensure signature types aren't mixed
+function validateAddressAgainstAny(signer: string, addresses: string[]): void {
+  let lastErr: Error | null = null
+  for (const addr of addresses) {
+    try {
+      validateAddress(signer, addr)
+      return
+    } catch (err) {
+      lastErr = err as Error
+    }
+  }
+  throw lastErr ?? new Error('unauthorised address')
+}
+
+// ---------------------------------------------------------------------------
+// Delegation
+// ---------------------------------------------------------------------------
+
+interface Ticket {
+  expires?: string
+  ephemeralAddress?: string
+}
+
+function validateDelegateExpiry(validUntil: string | undefined): void {
+  if (!validUntil) {
+    throw new Error('delegate missing expiry')
+  }
+  const date = new Date(validUntil)
+  if (Number.isNaN(date.getTime())) {
+    throw new Error('invalid delegate expiry')
+  }
+  const now = Date.now()
+  if (date.getTime() < now) {
+    throw new Error('delegate expired')
+  }
+  if (date.getTime() > now + 12 * 60 * 60 * 1000) {
+    throw new Error('delegate expiry too far into the future')
+  }
+}
+
+/** EIP-191 personal-message hash of `chainId + message`. */
+function eip191HashChainId(chainId: bigint, message: string): string {
+  return hashMessage(`${chainId.toString()}${message}`)
+}
+
+/** EIP-712 digest of the delegation ticket. */
+function hashEIP712TicketBytes(chainId: bigint, delegate: string): string {
+  const ticket = JSON.parse(delegate) as Ticket
+  const domain = { ...eip712Domain, chainId }
+  return TypedDataEncoder.hash(domain, delegateEIP712Types, {
+    expires: ticket.expires,
+    ephemeralAddress: ticket.ephemeralAddress,
+  })
+}
+
+async function recoverSignerWithDelegate(
+  provider: JsonRpcProvider,
+  chainId: bigint,
+  recoveredKey: string,
+  delegate: string,
+  delegateSignature: string,
+  hashFunc: (delegate: string) => string,
+  smartWalletContract: string,
+  signatureType: string,
+  isEIP712Delegate: boolean,
+): Promise<string> {
+  const ticket = JSON.parse(delegate) as Ticket
+
+  validateDelegateExpiry(ticket.expires)
+
   if (
-    (signature && eip712Signature) ||
-    (delegateSignature && eip712DelegateSignature)
+    !ticket.ephemeralAddress ||
+    !addressesEqual(ticket.ephemeralAddress, recoveredKey)
+  ) {
+    throw new Error('invalid ephemeral signature')
+  }
+
+  // Smart wallet: verify the delegate signature via ERC-1271.
+  if (smartWalletContract) {
+    let msgHash: string
+    if (isEIP712Delegate) {
+      msgHash = hashFunc(delegate)
+    } else {
+      const rawMessage = `${chainId.toString()}${delegate}`
+      if (signatureType === SignatureType.Raw) {
+        msgHash = keccak256(toUtf8Bytes(rawMessage))
+      } else {
+        // signMessage(hashBytes): hash raw message, EIP-191 prefix the 32 bytes, hash again.
+        const rawHash = keccak256(toUtf8Bytes(rawMessage))
+        const prefixed = concat([
+          toUtf8Bytes('\x19Ethereum Signed Message:\n32'),
+          getBytes(rawHash),
+        ])
+        msgHash = keccak256(prefixed)
+      }
+    }
+    const ok = await verifyERC1271Signature(
+      provider,
+      smartWalletContract,
+      msgHash,
+      delegateSignature,
+    )
+    if (!ok) {
+      throw new Error('ERC-1271 delegate signature verification failed')
+    }
+    return smartWalletContract
+  }
+
+  // EOA: recover the delegator from the delegate signature.
+  const composedHash = hashFunc(delegate)
+  return recoverAddress(composedHash, delegateSignature)
+}
+
+// ---------------------------------------------------------------------------
+// ERC-1271 smart wallet auth signature
+// ---------------------------------------------------------------------------
+
+interface Erc1271SignerRequest {
+  timestamp: string
+  signature: string
+  typedSignature: string
+  signatureType: string
+  signerSwcType: string
+  signerSwcVersion: string
+  body: string
+}
+
+async function verifyERC1271Signer(
+  provider: JsonRpcProvider,
+  chainId: bigint,
+  contractAddress: string,
+  req: Erc1271SignerRequest,
+): Promise<string> {
+  let baseHash: string
+  let signature: string
+
+  if (req.typedSignature && req.signature) {
+    throw new Error('both EIP712 and EIP191 signatures provided')
+  }
+
+  if (req.typedSignature) {
+    baseHash = constructEIP712Hash(chainId, req.body, req.timestamp)
+    signature = req.typedSignature
+  } else if (req.signature) {
+    if (req.signatureType === SignatureType.Raw) {
+      baseHash = constructRawHashForERC1271(chainId, req.body, req.timestamp)
+    } else {
+      baseHash = constructEIP191Hash(chainId, req.body, req.timestamp)
+    }
+    signature = req.signature
+  } else {
+    throw new Error('no signature provided')
+  }
+
+  const finalHash = wrapHashForSmartWallet(
+    baseHash,
+    contractAddress,
+    chainId,
+    req.signerSwcType,
+    req.signerSwcVersion,
+  )
+
+  const ok = await verifyERC1271Signature(
+    provider,
+    contractAddress,
+    finalHash,
+    signature,
+  )
+  if (!ok) {
+    throw new Error('ERC-1271 signature verification failed')
+  }
+
+  return contractAddress
+}
+
+// ---------------------------------------------------------------------------
+// Main recovery entry point
+// ---------------------------------------------------------------------------
+
+/**
+ * Recovers the effective signer from the request headers + body.
+ * Returns '' when the request carries no signature at all.
+ * Throws when signatures are malformed / invalid.
+ */
+export async function recoverSigner(
+  provider: JsonRpcProvider,
+  chainId: bigint,
+  headers: Headers,
+  body: string,
+): Promise<string> {
+  const xDelegationTicket = header(headers, HEADER_DELEGATE)
+  const xDelegationSignature = header(headers, HEADER_DELEGATE_SIGNATURE)
+  const xTypedDelegationSignature = header(
+    headers,
+    HEADER_EIP712_DELEGATE_SIGNATURE,
+  )
+  const xTimestamp = header(headers, HEADER_TIMESTAMP)
+  const xSignature = header(headers, HEADER_SIGNATURE)
+  const xTypedSignature = header(headers, HEADER_EIP712_SIGNATURE)
+  const xSmartWalletContract = header(headers, HEADER_SIGNER_SWC)
+  const xSignatureType = header(headers, HEADER_SIGNATURE_TYPE)
+  const xSignerSwcType = header(headers, HEADER_SIGNER_SWC_TYPE)
+  const xSignerSwcVersion = header(headers, HEADER_SIGNER_SWC_VERSION)
+
+  if (
+    !xDelegationTicket &&
+    !xDelegationSignature &&
+    !xTimestamp &&
+    !xSignature &&
+    !xTypedSignature &&
+    !xSmartWalletContract
+  ) {
+    return ''
+  }
+  if (!xTimestamp) {
+    throw new Error('signatures should be sent with a timestamp')
+  }
+  if (xSignature && xTypedSignature) {
+    throw new Error('EIP712 and EIP191 signatures should not be sent together')
+  }
+  if (!xSignature && !xTypedSignature) {
+    throw new Error('timestamp should be accompanied by signature')
+  }
+  if (xDelegationSignature && xTypedDelegationSignature) {
+    throw new Error(
+      'EIP712 and EIP191 delegation signatures should not be sent together',
+    )
+  }
+  if (
+    (xDelegationTicket === '') !==
+    (xDelegationSignature === '' && xTypedDelegationSignature === '')
+  ) {
+    throw new Error(
+      'delegation ticket should be sent with a delegation signature',
+    )
+  }
+  if (!validateRFC3339Timestamp(xTimestamp)) {
+    throw new Error('x-timestamp is outdated')
+  }
+
+  const hasDelegation =
+    xDelegationTicket !== '' &&
+    (xDelegationSignature !== '' || xTypedDelegationSignature !== '')
+
+  let payloadSigner = ''
+
+  if (xSmartWalletContract) {
+    if (hasDelegation) {
+      // With delegation, recover the ephemeral address like an EOA;
+      // the delegate signature carries the ERC-1271 authorization.
+      if (xTypedSignature) {
+        payloadSigner = recoverTypedSigner(
+          chainId,
+          xTimestamp,
+          xTypedSignature,
+          body,
+        )
+      } else if (xSignature) {
+        // Auth signature is ALWAYS EIP-191 when delegation + smart wallet.
+        payloadSigner = recoverSerialSigner(
+          chainId,
+          xTimestamp,
+          xSignature,
+          body,
+        )
+        const ticket = JSON.parse(xDelegationTicket) as Ticket
+        if (
+          ticket.ephemeralAddress &&
+          !addressesEqual(payloadSigner, ticket.ephemeralAddress)
+        ) {
+          throw new Error(
+            `recovered address ${payloadSigner} doesn't match ticket ephemeral address ${ticket.ephemeralAddress}`,
+          )
+        }
+      }
+    } else {
+      // No delegation: ERC-1271 verification for the smart wallet contract.
+      payloadSigner = await verifyERC1271Signer(
+        provider,
+        chainId,
+        xSmartWalletContract,
+        {
+          timestamp: xTimestamp,
+          signature: xSignature,
+          typedSignature: xTypedSignature,
+          signatureType: xSignatureType,
+          signerSwcType: xSignerSwcType,
+          signerSwcVersion: xSignerSwcVersion,
+          body,
+        },
+      )
+    }
+  } else {
+    // Traditional EOA recovery.
+    if (xTypedSignature) {
+      payloadSigner = recoverTypedSigner(
+        chainId,
+        xTimestamp,
+        xTypedSignature,
+        body,
+      )
+    }
+    if (xSignature) {
+      payloadSigner = recoverSerialSigner(chainId, xTimestamp, xSignature, body)
+    }
+  }
+
+  if (xDelegationSignature) {
+    return recoverSignerWithDelegate(
+      provider,
+      chainId,
+      payloadSigner,
+      xDelegationTicket,
+      xDelegationSignature,
+      (d) => eip191HashChainId(chainId, d),
+      xSmartWalletContract,
+      xSignatureType,
+      false,
+    )
+  }
+  if (xTypedDelegationSignature) {
+    return recoverSignerWithDelegate(
+      provider,
+      chainId,
+      payloadSigner,
+      xDelegationTicket,
+      xTypedDelegationSignature,
+      (d) => hashEIP712TicketBytes(chainId, d),
+      xSmartWalletContract,
+      xSignatureType,
+      true,
+    )
+  }
+
+  return payloadSigner
+}
+
+// ---------------------------------------------------------------------------
+// Request-side validation (may mutate the request)
+// ---------------------------------------------------------------------------
+
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+  return typeof v === 'object' && v !== null && !Array.isArray(v)
+}
+
+function validateSignerForGetters(signer: string, request: RpcRequest): void {
+  const params = request.params
+  if (!params || params.length === 0) {
+    throw new Error('empty params in RPC request')
+  }
+  if (typeof params[0] !== 'string') {
+    throw new Error('bad param type in request')
+  }
+  validateAddress(signer, params[0])
+}
+
+function validateSignerForGettersObject(
+  signer: string,
+  request: RpcRequest,
+): void {
+  const params = request.params
+  if (!params || params.length === 0) {
+    throw new Error('empty params in RPC request')
+  }
+  if (!isPlainObject(params[0])) {
+    throw new Error('bad param type in request, expected object')
+  }
+  const address = params[0].address
+  if (typeof address !== 'string') {
+    throw new Error('missing or invalid address field in params')
+  }
+  validateAddress(signer, address)
+}
+
+function validateAndSetFrom(
+  headers: Headers,
+  signer: string,
+  request: RpcRequest,
+): void {
+  const method = request.method
+  if (!request.params || request.params.length === 0) {
+    throw new Error(`empty params for ${method}`)
+  }
+  const param0 = request.params[0]
+  if (!isPlainObject(param0)) {
+    throw new Error(`${method} param[0] is not a json object`)
+  }
+  const xSignature = header(headers, HEADER_SIGNATURE)
+  const xTypedSignature = header(headers, HEADER_EIP712_SIGNATURE)
+  const xSmartWalletContract = header(headers, HEADER_SIGNER_SWC)
+
+  if (!xSignature && !xTypedSignature) {
+    throw new Error(`no signature provided for ${method}`)
+  }
+
+  const from = param0.from
+  if (typeof from === 'string') {
+    if (xSmartWalletContract) {
+      param0.from = signer
+    } else {
+      validateAddress(signer, from)
+    }
+  } else if (from === undefined || from === null) {
+    if (xSmartWalletContract) {
+      throw new Error(
+        "'from' field must be specified for smart wallet requests",
+      )
+    }
+    param0.from = signer
+  } else {
+    throw new Error(`'from' field in ${method} must be a valid address or null`)
+  }
+}
+
+/**
+ * Validates the signature for eth_call / eth_estimateGas and sets `from`.
+ * If validation fails, `from` is replaced with a random address (privacy).
+ */
+function sanitiseFrom(
+  headers: Headers,
+  signer: string,
+  request: RpcRequest,
+): void {
+  try {
+    validateAndSetFrom(headers, signer, request)
+  } catch {
+    const param0 = request.params[0]
+    if (!isPlainObject(param0)) {
+      throw new Error('bad params')
+    }
+    param0.from = Wallet.createRandom().address
+    request.params[0] = param0
+  }
+}
+
+/**
+ * Validates the signer against the request params before forwarding.
+ * May mutate the request (e.g. sanitising the `from` field). Throws on
+ * unauthorized access.
+ */
+export function validateSignerAgainstRequests(
+  headers: Headers,
+  signer: string,
+  request: RpcRequest,
+): void {
+  switch (request.method) {
+    case 'sd_getTransactionsByAddress':
+      validateSignerForGettersObject(signer, request)
+      return
+    case 'eth_getProof':
+      if (signer) {
+        const addr = request.params[0]
+        if (
+          typeof addr === 'string' &&
+          addressesEqual(addr, L2_TO_L1_MESSAGE_PASSER)
+        ) {
+          return
+        }
+        validateSignerForGetters(signer, request)
+      }
+      return
+    case 'eth_call':
+    case 'eth_estimateGas':
+      if (request.params.length > 2) {
+        throw new Error('state override is not supported')
+      }
+      sanitiseFrom(headers, signer, request)
+      return
+    default:
+      return
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Response-side validation
+// ---------------------------------------------------------------------------
+
+/**
+ * Validates the signer against a geth response. Throws when the signer is not
+ * authorized to see the full response (the caller then redacts).
+ */
+export function validateSignerAgainstResponses(
+  signer: string,
+  request: RpcRequest,
+  result: unknown,
+): void {
+  if (result === null || result === undefined) {
+    return
+  }
+  const r = result as Record<string, unknown>
+  switch (request.method) {
+    case 'eth_getTransactionByHash':
+      validateAddressAgainstAny(signer, [
+        typeof r.to === 'string' ? r.to : '',
+        typeof r.from === 'string' ? r.from : '',
+      ])
+      return
+    case 'eth_getTransactionReceipt':
+      validateAddress(signer, typeof r.from === 'string' ? r.from : '')
+      return
+    default:
+      return
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pre-geth handling (eth_getProof)
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns a pre-computed response for requests that can be answered without
+ * forwarding to the backing node, or null to forward:
+ * unsigned/mismatched eth_getProof (non-bridge) returns an empty proof.
+ */
+export function handlePreGethRequest(
+  signer: string,
+  request: RpcRequest,
+): unknown | null {
+  if (request.method !== 'eth_getProof') {
+    return null
+  }
+  const addr = request.params[0]
+  if (
+    typeof addr === 'string' &&
+    addressesEqual(addr, L2_TO_L1_MESSAGE_PASSER)
   ) {
     return null
   }
-
-  // Handle delegation
-  if (delegateTicket && (delegateSignature || eip712DelegateSignature)) {
-    const result = recoverSignerWithDelegate(
-      delegateTicket,
-      delegateSignature || eip712DelegateSignature || '',
-      body,
-      !!eip712DelegateSignature,
-      chainId,
-    )
-
-    return result ? result.delegator : null
-  }
-
-  // Handle regular signatures
-  if (signature) {
-    // For EIP-191 signatures, we sign the request body + timestamp
-    const message = `${body}${timestamp}`
-    return recoverSerialSigner(message, signature, chainId)
-  }
-
-  if (eip712Signature) {
-    // For EIP-712 signatures, we create a typed data structure
-    try {
-      const parsedBody = JSON.parse(body)
-      const data = {
-        method: parsedBody.method,
-        params: JSON.stringify(parsedBody.params),
-        timestamp,
-      }
-
-      return recoverTypedSigner(data, eip712Signature, chainId)
-    } catch {
-      return null
-    }
-  }
-
-  // No valid signature found
-  return null
-}
-
-/**
- * Generates a random Ethereum key pair
- * @returns An object containing the private key and address
- */
-export function generateRandomKeyPair(): {
-  privateKey: string
-  address: string
-} {
-  const wallet = ethers.Wallet.createRandom()
-  return {
-    privateKey: wallet.privateKey,
-    address: wallet.address,
-  }
-}
-
-/**
- * Validates that an address matches the expected signer
- * @param signer The recovered signer's address
- * @param address The address to validate
- * @returns Error if validation fails, null otherwise
- */
-export function validateAddress(signer: string, address: string): Error | null {
-  if (!signer || !address) {
-    return new Error('Missing signer or address')
-  }
-
-  if (signer.toLowerCase() !== address.toLowerCase()) {
-    return new Error(`Signer ${signer} does not match address ${address}`)
-  }
-
-  return null
-}
-
-/**
- * Validates that the signer is authorized to access the requested method and parameters
- * @param method The RPC method being called
- * @param params The parameters for the RPC method
- * @param signer The recovered signer's address
- * @param headers Optional HTTP headers for additional validation
- * @returns True if the signer is authorized, false otherwise
- */
-export function validateMethodAccess(
-  method: string,
-  params: any[],
-  signer: string | null,
-  headers?: Record<string, string>,
-): boolean {
-  switch (method) {
-    case 'eth_getProof':
-      // Only validate if signer is not empty
-      if (!signer) {
-        return true
-      }
-
-      // Validate that the signer matches the address in the first parameter
-      if (!params || !params[0]) {
-        return false
-      }
-      return params[0].toLowerCase() === signer.toLowerCase()
-
-    case 'eth_call':
-      // For eth_call, use sanitiseEthCallFrom function
-      return sanitiseEthCallFrom(params, signer ?? '', headers)
-
-    default:
-      return false
-  }
-}
-
-/**
- * Sanitizes the 'from' field in eth_call parameters
- * @param params The parameters for the eth_call method
- * @param signer The recovered signer's address
- * @param headers Optional HTTP headers for additional validation
- * @returns True if validation passes, false otherwise
- */
-function sanitiseEthCallFrom(
-  params: any[],
-  signer: string,
-  headers?: Record<string, string>,
-): boolean {
-  // Check if params exist
-  if (!params || params.length === 0) {
-    return false
-  }
-
-  // Validate the signer for eth_call
-  const validationError = validateSignerForEthCall(params, signer, headers)
-
-  if (validationError) {
-    // If validation fails, set a random address as 'from'
-    try {
-      let param0: Record<string, any>
-
-      if (typeof params[0] === 'object' && params[0] !== null) {
-        param0 = params[0]
-      } else {
-        return false
-      }
-
-      const { address } = generateRandomKeyPair()
-      param0.from = address
-      params[0] = param0
-
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  return true
-}
-
-/**
- * Validates the signer for eth_call method
- * @param params The parameters for the eth_call method
- * @param signer The recovered signer's address
- * @param headers Optional HTTP headers for additional validation
- * @returns Error if validation fails, null otherwise
- */
-function validateSignerForEthCall(
-  params: any[],
-  signer: string,
-  headers?: Record<string, string>,
-): Error | null {
-  if (params.length === 0) {
-    const err = new Error('empty params for eth_call')
-    return err
-  }
-
-  let param0: Record<string, any>
-
-  if (typeof params[0] === 'object' && params[0] !== null) {
-    param0 = params[0]
-  } else {
-    const err = new Error('eth_call param[0] is not a json object')
-    return err
-  }
-
-  // Check if signature is provided in headers
-  const hasSignature =
-    headers && (headers[HEADER_SIGNATURE] || headers[HEADER_EIP712_SIGNATURE])
-  if (!hasSignature) {
-    const err = new Error('no signature provided')
-    return err
-  }
-
-  // Handle the 'from' field
-  if (param0.from === undefined || param0.from === null) {
-    // If 'from' is not specified, use the recovered signer
-    param0.from = signer
+  try {
+    validateSignerForGetters(signer, request)
     return null
-  } else if (typeof param0.from === 'string') {
-    // If 'from' is explicitly set, validate it matches the signer
-    const validationError = validateAddress(signer, param0.from)
-    if (validationError) {
-      return validationError
+  } catch {
+    return {
+      address: typeof addr === 'string' ? addr : '',
+      accountProof: [],
+      balance: HEX_ZERO,
+      codeHash:
+        '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470',
+      nonce: HEX_ZERO,
+      storageHash:
+        '0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421',
+      storageProof: [],
     }
-    return null
-  } else {
-    const err = new Error(
-      "'from' field in eth_call must be a valid address or null",
-    )
-    return err
   }
 }

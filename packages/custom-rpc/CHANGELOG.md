@@ -1,5 +1,17 @@
 # @appliedblockchain/silentdatarollup-custom-rpc
 
+## 1.2.0
+
+### Minor Changes
+
+- Updated Custom-RPC
+- Other improvements and fixes
+
+### Patch Changes
+
+- Updated dependencies
+  - @appliedblockchain/silentdatarollup-core@1.2.0
+
 ## 1.1.0
 
 ### Minor Changes

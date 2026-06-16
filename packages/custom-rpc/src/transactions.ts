@@ -1,138 +1,69 @@
 import {
-  JsonRpcProvider,
-  TransactionReceipt,
-  TransactionResponse,
-} from 'ethers'
+  EMPTY_DATA,
+  HEX_ZERO,
+  UNAUTHENTICATED_TO_ADDRESS,
+  ZERO_ADDRESS,
+  ZERO_LOGS_BLOOM,
+} from './constants'
+import { filterPrivateLogs } from './privateEvents'
 
-type PublicTransactionResponse = {
-  status?: string | null
-  blockHash?: string | null
-  blockNumber?: string | null
-  transactionHash?: string | null
-  transactionIndex?: string | null
+/**
+ * Field-level redaction for transaction responses when the requesting signer
+ * is not authorized to see the full transaction.
+ *
+ * The redacted response exposes only the publicly available fields, with the
+ * sensitive ones zeroed; all other fields are dropped.
+ */
+
+function getField(result: unknown, key: string): unknown {
+  if (result && typeof result === 'object') {
+    const v = (result as Record<string, unknown>)[key]
+    return v === undefined ? null : v
+  }
+  return null
 }
 
-function sanitizeTransaction(
-  transaction: TransactionResponse | null,
-): PublicTransactionResponse | null {
-  if (!transaction) {
-    return null
+/** Redacts an eth_getTransactionByHash result. */
+export function redactTransactionByHash(
+  result: unknown,
+): Record<string, unknown> {
+  return {
+    blockHash: getField(result, 'blockHash'),
+    blockNumber: getField(result, 'blockNumber'),
+    transactionIndex: getField(result, 'transactionIndex'),
+    from: ZERO_ADDRESS,
+    to: UNAUTHENTICATED_TO_ADDRESS,
+    hash: getField(result, 'hash'),
+    gas: HEX_ZERO,
+    value: HEX_ZERO,
+    nonce: HEX_ZERO,
+    input: EMPTY_DATA,
+    gasPrice: HEX_ZERO,
+    r: HEX_ZERO,
+    s: HEX_ZERO,
+    v: HEX_ZERO,
   }
+}
+
+/** Redacts an eth_getTransactionReceipt result (logs filtered by private events). */
+export function redactTransactionReceipt(
+  result: unknown,
+  signer: string | null,
+): Record<string, unknown> {
+  const rawLogs = getField(result, 'logs')
+  const logs = Array.isArray(rawLogs) ? filterPrivateLogs(rawLogs, signer) : []
 
   return {
-    blockHash: transaction.blockHash ?? null,
-    blockNumber: transaction.blockNumber?.toString() ?? null,
-    transactionHash: transaction.hash ?? null,
-    transactionIndex: transaction.index?.toString() ?? null,
-  }
-}
-
-function sanitizeTransactionReceipt(
-  transactionReceipt: TransactionReceipt | null,
-): PublicTransactionResponse | null {
-  if (!transactionReceipt) {
-    return null
-  }
-
-  return {
-    status: transactionReceipt.status?.toString() ?? null,
-    blockHash: transactionReceipt.blockHash ?? null,
-    blockNumber: transactionReceipt.blockNumber?.toString() ?? null,
-    transactionHash: transactionReceipt.hash ?? null,
-    transactionIndex: transactionReceipt.index?.toString() ?? null,
-  }
-}
-
-function validateTransactionAccess(
-  transaction: any,
-  signer: string | null,
-): boolean {
-  if (!signer || !transaction) {
-    return false
-  }
-
-  const signerLower = signer.toLowerCase()
-
-  if (transaction.from && transaction.from.toLowerCase() === signerLower) {
-    return true
-  }
-
-  if (transaction.to && transaction.to.toLowerCase() === signerLower) {
-    return true
-  }
-
-  return false
-}
-
-function validateSignerAgainstResponse(
-  transaction: any,
-  signer: string | null,
-): boolean {
-  return validateTransactionAccess(transaction, signer)
-}
-
-async function handleGetTransactionByHash(
-  provider: JsonRpcProvider,
-  txHash: string,
-  signer: string | null,
-): Promise<any> {
-  const transaction = await provider.getTransaction(txHash)
-
-  if (!transaction) {
-    return null
-  }
-
-  if (validateSignerAgainstResponse(transaction, signer)) {
-    return transaction
-  } else {
-    const sanitizedData = sanitizeTransaction(transaction)
-    return sanitizedData
-  }
-}
-
-async function handleGetTransactionReceipt(
-  provider: JsonRpcProvider,
-  txHash: string,
-  signer: string | null,
-): Promise<any> {
-  const transaction = await provider.getTransactionReceipt(txHash)
-
-  if (!transaction) {
-    return null
-  }
-
-  if (validateSignerAgainstResponse(transaction, signer)) {
-    return transaction
-  } else {
-    const sanitizedData = sanitizeTransactionReceipt(transaction)
-
-    return sanitizedData
-  }
-}
-
-export async function validateTransactionMethod(
-  provider: JsonRpcProvider,
-  method: string,
-  params: any[],
-  signer: string | null,
-): Promise<
-  PublicTransactionResponse | TransactionResponse | TransactionReceipt | null
-> {
-  if (!params || !params[0]) {
-    return null
-  }
-
-  const txHash = params[0]
-
-  try {
-    if (method === 'eth_getTransactionByHash') {
-      return await handleGetTransactionByHash(provider, txHash, signer)
-    } else if (method === 'eth_getTransactionReceipt') {
-      return await handleGetTransactionReceipt(provider, txHash, signer)
-    }
-
-    return null
-  } catch {
-    return null
+    blockHash: getField(result, 'blockHash'),
+    blockNumber: getField(result, 'blockNumber'),
+    transactionIndex: getField(result, 'transactionIndex'),
+    from: ZERO_ADDRESS,
+    to: UNAUTHENTICATED_TO_ADDRESS,
+    transactionHash: getField(result, 'transactionHash'),
+    status: getField(result, 'status'),
+    logs,
+    logsBloom: ZERO_LOGS_BLOOM,
+    gasUsed: HEX_ZERO,
+    cumulativeGasUsed: HEX_ZERO,
   }
 }
