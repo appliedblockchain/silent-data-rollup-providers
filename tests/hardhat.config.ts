@@ -17,6 +17,9 @@ const config: HardhatUserConfig = {
       },
     },
   },
+  ignition: {
+    requiredConfirmations: 1,
+  },
 }
 
 export default config
